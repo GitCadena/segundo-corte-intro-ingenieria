@@ -11,22 +11,15 @@ export default {
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'Portabilidad es el grado en que un sistema puede trasladarse de un entorno a otro: otro sistema operativo, otro navegador, otro proveedor de nube, otro hardware.',
+          texto: 'Portabilidad es el grado en que un sistema puede trasladarse a otro entorno: otro sistema operativo, otro navegador, otro hardware.',
         },
         {
           t: 'lista',
           items: [
-            'Adaptabilidad: se ajusta a entornos distintos sin cambiar el código. Ejemplo: la configuración vive en variables de entorno y no dentro de las clases.',
-            'Instalabilidad: se instala y desinstala de forma confiable en el entorno destino. Un instalador que deja archivos huérfanos falla aquí.',
-            'Reemplazabilidad: puede sustituir a otro producto que cumple el mismo propósito, conservando los datos. Es lo que evalúa una entidad cuando cambia de proveedor.',
+            'Adaptabilidad: se ajusta a entornos distintos sin cambiar el código.',
+            'Instalabilidad: se instala y desinstala de forma confiable.',
+            'Reemplazabilidad: puede sustituir a otro producto conservando los datos.',
           ],
-        },
-        {
-          t: 'clave',
-          titulo: 'Decisiones que la determinan',
-          texto:
-            'La portabilidad se define en el diseño, no al final. Rutas absolutas del sistema de archivos, dependencias de una versión específica del sistema operativo, SQL propietario y supuestos sobre zona horaria o codificación de caracteres son las cuatro causas más frecuentes de que un sistema no sea portable.',
         },
       ],
     },
@@ -35,29 +28,15 @@ export default {
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'Compatibilidad es la capacidad de convivir con otros sistemas y de intercambiar información con ellos. Tiene dos subcaracterísticas que se confunden con frecuencia.',
+          texto: 'Compatibilidad es convivir con otros sistemas e intercambiar información con ellos.',
         },
         {
           t: 'tabla',
-          encabezados: ['Subcaracterística', 'Definición', 'Ejemplo de falla'],
+          encabezados: ['Subcaracterística', 'Ejemplo de falla'],
           filas: [
-            [
-              'Coexistencia',
-              'Comparte recursos con otros sistemas sin afectarlos',
-              'Un antivirus que bloquea el puerto que usa la aplicación contable',
-            ],
-            [
-              'Interoperabilidad',
-              'Intercambia información y la usa correctamente',
-              'El sistema exporta fechas en formato MM/DD y el receptor las lee como DD/MM',
-            ],
+            ['Coexistencia', 'Un antivirus bloquea el puerto de otra aplicación'],
+            ['Interoperabilidad', 'Un sistema exporta fechas MM/DD y el receptor las lee como DD/MM'],
           ],
-        },
-        {
-          t: 'p',
-          texto:
-            'La interoperabilidad depende de estándares compartidos: formatos (JSON, XML, CSV), protocolos (HTTP, MQTT), contratos de API (OpenAPI) y estándares de dominio (ISO 20022 en pagos, HL7 FHIR en salud, GTFS en transporte público). Cuando dos sistemas acuerdan un estándar, la integración deja de renegociarse con cada versión.',
         },
       ],
     },
@@ -66,23 +45,21 @@ export default {
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'Fiabilidad es que el sistema mantenga su nivel de servicio durante un periodo. La robustez es su cara más exigente: cómo se comporta ante entradas inválidas, condiciones extremas o fallas de sus dependencias.',
+          texto: 'Fiabilidad es mantener el nivel de servicio. Robustez es cómo se comporta ante entradas inválidas o fallas.',
         },
         {
           t: 'lista',
           items: [
             'Madurez: frecuencia de fallas en operación normal.',
-            'Disponibilidad: proporción del tiempo en que el sistema está operativo y accesible.',
-            'Tolerancia a fallos: sigue operando, quizá degradado, cuando algo falla. Ejemplo: la app muestra datos en caché si la API no responde.',
-            'Capacidad de recuperación: restablece el estado y los datos tras una falla. Se demuestra probando la restauración de respaldos, no teniéndolos.',
+            'Disponibilidad: proporción del tiempo operativo.',
+            'Tolerancia a fallos: sigue operando, degradado, cuando algo falla.',
+            'Capacidad de recuperación: restablece el estado tras una falla.',
           ],
         },
         {
           t: 'clave',
           titulo: 'Robustez en el código',
-          texto:
-            'Programar de forma robusta es asumir que toda entrada es hostil hasta demostrar lo contrario: validar rango y tipo, no confiar en el orden de llegada, definir qué pasa con cero, con negativos, con cadenas vacías y con valores enormes, y fallar de forma explícita en vez de continuar con datos inválidos.',
+          texto: 'Asumir que toda entrada es hostil: validar rango y tipo, y definir qué pasa con cero, negativos y valores enormes.',
         },
       ],
     },
@@ -91,25 +68,17 @@ export default {
       cuerpo: [
         {
           t: 'tabla',
-          encabezados: ['Indicador', 'Fórmula', 'Lectura'],
+          encabezados: ['Indicador', 'Fórmula'],
           filas: [
-            ['Disponibilidad', 'tiempo operativo / tiempo total × 100', '99,9% son unas 43,8 min de caída al mes'],
-            ['MTBF', 'tiempo operativo / número de fallas', 'Tiempo medio entre fallas: mide madurez'],
-            ['MTTR', 'tiempo total de reparación / número de fallas', 'Tiempo medio de reparación: mide recuperación'],
-            ['Densidad de defectos', 'defectos / KLOC', 'Defectos por cada mil líneas de código'],
-            ['Cobertura de pruebas', 'líneas ejecutadas por pruebas / líneas totales × 100', 'Alcance de la verificación, no su calidad'],
+            ['Disponibilidad', 'tiempo operativo ÷ tiempo total × 100'],
+            ['MTBF', 'tiempo operativo ÷ número de fallas'],
+            ['MTTR', 'tiempo de reparación ÷ número de fallas'],
           ],
-        },
-        {
-          t: 'p',
-          texto:
-            'Los "nueves" son la forma corta de hablar de disponibilidad: 99% permite 7,2 horas de caída al mes; 99,9% permite 43,8 minutos; 99,99% permite 4,4 minutos. Cada nueve adicional cuesta bastante más que el anterior, así que el nivel se negocia con el cliente y se escribe en un acuerdo de nivel de servicio.',
         },
         {
           t: 'clave',
           titulo: 'Trampa clásica',
-          texto:
-            'Alta cobertura de pruebas no implica alta corrección funcional. La cobertura solo dice qué porción del código se ejecutó durante las pruebas; si esas pruebas no verifican resultados, el porcentaje es alto y el sistema sigue equivocándose.',
+          texto: 'Alta cobertura de pruebas no implica alta corrección: solo dice qué porción del código se ejecutó, no si el resultado era correcto.',
         },
       ],
     },
@@ -118,16 +87,13 @@ export default {
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'Dos técnicas cubren la mayoría de los defectos de robustez con muy pocos casos. Clases de equivalencia: se parte el dominio en grupos donde el sistema debería comportarse igual, y se prueba un representante de cada grupo. Valores de frontera: se prueba justo en el límite y en sus vecinos inmediatos, porque ahí viven los errores de comparación.',
+          texto: 'Clases de equivalencia: un representante por grupo. Valores de frontera: justo en el límite y sus vecinos.',
         },
         {
           t: 'codigo',
           etiqueta: 'Campo "edad" que acepta de 18 a 65',
-          texto: `Clases de equivalencia:  17 (inválido) | 30 (válido) | 70 (inválido)
-Valores de frontera:     17, 18, 19  y  64, 65, 66
-Entradas hostiles:       vacío, "abc", -5, 3.5, 999999999
-Resultado esperado en cada caso: definido ANTES de ejecutar la prueba.`,
+          texto: `Valores de frontera:  17, 18, 19  y  64, 65, 66
+Entradas hostiles:    vacío, "abc", -5, 3.5`,
         },
       ],
     },

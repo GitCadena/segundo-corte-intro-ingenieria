@@ -60,6 +60,22 @@ export default {
         },
       ],
     },
+    'Scrum en concreto': {
+      titulo: 'El mito de "en Scrum no hay documentación"',
+      cuerpo: [
+        {
+          t: 'p',
+          texto:
+            'Error frecuente en los parciales: decir que en Scrum "no hay documentación" o "no hay planeación". El manifiesto ágil valora el software funcionando por encima de la documentación exhaustiva; no la prohíbe. Se planea más veces, en lotes más pequeños, y se documenta lo que realmente se va a usar.',
+        },
+        {
+          t: 'clave',
+          titulo: 'Por qué importa la Definición de Terminado',
+          texto:
+            'Sin una Definición de Terminado explícita, "terminado" significa cosas distintas para cada integrante: para uno es "compila", para otro es "tiene pruebas", para otro es "el usuario ya lo vio".',
+        },
+      ],
+    },
     'Requisitos que se pueden verificar': {
       titulo: 'Cómo convertir un deseo en algo comprobable',
       cuerpo: [
@@ -90,49 +106,44 @@ export default {
   ejemplo: {
     titulo: 'De una queja en el pasillo a una primera entrega',
     contexto:
-      'La coordinación de la Facultad recibe esta queja: «Nunca sabemos qué salas están libres. Uno llega, encuentra la 203 vacía, se instala, y a los veinte minutos llega un grupo que dice tenerla apartada en una hoja que está en la oficina». Vamos a recorrer el proceso completo sobre este caso, que además es el hilo conductor de todo el corte.',
+      'La coordinación recibe esta queja: «Nunca sabemos qué salas están libres; llego a la 203 vacía y a los veinte minutos aparece un grupo que dice tenerla apartada en una hoja». Vamos a recorrer el proceso completo sobre este caso.',
     pasos: [
       {
         titulo: '1. Separar el problema de la solución',
         texto:
-          'La queja menciona una solución implícita ("una hoja en la oficina") y un síntoma ("llega otro grupo"). El problema no es la hoja: el problema es que la información sobre disponibilidad de salas no está donde ni cuando se necesita. Enunciado del problema: «Los estudiantes no pueden saber, en el momento en que lo necesitan, si una sala está disponible».',
-        nota:
-          'Si se salta este paso, se termina construyendo "una hoja digital": el mismo proceso con otra tecnología y los mismos conflictos.',
+          'La hoja de papel es una solución implícita, no el problema. El problema real: «Los estudiantes no pueden saber, cuando lo necesitan, si una sala está disponible».',
       },
       {
         titulo: '2. Identificar a los usuarios y su necesidad',
         texto:
-          'Aparecen tres: el estudiante que busca sala, el monitor que administra el espacio y la coordinación, que necesita saber cuánto se usa cada sala. Sus necesidades son distintas y compiten: el estudiante quiere reservar en dos toques, la coordinación quiere trazabilidad. Reconocerlo temprano evita discusiones a mitad de la construcción.',
+          'Tres usuarios con necesidades distintas: el estudiante quiere reservar rápido, la coordinación quiere trazabilidad. Reconocerlo temprano evita discusiones a mitad de camino.',
       },
       {
         titulo: '3. Escribir requisitos comprobables',
         texto:
-          'Se traducen las necesidades a enunciados que alguien más podría poner a prueba:\n\nRF-1. El sistema muestra, para un día y una franja horaria, qué salas están libres.\nRF-2. Un estudiante autenticado puede reservar una sala libre por un máximo de 2 horas continuas.\nRF-3. Un estudiante puede cancelar su reserva hasta 30 minutos antes de la hora de inicio.\nRNF-1. La consulta de disponibilidad responde en menos de 2 segundos con 200 usuarios concurrentes.\nRestricción: debe funcionar en los equipos de la sala 2, que corren Windows 10 con 4 GB de RAM.',
-        nota:
-          'Fíjate en RF-2: "un máximo de 2 horas continuas" es lo que hace el requisito comprobable. Sin ese número, dos programadores implementarían cosas distintas y ninguno estaría equivocado.',
+          'RF-1. El sistema muestra qué salas están libres en un día y franja.\nRF-2. Un estudiante puede reservar una sala libre por máximo 2 horas.\nRF-3. Puede cancelar hasta 30 minutos antes.\nRestricción: debe correr en los equipos de la sala 2 (Windows 10, 4 GB RAM).',
+        nota: 'El número en RF-2 —"máximo 2 horas"— es lo que hace el requisito comprobable.',
       },
       {
         titulo: '4. Diseñar antes de escribir código',
         texto:
-          'Con los requisitos en la mano se decide la estructura: qué entidades existen (Sala, Reserva, Usuario), qué reglas viven en cada una (una Reserva no puede solaparse con otra de la misma Sala) y qué pantallas hacen falta. Esta es la decisión más cara de revertir: si la regla de solapamiento se escribe repartida en cinco pantallas, cambiarla después cuesta cinco veces más.',
+          'Se definen las entidades (Sala, Reserva, Usuario) y dónde vive cada regla, como que una Reserva no se solape con otra. Esta decisión es la más cara de revertir después.',
       },
       {
         titulo: '5. Construir y probar la primera entrega',
         texto:
-          'El equipo tiene capacidad para 8 puntos de trabajo en las dos primeras semanas. RF-1 vale 3, RF-2 vale 5, RF-3 vale 2 y los reportes para coordinación valen 8. Se eligen RF-1 y RF-2 (8 puntos): con eso el estudiante ya puede resolver su necesidad de punta a punta —ver y reservar—, aunque todavía no pueda cancelar. Los reportes, que son la necesidad de coordinación, esperan.',
-        nota:
-          'El criterio no es "lo más fácil primero" ni "lo más bonito primero": es el conjunto más pequeño con el que alguien resuelve su necesidad completa.',
+          'Con 8 puntos de capacidad se eligen RF-1 y RF-2: el estudiante ya puede ver y reservar, aunque todavía no cancele. Los reportes de coordinación esperan.',
+        nota: 'El criterio es el conjunto más pequeño con el que alguien resuelve su necesidad completa, no lo más fácil de programar.',
       },
       {
         titulo: '6. Llega un cambio, como siempre',
         texto:
-          'A la tercera semana la coordinación informa que el reglamento cambió: ahora un estudiante no puede tener más de 3 reservas activas en la misma semana. No es un defecto —el sistema hace lo que se acordó— ni un capricho: es una regla nueva. Se estima su impacto, se decide si entra en el incremento en curso o en el siguiente, y se documenta la decisión. Como se previó que las reglas del reglamento podían cambiar, el límite se escribió en un solo lugar y el cambio cuesta horas, no días.',
-        nota:
-          'Ningún modelo de proceso impide que cambie el reglamento. Lo que absorbe el cambio es haberlo tratado como riesgo y haber aislado lo que se sabía volátil.',
+          'A la tercera semana cambia el reglamento: máximo 3 reservas activas por semana. No es un defecto, es una regla nueva: se estima su impacto y se documenta la decisión.',
+        nota: 'Ningún modelo de proceso impide que cambie el reglamento; lo que absorbe el cambio es tratarlo como riesgo.',
       },
     ],
     cierre:
-      'En seis pasos se recorrió el proceso completo: comunicación, planeación, modelado, construcción y despliegue, con gestión de riesgos por encima de todo. Nada de esto exigió escribir una línea de código, y sin embargo todas las decisiones importantes del proyecto ya se tomaron.',
+      'En seis pasos se recorrió el proceso completo sin escribir una línea de código, y ya se tomaron todas las decisiones importantes del proyecto.',
   },
 
   actividades: [

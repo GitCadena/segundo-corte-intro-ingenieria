@@ -110,47 +110,33 @@ export default {
   ejemplo: {
     titulo: 'Una prueba de usabilidad de verdad, con sus números',
     contexto:
-      'El sistema de reservas de salas ya está en producción. La coordinación dice que «la gente se queja pero no sabemos de qué». En lugar de discutir opiniones, se monta una prueba con 10 estudiantes que nunca lo han usado. Tarea única: «Reserve la sala 203 para mañana de 10 a 12». Sin ayuda, sin explicación previa.',
+      'La coordinación dice que «la gente se queja pero no sabemos de qué». Se monta una prueba con 10 estudiantes nuevos: «Reserve la sala 203 para mañana de 10 a 12», sin ayuda.',
     pasos: [
       {
-        titulo: '1. Definir qué cuenta como éxito antes de empezar',
-        texto:
-          'Éxito = la reserva queda creada, para la sala correcta, el día correcto y la franja correcta. Se define antes de mirar los datos, para que nadie ajuste el criterio según convenga. Un participante que crea la reserva para el día equivocado no completó la tarea: la creó, pero no la que se le pidió.',
+        titulo: '1. Definir qué cuenta como éxito, antes de mirar los datos',
+        texto: 'Éxito = la reserva queda creada, para la sala, el día y la franja correctos. Quien reserva el día equivocado no completó la tarea.',
       },
       {
-        titulo: '2. Los datos crudos',
-        texto:
-          'Diez participantes. Completaron la tarea: P1 (2:10), P2 (3:40), P4 (1:55), P5 (4:20), P7 (2:30), P8 (6:15), P9 (2:05). No la completaron: P3 (abandonó a 0:45), P6 (creó la reserva para el día equivocado, 3:00), P10 (abandonó a 5:30).',
-        nota:
-          'Fíjate en P6: gastó 3 minutos y produjo una reserva. Igual cuenta como fracaso, porque no es la reserva que se pidió.',
+        titulo: '2. Tasa de éxito',
+        texto: 'Completaron 7 de 10 → 70 %. Tres de cada diez estudiantes se van sin sala.',
       },
       {
-        titulo: '3. Tasa de éxito',
-        texto:
-          'Completaron 7 de 10 → 70 %. Es el número que se reporta primero. Un 70 % en una tarea que es la razón de ser del sistema es malo: tres de cada diez estudiantes se van sin sala.',
+        titulo: '3. Tiempo en tarea',
+        texto: 'Se usa la mediana de los siete que completaron: 2:30. El promedio sería 3:16, arrastrado por el más lento.',
+        nota: 'Incluir a quienes abandonaron bajaría la mediana y haría parecer eficiente un formulario que nadie logra usar.',
       },
       {
-        titulo: '4. Tiempo en tarea',
-        texto:
-          'Solo entran los siete que completaron: 2:10, 3:40, 1:55, 4:20, 2:30, 6:15, 2:05. Ordenados: 1:55, 2:05, 2:10, 2:30, 3:40, 4:20, 6:15. La mediana es el cuarto valor: 2:30.\n\nEl promedio sería 3:16, arrastrado hacia arriba por P8 (6:15). Por eso se reporta la mediana: describe mejor lo que le pasa al estudiante típico.',
-        nota:
-          'Si por descuido se hubieran incluido los tiempos de P3 (0:45, abandonó rápido) y P6, la mediana habría bajado y el formulario habría parecido más eficiente justamente por la gente que fracasó.',
+        titulo: '4. Dónde estaba la fricción',
+        texto: 'Seis de diez intentaron escribir la fecha a mano en un campo que exigía AAAA-MM-DD sin decirlo, y el error no explicaba qué corregir.',
       },
       {
-        titulo: '5. Dónde estaba la fricción',
-        texto:
-          'Las notas de observación coinciden: seis de los diez intentaron escribir la fecha a mano en un campo que exigía el formato AAAA-MM-DD sin decirlo, y el sistema respondía «Dato inválido» sin indicar el formato ni conservar lo escrito. P6 se equivocó de día porque el calendario abría en el mes siguiente.',
-      },
-      {
-        titulo: '6. Nombrar la característica afectada',
-        texto:
-          'Nada de esto es un defecto de corrección funcional: el sistema guarda correctamente lo que recibe. Lo que falla es usabilidad, y más precisamente dos subcaracterísticas: protección contra errores de usuario (permite escribir una fecha inválida y no ayuda a corregirla) y operabilidad (el calendario no abre donde el usuario espera).',
-        nota:
-          'Esta es la frase que buscamos en el parcial: no "la app es mala", sino "la tasa de éxito es 70 % por fallas de protección contra errores de usuario en el campo de fecha".',
+        titulo: '5. Nombrar la característica afectada',
+        texto: 'No es corrección funcional: el sistema guarda bien lo que recibe. Es usabilidad: protección contra errores de usuario.',
+        nota: 'La frase que buscamos: no "la app es mala", sino "70 % de éxito por fallas de protección contra errores en el campo de fecha".',
       },
     ],
     cierre:
-      'Con diez personas, una tarea y dos números, la conversación pasó de «la gente se queja» a «tres de cada diez no logran reservar por el campo de fecha». Lo primero no se puede arreglar; lo segundo sí, y además se puede volver a medir después del cambio para saber si sirvió.',
+      'Con diez personas y dos números, la conversación pasó de «la gente se queja» a «tres de cada diez no reservan por el campo de fecha». Eso sí se puede arreglar y volver a medir.',
   },
 
   actividades: [

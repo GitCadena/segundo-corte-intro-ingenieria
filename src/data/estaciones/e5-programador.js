@@ -116,50 +116,39 @@ export default {
 
   ejemplo: {
     titulo: 'Un algoritmo, paso a paso, con las variables a la vista',
-    contexto:
-      'Problema: leer las notas de un grupo y reportar el promedio y cuántos aprobaron (nota ≥ 3,0). Vamos a construirlo decidiendo cada pieza, y después lo vamos a trazar valor por valor.',
+    contexto: 'Problema: leer las notas de un grupo y reportar el promedio y cuántos aprobaron (nota ≥ 3,0).',
     pasos: [
       {
         titulo: '1. Entrada, proceso y salida',
-        texto:
-          'Entrada: n (cuántas notas) y luego n notas.\nProceso: sumar todas las notas, contar las que llegan a 3,0, dividir la suma entre n.\nSalida: dos líneas, «PROMEDIO: x.x» y «APROBADOS: k».\n\nYa aquí aparecen las dos variables clave: una que suma (acumulador) y una que cuenta (contador). Son distintas y hacen falta las dos.',
+        texto: 'Entrada: n notas. Proceso: sumarlas, contar las que llegan a 3,0, dividir. Salida: «PROMEDIO: x.x» y «APROBADOS: k».',
       },
       {
-        titulo: '2. Elegir las variables y qué representa cada una',
-        texto:
-          'n → cuántas notas se van a leer. No cambia durante el ciclo.\ni → la vuelta del ciclo en la que vamos. Cambia sola.\nnota → la nota que se acaba de leer. Se sobrescribe en cada vuelta.\nsuma → ACUMULADOR: el total de lo leído hasta ahora. Arranca en 0.\naprobados → CONTADOR: cuántas notas llegaron a 3,0. Arranca en 0.',
-        nota:
-          'Fíjate en la diferencia: suma crece en cantidades variables (lo que valga cada nota); aprobados crece siempre de a 1. Esa es exactamente la distinción entre acumulador y contador.',
+        titulo: '2. Elegir las variables',
+        texto: 'suma → ACUMULADOR, arranca en 0, crece según cada nota. aprobados → CONTADOR, arranca en 0, crece de a 1.',
       },
       {
         titulo: '3. El algoritmo',
         texto:
           'Algoritmo Notas\n\tDefinir n, i, aprobados Como Entero\n\tDefinir nota, suma Como Real\n\tLeer n\n\tsuma <- 0\n\taprobados <- 0\n\tPara i <- 1 Hasta n Hacer\n\t\tLeer nota\n\t\tsuma <- suma + nota\n\t\tSi nota >= 3 Entonces\n\t\t\taprobados <- aprobados + 1\n\t\tFinSi\n\tFinPara\n\tEscribir "PROMEDIO: ", trunc(suma / n * 10) / 10\n\tEscribir "APROBADOS: ", aprobados\nFinAlgoritmo',
-        nota:
-          'Las dos inicializaciones están ANTES del Para. Si estuvieran adentro, se reiniciarían en cada vuelta y el promedio sería siempre la última nota.',
+        nota: 'Las dos inicializaciones están ANTES del Para. Si estuvieran adentro, se reiniciarían en cada vuelta.',
       },
       {
         titulo: '4. La traza con n = 4 y notas 2,0 · 3,0 · 4,0 · 5,0',
         texto:
-          'Paso                     | n | i | nota | suma | aprobados\n-------------------------|---|---|------|------|----------\nLeer n                   | 4 | — |  —   |  —   |    —\nsuma <- 0                | 4 | — |  —   |  0   |    —\naprobados <- 0           | 4 | — |  —   |  0   |    0\nPara i=1, Leer nota      | 4 | 1 | 2.0  |  0   |    0\n  suma <- suma + nota    | 4 | 1 | 2.0  | 2.0  |    0\n  2.0 >= 3 → falso       | 4 | 1 | 2.0  | 2.0  |    0\nPara i=2, Leer nota      | 4 | 2 | 3.0  | 2.0  |    0\n  suma <- suma + nota    | 4 | 2 | 3.0  | 5.0  |    0\n  3.0 >= 3 → verdadero   | 4 | 2 | 3.0  | 5.0  |    1\nPara i=3, Leer nota      | 4 | 3 | 4.0  | 5.0  |    1\n  suma <- suma + nota    | 4 | 3 | 4.0  | 9.0  |    1\n  4.0 >= 3 → verdadero   | 4 | 3 | 4.0  | 9.0  |    2\nPara i=4, Leer nota      | 4 | 4 | 5.0  | 9.0  |    2\n  suma <- suma + nota    | 4 | 4 | 5.0  | 14.0 |    2\n  5.0 >= 3 → verdadero   | 4 | 4 | 5.0  | 14.0 |    3\nPara i=5 → sale          | 4 | 5 | 5.0  | 14.0 |    3\n\nPromedio = 14,0 ÷ 4 = 3,5. Aprobados = 3.',
-        nota:
-          'Observa la columna `nota`: se sobrescribe en cada vuelta, así que al final vale 5.0 y no recuerda nada de las anteriores. Lo que recuerda es `suma`. Esa es la razón de existir de un acumulador.',
+          'i | nota | suma | aprobados\n1 | 2.0  | 2.0  |    0\n2 | 3.0  | 5.0  |    1\n3 | 4.0  | 9.0  |    2\n4 | 5.0  | 14.0 |    3\n\nPromedio = 14,0 ÷ 4 = 3,5. Aprobados = 3.',
+        nota: 'La variable `nota` se sobrescribe en cada vuelta; lo que recuerda el total es `suma`. Esa es la razón de existir de un acumulador.',
       },
       {
         titulo: '5. Los casos límite que hay que probar',
-        texto:
-          'n = 1 con una sola nota: ¿funciona el ciclo con una sola vuelta?\nTodas por debajo de 3,0: ¿aprobados queda en 0, o quedó inicializado mal?\nUna nota exactamente 3,0: ¿cuenta como aprobada? El enunciado dice «mayor o igual», así que sí. Si el código usó > en vez de >=, este es el único caso que lo descubre.\nn = 0: ¿qué pasa al dividir entre cero? El enunciado tendría que decir qué hacer.',
-        nota:
-          'La nota exactamente 3,0 es la frontera de la estación 3 aplicada a un algoritmo. Las mismas tres clases de entrada —normal, frontera, inválida— valen aquí.',
+        texto: 'n = 1 (una sola vuelta). Nota exactamente 3,0 (¿cuenta? sí, y descubre un > mal puesto en vez de >=). n = 0 (¿qué pasa al dividir?).',
       },
       {
         titulo: '6. Lo mismo, visto con objetos',
-        texto:
-          'En orientación a objetos el problema se reparte distinto. Existiría una clase Grupo con un atributo `notas` y métodos `promedio()` y `cuantosAprobaron()`. El algoritmo que acabas de escribir viviría dentro de esos métodos.\n\nLo que cambia no es la lógica: es quién es responsable de ella. En el pseudocódigo la responsabilidad está en el flujo principal; en objetos, cada clase responde por sus propios datos. Por eso decimos que un paradigma reparte responsabilidad, no que cambia la sintaxis.',
+        texto: 'En POO existiría una clase Grupo con métodos promedio() y cuantosAprobaron(). Un paradigma reparte responsabilidad, no cambia la lógica.',
       },
     ],
     cierre:
-      'Tres cosas para llevarse: las variables se eligen antes de escribir, y cada una tiene un papel (contador, acumulador, dato temporal); la traza permite encontrar el error sin ejecutar nada; y los casos límite de un algoritmo son los mismos que los de un formulario. En las actividades vas a hacer las tres, y el intérprete va a ejecutar tu código de verdad contra los casos.',
+      'Las variables se eligen antes de escribir, cada una con un papel. La traza encuentra el error sin ejecutar nada. El intérprete va a correr tu código de verdad contra los casos.',
   },
 
   actividades: [

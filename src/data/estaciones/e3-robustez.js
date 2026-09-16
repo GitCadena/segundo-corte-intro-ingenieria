@@ -106,46 +106,36 @@ export default {
   ejemplo: {
     titulo: 'Un campo de cuatro caracteres que se rompe de seis maneras',
     contexto:
-      'Regla de negocio del sistema de reservas: «Un estudiante puede tener entre 1 y 5 reservas activas». En el formulario hay un campo «Cantidad de reservas a crear». Parece trivial. Vamos a romperlo.',
+      'Regla: «Un estudiante puede tener entre 1 y 5 reservas activas». Hay un campo «Cantidad de reservas». Parece trivial. Vamos a romperlo.',
     pasos: [
       {
         titulo: '1. Escribir las reglas antes de probar',
-        texto:
-          'Tipo: número entero. Rango: de 1 a 5, ambos incluidos. Formato: sin decimales, sin signo, sin espacios. Obligatorio: sí. Nada de esto se puede probar hasta que esté escrito, porque hasta entonces no hay contra qué comparar.',
-        nota: 'Este paso es el que más se salta la gente. Sin reglas escritas, «probar» se convierte en «teclear cosas a ver qué pasa».',
+        texto: 'Tipo: entero. Rango: 1 a 5. Obligatorio. Sin esto escrito, no hay contra qué comparar.',
       },
       {
         titulo: '2. Las cuatro fronteras obligatorias',
-        texto:
-          'El rango es 1 a 5, así que las fronteras son 0, 1, 5 y 6.\n\n0 → debe rechazar. 1 → debe aceptar. 5 → debe aceptar. 6 → debe rechazar.\n\nSi el código escribió `if (n > 0 && n < 5)` en vez de `n <= 5`, la prueba con 5 falla y las otras tres pasan. Ese es exactamente el defecto que las fronteras existen para atrapar.',
+        texto: '0 → rechaza. 1 → acepta. 5 → acepta. 6 → rechaza. Si el código usó `n < 5` en vez de `n <= 5`, la prueba con 5 lo descubre.',
       },
       {
         titulo: '3. Las entradas inválidas por tipo',
-        texto:
-          '«tres» → texto donde se espera número. 2.5 → decimal donde se espera entero. −3 → negativo. Vacío → ausencia de dato. Cada una debe producir un mensaje específico, no el mismo «Dato inválido» genérico: el usuario necesita saber si el problema es el tipo o el rango.',
+        texto: '«tres», 2.5, −3, vacío: cada una debe dar un mensaje específico, no un «Dato inválido» genérico.',
       },
       {
         titulo: '4. Las entradas que nadie previó',
-        texto:
-          '999999999999 → ¿desborda algún cálculo? «  3  » con espacios → ¿se limpia o se rechaza? «3a» → ¿se lee el 3 y se ignora la letra? (Eso último es un defecto clásico: muchos lenguajes convierten «3a» a 3 sin avisar, y el sistema procesa una reserva que el usuario no pidió.)',
-        nota:
-          'Este paso distingue a quien prueba de quien solo confirma que funciona. Buscar entradas que nadie previó es el oficio.',
+        texto: '«3a» → ¿se lee el 3 y se ignora la letra? Muchos lenguajes lo hacen sin avisar, y el sistema procesa algo que el usuario no pidió.',
       },
       {
         titulo: '5. La tabla de casos de prueba',
         texto:
-          'Entrada  | Resultado esperado                          | Motivo\n---------|---------------------------------------------|---------------------------\n3        | Acepta y crea 3 reservas                    | Caso normal\n0        | Rechaza: «El mínimo es 1»                   | Frontera inferior externa\n1        | Acepta                                      | Frontera inferior interna\n5        | Acepta                                      | Frontera superior interna\n6        | Rechaza: «El máximo es 5»                   | Frontera superior externa\n«tres»   | Rechaza: «Debe ser un número entero»        | Tipo incorrecto\n2.5      | Rechaza: «No se permiten decimales»         | Formato incorrecto\n(vacío)  | Rechaza: «Este campo es obligatorio»        | Dato ausente\n\nOcho casos para un campo. No es exageración: es la cantidad mínima para poder afirmar que el campo funciona.',
+          'Entrada | Resultado esperado | Motivo\n3 | Acepta | Normal\n0 y 6 | Rechaza | Frontera externa\n1 y 5 | Acepta | Frontera interna\n«tres», 2.5, vacío | Rechaza | Tipo, formato, ausencia',
       },
       {
         titulo: '6. Y si se cae la conexión a mitad',
-        texto:
-          'El usuario llenó el formulario y presionó Guardar sin señal. Tres comportamientos posibles, de peor a mejor:\n\n(a) Pantalla en blanco y datos perdidos. Inaceptable.\n(b) Mensaje «Error de red» y datos perdidos. Honesto pero cruel.\n(c) Mensaje que explica qué pasó, el formulario conserva todo lo escrito, y el envío queda en cola para reintentarse. El usuario ve «Pendiente de envío», no «Guardado».\n\nLa diferencia entre (b) y (c) es robustez, y también es la diferencia entre una app que la gente usa en el campus y una que abandona.',
-        nota:
-          'Regla que no se negocia: nunca se confirma «Guardado» si la escritura no se completó. Esta misma aplicación aplica esa regla con tus intentos.',
+        texto: 'Lo correcto: conservar lo escrito y mostrar «Pendiente de envío», nunca «Guardado» si no se completó.',
+        nota: 'Esta misma aplicación aplica esa regla con tus propios intentos.',
       },
     ],
-    cierre:
-      'Un campo de un solo número produjo ocho casos de prueba y una decisión de diseño sobre la pérdida de conexión. Multiplica eso por los diez campos de un formulario real y entenderás por qué diseñar pruebas es un oficio completo, y por qué las tablas de casos se escriben antes de programar y no después.',
+    cierre: 'Un campo de un número produjo ocho casos de prueba. Por eso las tablas de casos se escriben antes de programar.',
   },
 
   actividades: [

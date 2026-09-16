@@ -10,22 +10,17 @@ export default {
       titulo: 'Tres calidades distintas',
       cuerpo: [
         {
-          t: 'p',
-          texto:
-            'Cuando alguien dice que un software "es de buena calidad" suele estar hablando de una de tres cosas, y conviene no mezclarlas.',
-        },
-        {
           t: 'lista',
           items: [
-            'Calidad interna: propiedades del código y del diseño que ve el equipo. Modularidad, legibilidad, acoplamiento, cobertura de pruebas.',
-            'Calidad externa: comportamiento del sistema ejecutándose. Responde bien, no se cae, hace lo que dice.',
-            'Calidad en uso: resultado para la persona que lo usa en su contexto real. ¿Logra su tarea, en cuánto tiempo, con cuántos errores y con qué nivel de satisfacción?',
+            'Calidad interna: propiedades del código que ve el equipo (legibilidad, cobertura de pruebas).',
+            'Calidad externa: comportamiento del sistema ejecutándose. Responde bien, no se cae.',
+            'Calidad en uso: resultado para quien lo usa. ¿Logra su tarea, en cuánto tiempo, con qué satisfacción?',
           ],
         },
         {
-          t: 'p',
-          texto:
-            'Un sistema puede tener excelente calidad interna y pésima calidad en uso. El caso contrario también existe y es peor a mediano plazo: funciona hoy y nadie puede modificarlo mañana.',
+          t: 'clave',
+          titulo: 'El caso que más se olvida',
+          texto: 'Un sistema puede funcionar hoy (calidad externa) y ser imposible de modificar mañana (mala calidad interna).',
         },
       ],
     },
@@ -34,25 +29,22 @@ export default {
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'SQuaRE significa Software Product Quality Requirements and Evaluation. Es la familia de normas que reemplazó a ISO/IEC 9126 y organiza en divisiones todo lo relacionado con calidad de producto de software.',
+          texto: 'SQuaRE es la familia de normas que organiza todo lo relacionado con calidad de producto de software.',
         },
         {
           t: 'tabla',
           encabezados: ['División', 'Serie', 'Qué aporta'],
           filas: [
-            ['Gestión de calidad', '2500n', 'Modelos y vocabulario comunes a toda la familia (ISO/IEC 25000, 25001)'],
-            ['Modelo de calidad', '2501n', 'Las características de calidad: producto, calidad en uso y datos (ISO/IEC 25010, 25012)'],
-            ['Medición de calidad', '2502n', 'Cómo construir y aplicar medidas (ISO/IEC 25020, 25023)'],
-            ['Requisitos de calidad', '2503n', 'Cómo especificar requisitos de calidad (ISO/IEC 25030)'],
-            ['Evaluación de calidad', '2504n', 'El proceso de evaluación y quién lo ejecuta (ISO/IEC 25040)'],
+            ['Gestión de calidad', '2500n', 'Vocabulario común'],
+            ['Modelo de calidad', '2501n', 'Características de calidad (25010)'],
+            ['Medición', '2502n', 'Cómo aplicar medidas'],
+            ['Evaluación', '2504n', 'El proceso de evaluación'],
           ],
         },
         {
           t: 'clave',
           titulo: 'Nota de precisión',
-          texto:
-            'ISO/IEC 25001 trata de planeación y gestión de la evaluación de calidad; el modelo de características es ISO/IEC 25010. Si en el parcial preguntan "cuál es la norma del modelo de calidad del producto", la respuesta es 25010.',
+          texto: 'Si preguntan "cuál es la norma del modelo de calidad del producto", la respuesta es ISO/IEC 25010, no 25000 ni 25001.',
         },
       ],
     },
@@ -61,21 +53,20 @@ export default {
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'ISO/IEC 25010:2011 define ocho características de calidad del producto, cada una con subcaracterísticas. La revisión de 2023 reorganiza el modelo en nueve: renombra usabilidad como capacidad de interacción, separa flexibilidad (antes dentro de portabilidad y mantenibilidad) e incorpora seguridad física (safety). En el curso trabajaremos sobre el modelo de ocho características, señalando el cambio cuando corresponda.',
+          texto: 'ISO/IEC 25010:2011 define ocho características de calidad del producto. En el curso trabajamos ese modelo.',
         },
         {
           t: 'tabla',
-          encabezados: ['Característica', 'Pregunta que responde', 'Subcaracterísticas clave'],
+          encabezados: ['Característica', 'Pregunta que responde'],
           filas: [
-            ['Adecuación funcional', '¿Hace lo que debe hacer?', 'Completitud, corrección, pertinencia'],
-            ['Eficiencia de desempeño', '¿A qué costo de recursos?', 'Tiempo de respuesta, uso de recursos, capacidad'],
-            ['Compatibilidad', '¿Convive e intercambia con otros sistemas?', 'Coexistencia, interoperabilidad'],
-            ['Usabilidad', '¿La persona logra su tarea?', 'Aprendizaje, operabilidad, protección ante errores, accesibilidad'],
-            ['Fiabilidad', '¿Sigue funcionando en el tiempo?', 'Madurez, disponibilidad, tolerancia a fallos, recuperación'],
-            ['Seguridad', '¿Protege datos y accesos?', 'Confidencialidad, integridad, no repudio, autenticidad'],
-            ['Mantenibilidad', '¿Se puede cambiar sin romperlo?', 'Modularidad, reusabilidad, analizabilidad, capacidad de prueba'],
-            ['Portabilidad', '¿Se lleva a otro entorno?', 'Adaptabilidad, instalabilidad, reemplazabilidad'],
+            ['Adecuación funcional', '¿Hace lo que debe hacer?'],
+            ['Eficiencia de desempeño', '¿A qué costo de recursos?'],
+            ['Compatibilidad', '¿Convive con otros sistemas?'],
+            ['Usabilidad', '¿La persona logra su tarea?'],
+            ['Fiabilidad', '¿Sigue funcionando en el tiempo?'],
+            ['Seguridad', '¿Protege datos y accesos?'],
+            ['Mantenibilidad', '¿Se puede cambiar sin romperlo?'],
+            ['Portabilidad', '¿Se lleva a otro entorno?'],
           ],
         },
       ],
@@ -84,28 +75,17 @@ export default {
       titulo: 'Adecuación funcional y corrección funcional',
       cuerpo: [
         {
-          t: 'p',
-          texto:
-            'Es la característica que el microcurrículo llama corrección funcional, y vale la pena separarla de sus hermanas porque en el parcial se confunden.',
-        },
-        {
           t: 'lista',
           items: [
-            'Completitud funcional: están todas las funciones que se acordaron. Falla cuando el sistema no tiene el reporte que pidió el cliente.',
-            'Corrección funcional: los resultados son correctos con la precisión requerida. Falla cuando el reporte existe pero suma mal.',
-            'Pertinencia funcional: las funciones facilitan la tarea real. Falla cuando el reporte existe, suma bien y nadie lo necesita porque no responde la pregunta del negocio.',
+            'Completitud: están todas las funciones acordadas.',
+            'Corrección: los resultados son correctos.',
+            'Pertinencia: las funciones facilitan la tarea real.',
           ],
         },
         {
           t: 'clave',
-          titulo: 'Cómo se mide',
-          texto:
-            'Corrección funcional = casos de prueba aprobados / casos de prueba ejecutados. Requiere un oráculo: una fuente independiente que diga cuál era el resultado esperado. Sin oráculo no hay medición, solo la sensación de que la pantalla se ve bien.',
-        },
-        {
-          t: 'p',
-          texto:
-            'De ahí la importancia de los criterios de aceptación de la sesión anterior: son el oráculo escrito antes de programar, cuando todavía nadie está defendiendo su propio código.',
+          titulo: 'Cómo se mide la corrección',
+          texto: 'Casos de prueba aprobados ÷ casos ejecutados. Necesita un oráculo: una fuente que diga cuál era el resultado esperado.',
         },
       ],
     },
@@ -114,29 +94,21 @@ export default {
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'La usabilidad no es que la interfaz sea bonita. ISO/IEC 25010 la descompone en reconocibilidad de la adecuación (¿el usuario entiende si esto le sirve?), aprendizaje, operabilidad, protección contra errores de usuario, estética y accesibilidad.',
-        },
-        {
-          t: 'p',
-          texto:
-            'Para evaluarla se usan dos herramientas complementarias. La evaluación heurística la hace un experto contra una lista de principios; las 10 heurísticas de Nielsen son la lista clásica: visibilidad del estado del sistema, correspondencia con el mundo real, control y libertad del usuario, consistencia y estándares, prevención de errores, reconocer antes que recordar, flexibilidad y eficiencia, diseño estético y minimalista, ayuda para reconocer y recuperarse de errores, y ayuda y documentación. La prueba con usuarios mide lo que ocurre cuando alguien intenta hacer la tarea de verdad.',
+          texto: 'La usabilidad no es que la interfaz sea bonita: se mide con personas haciendo una tarea concreta.',
         },
         {
           t: 'tabla',
-          encabezados: ['Medida', 'Cómo se obtiene', 'Qué indica'],
+          encabezados: ['Medida', 'Cómo se obtiene'],
           filas: [
-            ['Tasa de éxito', 'Usuarios que completan la tarea / usuarios que la intentan', 'Efectividad'],
-            ['Tiempo en tarea', 'Promedio de segundos hasta completarla', 'Eficiencia'],
-            ['Errores por tarea', 'Acciones incorrectas contadas por observación', 'Protección contra errores'],
-            ['SUS', 'Cuestionario de 10 ítems, escala 0 a 100', 'Satisfacción percibida'],
+            ['Tasa de éxito', 'Usuarios que completan la tarea ÷ usuarios que la intentan'],
+            ['Tiempo en tarea', 'Mediana de los tiempos de quienes completaron'],
+            ['Errores por tarea', 'Acciones incorrectas observadas'],
           ],
         },
         {
           t: 'clave',
           titulo: 'Regla práctica',
-          texto:
-            'Un SUS por debajo de 68 se considera bajo el promedio de la industria. Cinco usuarios detectan alrededor del 80% de los problemas graves de usabilidad, así que la falta de presupuesto no es excusa para no medir.',
+          texto: 'Cinco usuarios detectan cerca del 80 % de los problemas graves de usabilidad.',
         },
       ],
     },
@@ -145,23 +117,15 @@ export default {
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'El método GQM (Goal–Question–Metric) evita el error más común: medir lo que es fácil de contar en vez de lo que importa. Se define primero el objetivo, luego las preguntas que lo evidenciarían y solo al final las métricas.',
+          texto: 'GQM (Objetivo–Pregunta–Métrica) evita medir lo fácil de contar en vez de lo que importa.',
         },
         {
           t: 'codigo',
           etiqueta: 'Ejemplo GQM',
           texto: `Objetivo:  reducir el abandono en el registro de usuarios nuevos.
 Pregunta:  ¿en qué paso se detiene la gente?
-Métrica:   usuarios que completan el paso / usuarios que lo inician,
-           por cada paso, medido durante 2 semanas.
-Umbral:    ningún paso por debajo del 85%.
-Acción:    si un paso queda por debajo, se rediseña ese paso.`,
-        },
-        {
-          t: 'p',
-          texto:
-            'Una métrica sin umbral y sin acción asociada es un número decorativo. Si nadie va a hacer nada distinto según el resultado, no vale la pena recolectarlo.',
+Métrica:   usuarios que completan el paso ÷ usuarios que lo inician.
+Umbral:    ningún paso por debajo del 85%.`,
         },
       ],
     },

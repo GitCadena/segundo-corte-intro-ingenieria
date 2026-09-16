@@ -12,18 +12,13 @@ export default {
         {
           t: 'p',
           texto:
-            'El producto es lo que se entrega: un ejecutable, una API, una app, su documentación y sus datos. El proceso es la secuencia de actividades que lo produce. Dos equipos pueden entregar el mismo producto con procesos muy distintos, y esa diferencia explica casi todo lo que pasa después: cuánto cuesta cambiarlo, cuántos defectos llegan al usuario y si el equipo puede mantenerlo cuando quien lo escribió ya no está.',
+            'El producto es lo que se entrega. El proceso es la secuencia de actividades que lo produce. Dos equipos pueden entregar el mismo producto con procesos muy distintos.',
         },
         {
           t: 'clave',
           titulo: 'Definición de trabajo',
           texto:
-            'Un proceso de software es un conjunto de actividades, restricciones y recursos que, aplicados de forma repetible, transforman una necesidad en un sistema que la resuelve y en la evidencia de que la resuelve.',
-        },
-        {
-          t: 'p',
-          texto:
-            'Esa última parte —la evidencia— es lo que separa a un ingeniero de alguien que programa bien. Una funcionalidad sin pruebas, sin requisitos escritos y sin trazabilidad no es un entregable de ingeniería: es una promesa.',
+            'Un proceso de software transforma una necesidad en un sistema que la resuelve y en la evidencia de que la resuelve.',
         },
       ],
     },
@@ -32,24 +27,24 @@ export default {
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'Independientemente del modelo que use el equipo, casi todo proceso contiene las mismas cinco actividades marco. Cambia el orden, el tamaño del lote y cuántas veces se repiten.',
+          texto: 'Todo proceso contiene las mismas cinco actividades. Cambia el orden y cuántas veces se repiten.',
         },
         {
           t: 'tabla',
           encabezados: ['Actividad', 'Pregunta que responde', 'Salida típica'],
           filas: [
-            ['Comunicación', '¿Qué necesita quién y para qué?', 'Requisitos, historias de usuario, glosario'],
-            ['Planeación', '¿Cómo, con quién, cuándo y con qué riesgos?', 'Cronograma, estimaciones, plan de riesgos'],
-            ['Modelado', '¿Cómo se estructura la solución antes de codificarla?', 'Diagramas, modelo de datos, arquitectura'],
-            ['Construcción', '¿El código hace lo que se acordó?', 'Código fuente, pruebas, build'],
-            ['Despliegue', '¿El usuario lo tiene, lo usa y qué opina?', 'Versión liberada, manual, retroalimentación'],
+            ['Comunicación', '¿Qué necesita quién?', 'Requisitos'],
+            ['Planeación', '¿Cómo y con qué riesgos?', 'Cronograma'],
+            ['Modelado', '¿Cómo se estructura?', 'Diagramas, arquitectura'],
+            ['Construcción', '¿Hace lo acordado?', 'Código, pruebas'],
+            ['Despliegue', '¿El usuario lo usa?', 'Versión liberada'],
           ],
         },
         {
-          t: 'p',
+          t: 'clave',
+          titulo: 'Actividades sombrilla',
           texto:
-            'Encima de ellas corren las actividades sombrilla, que nunca se "terminan": gestión de riesgos, aseguramiento de calidad, gestión de la configuración (control de versiones), medición, revisiones técnicas y gestión de la reutilización. Cuando un proyecto se cae, casi siempre falló una sombrilla, no la codificación.',
+            'Riesgos, calidad, control de versiones y revisiones corren en paralelo y nunca terminan. Cuando un proyecto se cae, casi siempre falló una sombrilla.',
         },
       ],
     },
@@ -58,20 +53,18 @@ export default {
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'Los roles no son cargos. Una persona puede cubrir varios en un equipo pequeño, y en una empresa grande cada rol puede ser un área completa. Reconocerlos sirve para dos cosas: entender con quién se negocia cada decisión y ubicar hacia dónde se quiere uno mover profesionalmente.',
+          texto: 'Los roles son responsabilidades, no cargos: una persona puede cubrir varios.',
         },
         {
           t: 'lista',
           items: [
-            'Analista o ingeniero de requisitos: traduce el problema del cliente a algo verificable. Su producto es una frase que se puede probar, no un deseo.',
-            'Arquitecto de software: decide la estructura, los límites entre componentes y las tecnologías. Sus decisiones son las más caras de revertir.',
-            'Desarrollador: implementa y prueba. Responde por el código y por los casos de prueba de su unidad.',
-            'Ingeniero de pruebas (QA): diseña la evidencia de que el sistema cumple. No "busca errores", diseña experimentos que puedan fallar.',
-            'DevOps / ingeniero de plataforma: automatiza construcción, despliegue y monitoreo. Convierte "funciona en mi máquina" en "funciona en producción".',
-            'Product Owner o líder funcional: prioriza. Es quien decide qué NO se hace en esta versión.',
-            'Diseñador UX: define la interacción y valida con usuarios reales. Su evidencia son pruebas de usabilidad, no gustos.',
-            'Administrador de base de datos, especialista en seguridad, científico de datos: roles especializados que aparecen según el dominio.',
+            'Analista: convierte el problema en algo verificable.',
+            'Arquitecto: decide la estructura. Sus decisiones son las más caras de revertir.',
+            'Desarrollador: implementa y prueba su código.',
+            'QA: diseña experimentos que puedan hacer fallar el sistema.',
+            'DevOps: automatiza construcción, despliegue y monitoreo.',
+            'Product Owner: prioriza qué se hace y qué no.',
+            'Diseñador UX: valida la interacción con usuarios reales.',
           ],
         },
       ],
@@ -81,50 +74,24 @@ export default {
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'No existe un modelo superior. Existe un modelo adecuado a un nivel de incertidumbre, un costo de error y un tipo de contrato. Esta es la comparación que deben poder defender en el parcial.',
+          texto: 'No hay un modelo superior: cada uno responde a un nivel de incertidumbre y un tipo de contrato.',
         },
         {
           t: 'tabla',
-          encabezados: ['Modelo', 'Idea central', 'Funciona cuando', 'Se rompe cuando'],
+          encabezados: ['Modelo', 'Funciona cuando', 'Se rompe cuando'],
           filas: [
-            [
-              'Cascada',
-              'Fases secuenciales; cada una se aprueba antes de la siguiente',
-              'Los requisitos son estables, regulados o contratados por licitación',
-              'El cliente descubre lo que quería al ver el producto (casi siempre)',
-            ],
-            [
-              'Incremental',
-              'Se entrega por partes funcionales, cada una utilizable',
-              'Se necesita valor temprano y el alcance se puede partir',
-              'Las partes tienen dependencias fuertes entre sí',
-            ],
-            [
-              'Prototipos',
-              'Se construye una versión desechable para descubrir requisitos',
-              'La interfaz o la interacción son el riesgo principal',
-              'El cliente exige que el prototipo se convierta en el producto',
-            ],
-            [
-              'Espiral',
-              'Ciclos guiados por análisis de riesgo, con prototipos en cada vuelta',
-              'El proyecto es grande, largo y de alto riesgo técnico',
-              'No hay capacidad real de analizar riesgos ni presupuesto para iterar',
-            ],
-            [
-              'Ágil (Scrum, XP, Kanban)',
-              'Iteraciones cortas, cliente presente, software funcionando como medida',
-              'Los requisitos cambian y hay acceso continuo al usuario',
-              'Se adopta la ceremonia sin las prácticas técnicas ni el cliente disponible',
-            ],
+            ['Cascada', 'Requisitos estables o licitados', 'El cliente descubre lo que quería al ver el producto'],
+            ['Incremental', 'Se necesita valor temprano', 'Las partes tienen dependencias fuertes'],
+            ['Prototipos', 'El riesgo es la interacción', 'El cliente exige que el prototipo sea el producto'],
+            ['Espiral', 'Proyecto grande y de alto riesgo', 'No hay presupuesto real para iterar'],
+            ['Ágil (Scrum)', 'Los requisitos cambian', 'Se adoptan las ceremonias sin las prácticas'],
           ],
         },
         {
           t: 'clave',
           titulo: 'Criterio de elección',
           texto:
-            'Mientras mayor sea la incertidumbre sobre los requisitos, más corto debe ser el ciclo de retroalimentación. Mientras mayor sea el costo de una falla (salud, aviación, banca), más formal debe ser la verificación. Los dos criterios son independientes: existen proyectos ágiles con verificación muy estricta.',
+            'A mayor incertidumbre, ciclo de retroalimentación más corto. A mayor costo de una falla, verificación más formal. Son criterios independientes.',
         },
       ],
     },
@@ -132,23 +99,13 @@ export default {
       titulo: 'Scrum en concreto',
       cuerpo: [
         {
-          t: 'p',
-          texto:
-            'Scrum es el marco ágil más usado en la industria colombiana, así que conviene conocerlo con precisión y no de oído.',
-        },
-        {
           t: 'lista',
           items: [
-            'Responsabilidades: Product Owner (maximiza el valor y ordena el backlog), Scrum Master (hace funcionar el marco y remueve impedimentos), Equipo de desarrollo (autogestionado, entrega el incremento).',
-            'Eventos: el Sprint (contenedor, de 1 a 4 semanas), planeación del sprint, scrum diario (15 minutos, sincronización del equipo), revisión del sprint (con interesados) y retrospectiva (mejora del proceso).',
-            'Artefactos: Product Backlog (todo lo pendiente, ordenado), Sprint Backlog (lo comprometido y el plan) e Incremento (lo terminado y utilizable).',
-            'Compromisos: meta del producto, meta del sprint y Definición de Terminado. Sin una Definición de Terminado explícita, "terminado" significa cosas distintas para cada integrante.',
+            'Roles: Product Owner (prioriza), Scrum Master (remueve impedimentos), Equipo (entrega el incremento).',
+            'Eventos: Sprint (1 a 4 semanas), planeación, daily (15 min), revisión y retrospectiva.',
+            'Artefactos: Product Backlog, Sprint Backlog e Incremento.',
+            'Compromisos: meta del producto, meta del sprint y Definición de Terminado.',
           ],
-        },
-        {
-          t: 'p',
-          texto:
-            'Error frecuente en los parciales: decir que en Scrum "no hay documentación" o "no hay planeación". El manifiesto ágil valora el software funcionando por encima de la documentación exhaustiva; no la prohíbe. Se planea más veces, en lotes más pequeños.',
         },
       ],
     },
@@ -157,8 +114,7 @@ export default {
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'La historia de usuario es el formato más común para capturar una necesidad, pero solo sirve si trae criterios de aceptación. El formato es: Como <rol>, quiero <acción>, para <beneficio>.',
+          texto: 'La historia de usuario captura una necesidad. Formato: Como <rol>, quiero <acción>, para <beneficio>.',
         },
         {
           t: 'codigo',
@@ -170,14 +126,12 @@ para no depender de la cartelera de la facultad.
 Criterios de aceptación
 1. Dado que inicié sesión, cuando abro "Mi horario",
    entonces veo las materias de la semana en curso.
-2. Dado que no hay conexión, cuando abro "Mi horario",
-   entonces veo la última versión descargada y su fecha.
-3. El horario carga en menos de 2 segundos con red 4G.`,
+2. El horario carga en menos de 2 segundos con red 4G.`,
         },
         {
-          t: 'p',
-          texto:
-            'Los criterios 1 y 2 describen comportamiento (adecuación funcional). El criterio 3 describe una cualidad medible (eficiencia de desempeño). Los dos tipos deben poder probarse; si una frase no se puede convertir en prueba, todavía no es un requisito.',
+          t: 'clave',
+          titulo: 'Prueba de fuego',
+          texto: 'Si una frase no se puede convertir en una prueba, todavía no es un requisito.',
         },
       ],
     },

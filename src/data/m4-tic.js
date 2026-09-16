@@ -11,22 +11,20 @@ export default {
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'En 1965, Gordon Moore observó que la cantidad de transistores que resultaba económico integrar en un circuito se duplicaba cada año. En 1975 ajustó el periodo a aproximadamente dos años. No es una ley física: es una observación económica sobre la industria que terminó funcionando como hoja de ruta, porque los fabricantes planearon sus inversiones para cumplirla.',
+          texto: 'Gordon Moore observó en 1965 que la densidad de transistores por chip se duplica cada cierto periodo. No es una ley física.',
         },
         {
           t: 'lista',
           items: [
-            'Dice: la densidad de transistores por chip crece de forma exponencial mientras sea económicamente viable.',
-            'No dice: que la velocidad del procesador se duplique. Eso era consecuencia del escalamiento de Dennard, que se detuvo a mediados de los 2000 por disipación de calor.',
-            'No dice: que el software vaya a ser más rápido. Un algoritmo ineficiente se come varias generaciones de hardware en una sola decisión de diseño.',
+            'Dice: la densidad de transistores crece de forma exponencial.',
+            'No dice: que la velocidad del procesador se duplique igual.',
+            'No dice: que el software vaya a ser más rápido solo.',
           ],
         },
         {
           t: 'clave',
           titulo: 'Qué pasó cuando se frenó',
-          texto:
-            'Al no poder subir la frecuencia, la industria se movió hacia el paralelismo: múltiples núcleos, GPU, aceleradores especializados, chiplets y arquitecturas heterogéneas. Ese giro trasladó el problema al software: aprovechar ocho núcleos exige programar concurrencia, y eso no es gratis.',
+          texto: 'Al no poder subir la frecuencia, la industria se movió al paralelismo: más núcleos. Aprovecharlos exige programar concurrencia.',
         },
       ],
     },
@@ -34,22 +32,17 @@ export default {
       titulo: 'Calcular con crecimiento exponencial',
       cuerpo: [
         {
-          t: 'p',
-          texto:
-            'El modelo es directo y aparece en el parcial. Si una magnitud se duplica cada p años, después de t años se multiplica por 2 elevado a (t/p).',
-        },
-        {
           t: 'codigo',
           etiqueta: 'Fórmula y ejemplo',
           texto: `valor_final = valor_inicial × 2^(t / p)
 
-Ejemplo: 5 000 millones de transistores, p = 2 años, t = 6 años
-         5 000 × 2^(6/2) = 5 000 × 2^3 = 40 000 millones`,
+Ejemplo: 5 000 millones, p = 2 años, t = 6 años
+         5 000 × 2^(6/2) = 40 000 millones`,
         },
         {
-          t: 'p',
-          texto:
-            'La intuición humana falla con estas curvas. Treinta duplicaciones son mil millones de veces el valor inicial. Por eso los sistemas que crecen exponencialmente —almacenamiento, tráfico, datos de sensores— pasan de "cabe sin problema" a "no cabe" sin etapa intermedia perceptible.',
+          t: 'clave',
+          titulo: 'La intuición humana falla',
+          texto: 'Treinta duplicaciones son mil millones de veces el valor inicial.',
         },
       ],
     },
@@ -57,18 +50,12 @@ Ejemplo: 5 000 millones de transistores, p = 2 años, t = 6 años
       titulo: 'Las TIC en la sociedad',
       cuerpo: [
         {
-          t: 'p',
-          texto:
-            'La informática dejó de ser una herramienta de apoyo para convertirse en la infraestructura donde ocurren la educación, el trabajo, el comercio, la salud y el Estado. Eso trae efectos que el ingeniero debe poder nombrar con precisión.',
-        },
-        {
           t: 'lista',
           items: [
-            'Brecha digital: no es solo tener o no internet. Se compone de acceso, calidad de la conexión, dispositivo adecuado y competencias para usarlo. En Colombia la diferencia entre cabeceras municipales y zonas rurales es el eje más marcado, y el Cauca lo vive de cerca.',
-            'Transformación del trabajo: automatización de tareas rutinarias, teletrabajo, plataformas de trabajo por demanda y aparición de roles que no existían hace diez años.',
-            'Gobierno digital: trámites en línea, datos abiertos, interoperabilidad entre entidades. Su límite es la brecha: un trámite exclusivamente digital excluye a quien no puede acceder.',
-            'Huella ambiental: centros de datos, consumo eléctrico, agua de refrigeración y residuos electrónicos. El cómputo barato no es cómputo sin costo.',
-            'Efectos cognitivos y sociales: economía de la atención, desinformación amplificada por recomendadores y presión sobre la salud mental en adolescentes.',
+            'Brecha digital: acceso, calidad de conexión, dispositivo y competencias para usarlo.',
+            'Transformación del trabajo: automatización, teletrabajo, nuevos roles.',
+            'Gobierno digital: trámites en línea que excluyen a quien no puede acceder.',
+            'Huella ambiental: centros de datos, consumo eléctrico, residuos electrónicos.',
           ],
         },
       ],
@@ -78,28 +65,17 @@ Ejemplo: 5 000 millones de transistores, p = 2 años, t = 6 años
       cuerpo: [
         {
           t: 'tabla',
-          encabezados: ['Norma', 'Objeto', 'Ejemplo de aplicación'],
+          encabezados: ['Norma', 'Objeto'],
           filas: [
-            [
-              'Ley 1273 de 2009',
-              'Delitos informáticos: acceso abusivo a sistema informático, interceptación de datos, daño informático, uso de software malicioso, violación de datos personales, suplantación de sitios web',
-              'Entrar a un sistema con credenciales ajenas, aunque no se dañe nada',
-            ],
-            [
-              'Ley 1581 de 2012',
-              'Protección de datos personales: autorización, finalidad, circulación restringida, seguridad',
-              'Guardar cédulas y correos de estudiantes sin autorización ni política de tratamiento',
-            ],
-            ['Ley 1266 de 2008', 'Habeas data financiero y crediticio', 'Reporte y corrección en centrales de riesgo'],
-            ['Ley 1341 de 2009', 'Marco general del sector TIC y sus principios', 'Política pública de conectividad y espectro'],
-            ['Ley 527 de 1999', 'Comercio electrónico, mensajes de datos y firma digital', 'Validez jurídica de un contrato firmado electrónicamente'],
+            ['Ley 1273 de 2009', 'Delitos informáticos: acceso abusivo, daño informático, suplantación'],
+            ['Ley 1581 de 2012', 'Protección de datos personales: autorización, finalidad, seguridad'],
+            ['Ley 1266 de 2008', 'Habeas data financiero y crediticio'],
           ],
         },
         {
           t: 'clave',
           titulo: 'Consecuencia práctica',
-          texto:
-            'Un proyecto académico que recolecta datos de personas necesita autorización informada, finalidad explícita y control de acceso. No es un trámite: es el mínimo legal, y aplica también al proyecto final de esta materia.',
+          texto: 'Un proyecto que recolecta datos de personas necesita autorización informada y finalidad explícita. Aplica también al proyecto final del curso.',
         },
       ],
     },
@@ -108,39 +84,17 @@ Ejemplo: 5 000 millones de transistores, p = 2 años, t = 6 años
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'El código de ética de ACM/IEEE parte de un principio incómodo: el interés público está por encima del interés del cliente y del empleador. Estos casos muestran por qué esa jerarquía existe.',
+          texto: 'El interés público está por encima del interés del cliente. Estos casos muestran por qué.',
         },
         {
           t: 'tabla',
-          encabezados: ['Caso', 'Qué pasó', 'Lección de ingeniería'],
+          encabezados: ['Caso', 'Lección de ingeniería'],
           filas: [
-            [
-              'Therac-25 (1985-1987)',
-              'Un equipo de radioterapia entregó sobredosis letales por una condición de carrera, agravada por retirar los seguros físicos y confiar todo al software',
-              'Los mecanismos de seguridad no deben depender de una sola capa, y menos del componente menos verificable',
-            ],
-            [
-              'Ariane 5, vuelo 501 (1996)',
-              'Reutilización de código del Ariane 4 sin revalidar supuestos; un desbordamiento en una conversión numérica destruyó el cohete',
-              'Reutilizar código exige revalidar el contexto para el que fue escrito',
-            ],
-            [
-              'Knight Capital (2012)',
-              'Un despliegue incompleto dejó código viejo activo en un servidor y la empresa perdió cientos de millones de dólares en menos de una hora',
-              'El despliegue es parte del sistema: debe ser automatizado, verificable y reversible',
-            ],
-            [
-              'Boeing 737 MAX (2018-2019)',
-              'Un sistema de control dependía de un solo sensor y la documentación para pilotos era insuficiente',
-              'Un punto único de falla, más información oculta al usuario, es una decisión de ingeniería con víctimas',
-            ],
+            ['Therac-25', 'Un mecanismo de seguridad no debe depender de una sola capa.'],
+            ['Ariane 5, vuelo 501', 'Reutilizar código exige revalidar el contexto para el que fue escrito.'],
+            ['Knight Capital', 'El despliegue debe ser automatizado, verificable y reversible.'],
+            ['Boeing 737 MAX', 'Un punto único de falla, con información oculta al usuario, tiene víctimas.'],
           ],
-        },
-        {
-          t: 'p',
-          texto:
-            'Los dilemas contemporáneos siguen la misma estructura: sesgos en sistemas de decisión automatizada, uso de datos personales para entrenar modelos, autoría y honestidad académica con IA generativa, y vigilancia. En todos, la pregunta útil no es "¿es legal?", sino "¿quién asume el riesgo de que yo me equivoque?".',
         },
       ],
     },

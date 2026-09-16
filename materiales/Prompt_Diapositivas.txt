@@ -1,0 +1,202 @@
+PROMPT PARA GENERAR LAS DIAPOSITIVAS DEL SEGUNDO CORTE
+=========================================================
+Cópialo completo en la herramienta que uses (ChatGPT, Claude, Gemini, Copilot,
+Gamma, etc.) para generar tus diapositivas de clase. Está escrito para que la
+IA que lo reciba entienda el contexto exacto de tu curso y de la aplicación
+que tus estudiantes van a usar, y para que las diapositivas queden coherentes
+con lo que ellos verán en pantalla y con lo que tú vas a exponer en vivo.
+
+---------------------------------------------------------
+CONTEXTO QUE DEBES DARLE A LA IA (pégalo tal cual)
+---------------------------------------------------------
+
+Eres mi asistente para diseñar diapositivas de clase universitaria. Voy a
+darte el contexto completo antes de pedirte nada; espera a que te dé la
+instrucción final antes de generar las diapositivas.
+
+CURSO: Introducción a la Ingeniería Informática, primer semestre, Institución
+Universitaria Colegio Mayor del Cauca (Unimayor), Popayán, Colombia.
+
+CORTE: Segundo corte, sesiones 7 a 11 (de 2 horas cada una).
+
+ESTUDIANTES: Un mismo salón mezcla dos perfiles: estudiantes que llegan sin
+ninguna experiencia previa en programación ni en desarrollo de software, y
+estudiantes que vienen de programas de tecnología y ya tienen algo de
+experiencia. NO se deben separar ni etiquetar en las diapositivas ni en la
+clase. El lenguaje debe ser español de Colombia, universitario, claro y
+directo. Nunca infantilizar ("¡genial!", emojis excesivos, tono de colegio) y
+nunca asumir que todos ya saben programar. Las definiciones deben decir qué
+es algo y cómo se reconoce, no repetir el nombre con otras palabras.
+
+APOYO DIGITAL: El curso tiene una aplicación web donde los estudiantes
+practican después de cada explicación. La aplicación tiene seis estaciones,
+cada una con la misma estructura: (1) Qué aprenderás, (2) Comprende (la
+teoría), (3) Mira un ejemplo, (4) Practica jugando (actividades que se
+autocorrigen), (5) Ponlo a prueba (un reto que integra varias decisiones), (6)
+Qué te llevas (síntesis). Las diapositivas NO deben repetir el contenido de la
+aplicación: deben dar la idea central de forma breve, generar la necesidad de
+practicarla, y remitir a la estación y actividad exactas donde se practica.
+La gamificación —los juegos, el puntaje, las pistas— vive en la aplicación,
+no en las diapositivas. Las diapositivas son el puente hacia la práctica, no
+un sustituto de ella.
+
+LAS SEIS ESTACIONES Y SU CONTENIDO (usa esto como fuente de verdad; no
+inventes datos ni cambies las cifras):
+
+Estación 1 · Sesión 7 · Cómo se construye el software
+  Conceptos: producto vs. proceso, las cinco actividades marco (comunicación,
+  planeación, modelado, construcción, despliegue) y las actividades sombrilla,
+  roles del proceso (analista, arquitecto, desarrollador, QA, DevOps, product
+  owner, UX), modelos de proceso (cascada, incremental, prototipos, espiral,
+  ágil/Scrum) y cuándo conviene cada uno, cómo escribir un requisito
+  verificable (magnitud + condición + umbral) frente a una frase vaga o una
+  restricción, alcance mínimo de una primera entrega, cómo responder a un
+  cambio de alcance.
+  Actividades en la app: Ordena el desarrollo, ¿Quién se encarga?, Requisito o
+  frase vaga, Construye una entrega, Llegó un cambio, Mitos sobre los modelos
+  de proceso, Proyectar con velocidad. Reto: Del problema al primer incremento.
+
+Estación 2 · Sesión 8 · ¿Cuándo un software es bueno?
+  Conceptos: calidad como satisfacción de necesidades con evidencia, familia
+  ISO/IEC 25000 (SQuaRE), modelo de calidad ISO/IEC 25010:2011 con sus ocho
+  características (adecuación funcional, eficiencia de desempeño,
+  compatibilidad, usabilidad, fiabilidad, seguridad, mantenibilidad,
+  portabilidad) y qué cambió en la revisión de 2023, diferencia entre función
+  ausente / incorrecta / difícil de usar, medición de usabilidad (tasa de
+  éxito, tiempo en tarea con mediana, errores por tarea).
+  Actividades en la app: Detective de calidad, Encuentra la fricción, Mejora
+  la interfaz, Mide la usabilidad, ¿Qué probarías?, Ubicar la norma, Cada
+  subcaracterística en su lugar. Reto: Diagnóstico de calidad de una app real.
+
+Estación 3 · Sesión 9 · Que no se rompa
+  Conceptos: robustez y validación de entradas, las tres clases de entrada
+  (normal, frontera, inválida) y la regla de los cuatro valores de frontera
+  (A-1, A, B, B+1), diferencia entre compatibilidad (intercambio o convivencia
+  con otro producto) y portabilidad (mudanza a otro entorno), disponibilidad y
+  el costo de cada "nueve" adicional, cómo debe responder una aplicación ante
+  la pérdida de conexión, anatomía de un reporte de defecto.
+  Actividades en la app: Rompe el formulario, Explora los límites, ¿Compatible
+  o portable?, Se cayó la conexión, Diseña las pruebas, Cuánto es un nueve
+  más, Anatomía de un reporte de defecto. Reto: Poner a prueba una función
+  nueva.
+
+Estación 4 · Sesiones 8 y 9 · Informática y sociedad
+  Conceptos: qué describe exactamente la Ley de Moore (densidad de
+  transistores, no velocidad de un programa) y por qué más transistores no
+  implica programas más rápidos (frecuencia de reloj estancada desde ~2005,
+  más núcleos, Ley de Amdahl), crecimiento lineal vs. exponencial con la regla
+  del 72, brecha digital en tres dimensiones (acceso, uso, aprovechamiento),
+  accesibilidad, principio de finalidad de los datos personales, diferencia
+  entre la Ley 1273 de 2009 (delitos informáticos, castiga a quien ataca) y la
+  Ley 1581 de 2012 (protección de datos personales, obliga a quien custodia).
+  Actividades en la app: Simulador de duplicación, Predice antes de mover,
+  Mito o conclusión válida, Diseña para todos, ¿Necesitas ese dato?,
+  Protección de datos o delito informático. Reto: Un servicio digital para
+  todo el campus.
+
+Estación 5 · Sesión 10 · Pensar como programador
+  Conceptos: algoritmo (finito, ordenado, no ambiguo, termina), entrada-
+  proceso-salida con formato de salida exacto, asignación (no es una
+  igualdad), las tres estructuras de control (secuencia, selección,
+  repetición), los cuatro patrones (contador, acumulador, bandera, centinela)
+  y sus errores clásicos (inicializar dentro del ciclo, sumar el centinela),
+  de la programación estructurada a la orientación a objetos (clase, objeto,
+  atributo, método) y cómo distinguirlos.
+  Actividades en la app: Sigue las variables, Arma el algoritmo, Completa la
+  decisión, Repara el ciclo, Contador o acumulador, Del objeto a la clase,
+  Lectura con centinela. Reto: Reto integrador · Informe de notas.
+
+Estación 6 · Preparación sesión 11 · Reto final de práctica
+  Caso integrador de las cinco sesiones: interpretar una necesidad,
+  seleccionar requisitos comprobables, identificar problemas de calidad,
+  proponer entradas de prueba, resolver un algoritmo, revisar una decisión de
+  accesibilidad y datos personales. No genera nota académica: es el ensayo del
+  parcial.
+
+REFERENCIAS QUE YA ESTÁN VERIFICADAS (úsalas si las citas, no busques otras):
+Ley 1273 de 2009 (Función Pública / SIC), Ley 1581 de 2012 y su Decreto 1377
+de 2013 (Función Pública), ISO/IEC 25010:2011 y su revisión de 2023.
+
+---------------------------------------------------------
+REGLAS DE CONSTRUCCIÓN DE LAS DIAPOSITIVAS
+---------------------------------------------------------
+
+Dale estas reglas a la IA como instrucción de formato, después del contexto:
+
+1. UNA IDEA POR DIAPOSITIVA. Si una diapositiva necesita explicar dos cosas,
+   son dos diapositivas.
+
+2. MÁXIMO 4 LÍNEAS DE TEXTO POR DIAPOSITIVA, y cada línea con máximo ~12
+   palabras. Si el contenido no cabe así, es señal de que hay que dividirlo o
+   de que ese detalle no va en la diapositiva sino en las notas del orador.
+
+3. NADA DE PÁRRAFOS. Solo viñetas cortas, una palabra clave en negrita por
+   viñeta, una tabla pequeña, o una comparación de dos columnas (concepto A
+   frente a concepto B). Cero muros de texto.
+
+4. UNA SOLA DEFINICIÓN TÉCNICA POR DIAPOSITIVA, y siempre acompañada de un
+   ejemplo concreto del caso del curso (el sistema de reservas de salas, la
+   biblioteca, el préstamo de equipos), nunca un ejemplo abstracto o genérico.
+
+5. TERMINOLOGÍA IDÉNTICA A LA DE LA APLICACIÓN. Usa exactamente los mismos
+   nombres de conceptos, estaciones y actividades que aparecen en el contexto
+   de arriba. Si el estudiante ve "adecuación funcional" en la diapositiva,
+   debe encontrar la misma palabra en la aplicación.
+
+6. CADA BLOQUE DE TEORÍA CIERRA CON UNA DIAPOSITIVA DE TRANSICIÓN que diga
+   explícitamente a qué estación y actividad de la aplicación pasan a
+   practicar eso mismo. Formato sugerido: "A la práctica → Estación N,
+   actividad: [nombre exacto]". Esta diapositiva marca el momento de cerrar el
+   proyector y abrir la aplicación.
+
+7. NO EXPLIQUES LOS JUEGOS EN LA DIAPOSITIVA. No describas mecánicas, reglas
+   de puntaje ni pistas: eso ya está dentro de la aplicación y el estudiante
+   lo lee ahí. La diapositiva solo dice qué van a practicar y por qué importa,
+   no cómo funciona el juego.
+
+8. UN SOLO EJEMPLO DESARROLLADO POR SESIÓN, no uno por concepto. Elige el
+   ejemplo más representativo de la sesión y síguelo paso a paso en 2 o 3
+   diapositivas como máximo; no repitas el ejemplo completo de la aplicación,
+   solo el punto más ilustrativo.
+
+9. NÚMERO DE DIAPOSITIVAS POR SESIÓN: entre 8 y 12, para una clase de 2 horas
+   con este ritmo: apertura (una diapositiva de objetivos), teoría (3 a 5
+   diapositivas), un ejemplo (2 a 3 diapositivas), transición a la práctica
+   (una diapositiva), cierre (una diapositiva con la síntesis de la sesión).
+   El resto del tiempo de clase es práctica en la aplicación y puesta en
+   común: eso no lleva diapositivas.
+
+10. NOTAS DEL ORADOR breves en cada diapositiva (3 a 5 líneas): qué decir en
+    voz alta, qué error frecuente anticipar, y una pregunta para activar al
+    grupo antes de revelar la respuesta. Las notas pueden tener más detalle
+    que la diapositiva misma; la diapositiva es lo que ve el estudiante, la
+    nota es lo que dices tú.
+
+11. DISEÑO PARA VIDEOBEAM: texto grande (asume que se va a proyectar, no que
+    se va a leer de cerca), alto contraste, sin animaciones que distraigan,
+    sin relleno decorativo. Si una diapositiva no tiene una función clara,
+    elimínala.
+
+12. LA SESIÓN 11 (repaso y parcial) NO lleva teoría nueva: son diapositivas de
+    instrucciones del examen y de repaso dirigido por los errores más
+    frecuentes que arroje el panel docente de la aplicación.
+
+---------------------------------------------------------
+INSTRUCCIÓN FINAL (personalízala antes de enviarla)
+---------------------------------------------------------
+
+Con el contexto y las reglas anteriores, genera las diapositivas de la
+[SESIÓN 7 / SESIÓN 8 / SESIÓN 9 / SESIÓN 10 / SESIÓN 11 — indica cuál].
+Entrégalas como una lista numerada de diapositivas, cada una con:
+  Título
+  Contenido visible (viñetas cortas, máximo 4 líneas)
+  Notas del orador (3 a 5 líneas)
+Recuerda: coherencia total con los nombres de conceptos y actividades del
+contexto, cierre con la diapositiva de transición a la estación
+correspondiente, y nada de texto que no vaya a leerse en voz alta o a
+proyectarse tal cual.
+
+=========================================================
+Fin del prompt. Puedes editarlo libremente antes de usarlo; lo importante es
+que la IA que genere las diapositivas reciba siempre el bloque de contexto
+completo, para que no invente terminología distinta a la de la aplicación.

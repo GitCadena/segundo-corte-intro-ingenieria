@@ -31,6 +31,26 @@ export default {
   comprende: base.lecciones,
 
   profundiza: {
+    'Ética profesional y casos que cambiaron la ingeniería': {
+      titulo: 'Qué pasó exactamente en cada caso',
+      cuerpo: [
+        {
+          t: 'tabla',
+          encabezados: ['Caso', 'Qué pasó'],
+          filas: [
+            ['Therac-25 (1985-1987)', 'Un equipo de radioterapia entregó sobredosis letales por una condición de carrera, agravada por retirar los seguros físicos y confiar todo al software.'],
+            ['Ariane 5, vuelo 501 (1996)', 'Se reutilizó código del Ariane 4 sin revalidar sus supuestos; un desbordamiento numérico destruyó el cohete.'],
+            ['Knight Capital (2012)', 'Un despliegue incompleto dejó código viejo activo en un servidor; la empresa perdió cientos de millones de dólares en menos de una hora.'],
+            ['Boeing 737 MAX (2018-2019)', 'Un sistema de control dependía de un solo sensor y la documentación para pilotos era insuficiente.'],
+          ],
+        },
+        {
+          t: 'p',
+          texto:
+            'Los dilemas contemporáneos siguen la misma estructura: sesgos en decisiones automatizadas, datos personales usados para entrenar modelos, autoría con IA generativa. La pregunta útil no es «¿es legal?», sino «¿quién asume el riesgo de que yo me equivoque?».',
+        },
+      ],
+    },
     'Qué dice y qué no dice la Ley de Moore': {
       titulo: 'Por qué el doble de transistores no da el doble de velocidad',
       cuerpo: [
@@ -127,46 +147,35 @@ export default {
 
   ejemplo: {
     titulo: 'Duplicar tres veces no es triplicar',
-    contexto:
-      'Dos afirmaciones que suenan parecidas: «la capacidad crece 100 unidades cada dos años» y «la capacidad se duplica cada dos años». Vamos a ponerles números y a ver dónde se separan, para después distinguir qué conclusiones se pueden sacar de la segunda y cuáles no.',
+    contexto: '«Crece 100 unidades cada dos años» y «se duplica cada dos años» suenan parecidas. Vamos a ver dónde se separan.',
     pasos: [
       {
         titulo: '1. Los dos crecimientos, lado a lado',
         texto:
-          'Ambos parten de 100 unidades en el año 0.\n\nAño | Lineal (+100 cada 2 años) | Exponencial (×2 cada 2 años)\n----|---------------------------|------------------------------\n 0  |           100             |            100\n 2  |           200             |            200\n 4  |           300             |            400\n 6  |           400             |            800\n 8  |           500             |          1.600\n10  |           600             |          3.200\n12  |           700             |          6.400\n\nA los 2 años son idénticos. A los 12, uno vale 700 y el otro 6.400.',
-        nota:
-          'La diferencia no es «más rápido». Es que en el lineal la diferencia entre dos puntos consecutivos es siempre la misma (100); en el exponencial esa diferencia también crece.',
+          'Año | Lineal (+100) | Exponencial (×2)\n 0  |     100       |      100\n 6  |     400       |      800\n12  |     700       |    6.400\n\nA los 2 años son casi iguales. A los 12, uno vale 700 y el otro 6.400.',
       },
       {
         titulo: '2. La fórmula',
-        texto:
-          'Valor final = valor inicial × 2^(tiempo ÷ periodo de duplicación)\n\nCon 100 unidades iniciales, periodo de 2 años y 12 años transcurridos:\n100 × 2^(12/2) = 100 × 2^6 = 100 × 64 = 6.400.\n\nEl exponente es el número de duplicaciones completas. Seis duplicaciones multiplican por 64, no por 12.',
+        texto: 'valor final = inicial × 2^(tiempo ÷ periodo). Con 12 años y periodo de 2: 100 × 2⁶ = 6.400. Seis duplicaciones multiplican por 64, no por 6.',
       },
       {
-        titulo: '3. El error de intuición que esto produce',
-        texto:
-          'La mayoría de la gente subestima el exponencial a largo plazo y lo sobreestima a corto. A dos años los dos modelos dan lo mismo, así que parece que «no hay tanta diferencia»; a doce años la diferencia es de casi diez veces. Por eso predecir el resultado antes de calcularlo —como vas a hacer en la actividad 2— es un ejercicio útil: obliga a enfrentar el error propio.',
+        titulo: '3. El error de intuición',
+        texto: 'Se subestima el exponencial a largo plazo. Por eso conviene predecir antes de calcular: obliga a enfrentar el error propio.',
       },
       {
-        titulo: '4. Qué se puede concluir de la Ley de Moore',
-        texto:
-          'Válido: «la densidad de transistores en los chips ha venido duplicándose aproximadamente cada dos años durante décadas».\n\nVálido: «esa tendencia abarató enormemente la capacidad de cómputo y por eso hoy un celular supera a los computadores que enviaron misiones a la Luna».\n\nVálido: «la tendencia se ha desacelerado por límites físicos y por el costo creciente de fabricar».',
+        titulo: '4. Qué sí se puede concluir de la Ley de Moore',
+        texto: 'Que la densidad de transistores se ha duplicado cada ~2 años, y que la tendencia se ha desacelerado por límites físicos.',
       },
       {
         titulo: '5. Qué NO se puede concluir',
-        texto:
-          'Inválido: «mi programa correrá el doble de rápido en dos años». Los transistores adicionales se usan en más núcleos, más caché y aceleradores especializados; un programa de un solo hilo no se beneficia solo por existir.\n\nInválido: «la Ley de Moore garantiza que siempre habrá más potencia». No es una ley de la naturaleza: es una observación sobre una industria, y las observaciones sobre industrias terminan.\n\nInválido: «como el hardware mejora, no hace falta optimizar el software». Este razonamiento sostuvo décadas de programas cada vez más pesados, y dejó de funcionar cuando la frecuencia de reloj se estancó.',
-        nota:
-          'El patrón de los tres errores es el mismo: extender una observación sobre una magnitud (transistores) a otra magnitud distinta (velocidad de mi programa, potencia futura garantizada, necesidad de optimizar).',
+        texto: '«Mi programa correrá el doble de rápido» — los transistores van a más núcleos, no a un solo hilo. «Ya no hace falta optimizar» — dejó de ser cierto cuando la frecuencia se estancó.',
       },
       {
-        titulo: '6. Y qué tiene que ver esto con el campus',
-        texto:
-          'Que el hardware sea más barato no reparte sus beneficios por igual. En la sala 2 hay equipos de 2016 con 4 GB de RAM; varios estudiantes se conectan con datos móviles limitados. Un sitio pesado no es «moderno»: es un sitio que funciona bien para quien tiene el equipo nuevo y mal para quien no. La decisión técnica —cuántos megabytes pesa la página— es también una decisión sobre quién puede usarla.',
+        titulo: '6. Qué tiene que ver con el campus',
+        texto: 'El hardware más barato no reparte beneficios por igual: un sitio pesado funciona bien solo para quien tiene equipo nuevo.',
       },
     ],
-    cierre:
-      'El crecimiento exponencial explica por qué tienes un computador en el bolsillo. No explica que tu programa vaya a ser más rápido solo, ni que todos tus compañeros tengan el mismo acceso. Confundir la observación con sus consecuencias es el error que esta estación quiere evitar.',
+    cierre: 'El crecimiento exponencial explica el computador en tu bolsillo. No explica que tu programa vaya a ser más rápido solo.',
   },
 
   actividades: [

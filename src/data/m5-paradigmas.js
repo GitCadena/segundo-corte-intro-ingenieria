@@ -11,24 +11,21 @@ export default {
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'Un algoritmo es una secuencia finita y precisa de pasos que transforma unas entradas en unas salidas. Tres propiedades lo definen: es finito (termina), es preciso (cada paso está definido sin ambigüedad) y es efectivo (cada paso se puede ejecutar).',
+          texto: 'Un algoritmo es una secuencia finita y precisa de pasos que transforma entradas en salidas.',
         },
         {
           t: 'tabla',
-          encabezados: ['Representación', 'Fortaleza', 'Límite'],
+          encabezados: ['Representación', 'Fortaleza'],
           filas: [
-            ['Lenguaje natural', 'Cualquiera lo lee', 'Ambiguo: "sumar los mayores" admite varias lecturas'],
-            ['Pseudocódigo', 'Preciso y cercano al código, independiente del lenguaje', 'Requiere una convención acordada'],
-            ['Diagrama de flujo', 'Muestra el control visualmente', 'Se vuelve ilegible con muchos caminos'],
-            ['Tabla de decisión', 'Excelente para combinaciones de condiciones', 'No expresa repetición'],
+            ['Lenguaje natural', 'Cualquiera lo lee, pero es ambiguo'],
+            ['Pseudocódigo', 'Preciso, independiente del lenguaje'],
+            ['Diagrama de flujo', 'Muestra el control visualmente'],
           ],
         },
         {
           t: 'clave',
           titulo: 'Entrada – proceso – salida',
-          texto:
-            'Antes de escribir una línea, respondan tres preguntas: qué datos entran, qué transformación ocurre y qué debe salir exactamente. La mayoría de los algoritmos mal resueltos en un parcial fallan en la tercera, no en la segunda.',
+          texto: 'Antes de escribir una línea: qué datos entran, qué transformación ocurre, qué debe salir exactamente.',
         },
       ],
     },
@@ -36,31 +33,15 @@ export default {
       titulo: 'El pseudocódigo que usamos en el curso',
       cuerpo: [
         {
-          t: 'p',
-          texto:
-            'Esta es la convención del laboratorio de esta página, compatible con PSeInt. El intérprete que corre aquí acepta exactamente estas instrucciones.',
-        },
-        {
           t: 'codigo',
           etiqueta: 'Referencia rápida',
-          texto: `Algoritmo Nombre                  Si cond Entonces
-   Definir x Como Entero             ...
-   Leer x                         Sino
-   x <- 5                             ...
-   Escribir "texto", x            FinSi
+          texto: `Algoritmo Nombre           Si cond Entonces ... FinSi
+   Definir x Como Entero   Mientras cond Hacer ... FinMientras
+   Leer x                  Para i <- 1 Hasta n Hacer ... FinPara
+   Escribir "texto", x     Dimension v[10]   // índice empieza en 1
 FinAlgoritmo
 
-Mientras cond Hacer          Para i <- 1 Hasta n Con Paso 1 Hacer
-   ...                          ...
-FinMientras                   FinPara
-
-Repetir                      Dimension v[10]
-   ...                        v[3] <- 7      // el índice empieza en 1
-Hasta Que cond
-
-Operadores:  +  -  *  /  ^  MOD      Comparación:  =  <>  <  <=  >  >=
-Lógicos:     Y   O   NO              Funciones: raiz, abs, trunc, redondear,
-Valores:     Verdadero / Falso                  longitud, mayusculas, minusculas`,
+Operadores: + - * / ^ MOD    Comparación: = <> < <= > >=    Lógicos: Y O NO`,
         },
       ],
     },
@@ -68,25 +49,19 @@ Valores:     Verdadero / Falso                  longitud, mayusculas, minusculas
       titulo: 'Las tres estructuras de control',
       cuerpo: [
         {
-          t: 'p',
-          texto:
-            'El teorema de Böhm-Jacopini demuestra que cualquier algoritmo se puede escribir combinando únicamente secuencia, selección y repetición. Ese resultado es el fundamento de la programación estructurada y la razón por la que la instrucción de salto incondicional desapareció de los lenguajes modernos.',
-        },
-        {
           t: 'lista',
           items: [
-            'Secuencia: instrucciones una tras otra. El orden es el significado.',
-            'Selección: Si / Sino, y selección anidada o múltiple. Cada condición divide el conjunto de casos posibles; si dos ramas pueden ser verdaderas a la vez, hay un error de diseño.',
-            'Repetición con Mientras: se evalúa antes; puede ejecutar cero veces. Se usa cuando no se sabe cuántas iteraciones habrá.',
-            'Repetición con Repetir-Hasta Que: se evalúa después; ejecuta al menos una vez. Se usa para validar entradas.',
-            'Repetición con Para: se usa cuando la cantidad de iteraciones se conoce antes de empezar.',
+            'Secuencia: instrucciones una tras otra.',
+            'Selección: Si / Sino, para casos que se excluyen.',
+            'Mientras: evalúa antes; puede ejecutar cero veces.',
+            'Repetir-Hasta Que: evalúa después; ejecuta al menos una vez.',
+            'Para: la cantidad de vueltas se conoce antes de empezar.',
           ],
         },
         {
           t: 'clave',
           titulo: 'Los cuatro patrones que resuelven casi todo',
-          texto:
-            'Contador (cuenta ocurrencias: c <- c + 1). Acumulador (suma o concatena: s <- s + x). Bandera (recuerda que algo ocurrió: encontrado <- Verdadero). Centinela (valor especial que marca el fin de los datos, por ejemplo -1). Con estos cuatro y las tres estructuras se resuelve la mayor parte del parcial.',
+          texto: 'Contador (c <- c + 1), acumulador (s <- s + x), bandera (encontrado <- Verdadero), centinela (valor que marca el fin).',
         },
       ],
     },
@@ -95,16 +70,12 @@ Valores:     Verdadero / Falso                  longitud, mayusculas, minusculas
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'Cuando un algoritmo crece, la programación estructurada sola no alcanza: aparece código repetido y variables que todo el programa puede tocar. La respuesta es la modularidad, es decir, dividir en subprogramas con responsabilidad única y parámetros explícitos.',
+          texto: 'Cuando un algoritmo crece, se divide en subprogramas con responsabilidad única.',
         },
         {
-          t: 'lista',
-          items: [
-            'Cohesión alta: cada módulo hace una sola cosa. "CalcularPromedio" calcula un promedio; no lo imprime, ni lo guarda, ni valida la sesión.',
-            'Acoplamiento bajo: los módulos dependen entre sí lo menos posible, y cuando dependen es a través de parámetros, no de variables globales.',
-            'Ese par de criterios —alta cohesión, bajo acoplamiento— sigue siendo el criterio de diseño más usado cincuenta años después, y reaparece intacto en la orientación a objetos, en microservicios y en la mantenibilidad de ISO/IEC 25010.',
-          ],
+          t: 'clave',
+          titulo: 'El criterio de diseño que no pasa de moda',
+          texto: 'Cohesión alta (cada módulo hace una sola cosa) y acoplamiento bajo (dependen poco entre sí).',
         },
       ],
     },
@@ -113,48 +84,26 @@ Valores:     Verdadero / Falso                  longitud, mayusculas, minusculas
       cuerpo: [
         {
           t: 'p',
-          texto:
-            'La POO cambia la pregunta de diseño. En programación estructurada se pregunta "¿qué pasos sigo?". En POO se pregunta "¿qué entidades existen en este problema, qué sabe cada una y qué puede hacer?". Los datos y las operaciones que los manipulan viven juntos.',
+          texto: 'La POO pregunta qué entidades existen en el problema, qué sabe cada una y qué puede hacer.',
         },
         {
           t: 'tabla',
-          encabezados: ['Concepto', 'Definición', 'Ejemplo en un sistema académico'],
+          encabezados: ['Concepto', 'Ejemplo académico'],
           filas: [
-            ['Clase', 'Plantilla que define atributos y métodos', 'Estudiante'],
-            ['Objeto', 'Instancia concreta de una clase, con sus propios valores', 'el estudiante con código 20241234'],
-            ['Atributo', 'Dato que caracteriza al objeto', 'codigo, nombre, semestre'],
-            ['Método', 'Comportamiento que el objeto puede ejecutar', 'inscribirMateria(), calcularPromedio()'],
-            ['Mensaje', 'Invocación de un método sobre un objeto', 'estudiante.calcularPromedio()'],
+            ['Clase', 'Estudiante'],
+            ['Objeto', 'el estudiante con código 20241234'],
+            ['Atributo', 'código, nombre, semestre'],
+            ['Método', 'inscribirMateria(), calcularPromedio()'],
           ],
-        },
-        {
-          t: 'p',
-          texto:
-            'Los cuatro pilares se entienden mejor por lo que evitan que por su definición de diccionario.',
         },
         {
           t: 'lista',
           items: [
-            'Abstracción: se modela solo lo que el problema necesita. Para matrícula importa el semestre del estudiante; su tipo de sangre no.',
-            'Encapsulamiento: el estado interno se protege y se accede por operaciones controladas. Evita que cualquier parte del programa deje al objeto en un estado imposible, como un promedio de 8,7 sobre 5.',
-            'Herencia: una clase especializa a otra reutilizando lo común. Estudiante y Docente heredan de Persona. Se abusa de ella: si la relación no es realmente "es un", conviene composición.',
-            'Polimorfismo: distintos objetos responden al mismo mensaje a su manera. calcularPago() se comporta distinto en DocenteHora y en DocentePlanta, y quien lo invoca no necesita saber cuál es cuál.',
+            'Abstracción: se modela solo lo que el problema necesita.',
+            'Encapsulamiento: el estado interno se protege.',
+            'Herencia: una clase especializa a otra (Estudiante y Docente heredan de Persona).',
+            'Polimorfismo: distintos objetos responden al mismo mensaje a su manera.',
           ],
-        },
-        {
-          t: 'codigo',
-          etiqueta: 'Mismo problema, dos enfoques',
-          texto: `ESTRUCTURADO                       ORIENTADO A OBJETOS
-
-leer notas[]                       clase Estudiante
-promedio <- suma(notas)/n            atributos: nombre, notas[]
-si promedio >= 3 entonces            metodo promedio()
-   escribir "APROBADO"               metodo estaAprobado()
-                                     metodo agregarNota(n)
-
-El flujo vive en el programa        Cada estudiante sabe calcular
-principal; los datos están          su propio estado; el programa
-sueltos y cualquiera los toca.      principal solo coordina.`,
         },
       ],
     },
@@ -163,19 +112,13 @@ sueltos y cualquiera los toca.      principal solo coordina.`,
       cuerpo: [
         {
           t: 'tabla',
-          encabezados: ['Paradigma', 'Idea central', 'Dónde aparece'],
+          encabezados: ['Paradigma', 'Idea central'],
           filas: [
-            ['Imperativo / estructurado', 'Describir los pasos y el cambio de estado', 'C, Pascal, la base de casi todo'],
-            ['Orientado a objetos', 'Objetos que encapsulan estado y comportamiento', 'Java, C#, Python, Kotlin'],
-            ['Funcional', 'Funciones sin efectos secundarios, datos inmutables', 'Haskell, Elixir; map/filter/reduce en JavaScript y Python'],
-            ['Lógico', 'Declarar hechos y reglas; el motor deduce', 'Prolog, sistemas expertos'],
-            ['Declarativo', 'Describir qué se quiere, no cómo obtenerlo', 'SQL, HTML, configuración de infraestructura'],
+            ['Estructurado', 'Describir los pasos y el cambio de estado'],
+            ['Orientado a objetos', 'Objetos que encapsulan estado y comportamiento'],
+            ['Funcional', 'Funciones sin efectos secundarios'],
+            ['Declarativo', 'Describir qué se quiere, no cómo obtenerlo (SQL, HTML)'],
           ],
-        },
-        {
-          t: 'p',
-          texto:
-            'Los lenguajes actuales son multiparadigma: en Python se escribe una clase y tres líneas más abajo una comprensión de listas de estilo funcional. La competencia profesional no es elegir un bando, sino reconocer qué estilo hace más simple cada parte del problema.',
         },
       ],
     },
