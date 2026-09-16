@@ -1,5 +1,9 @@
 # Segundo corte · Introducción a la Ingeniería Informática
 
+**En producción:** https://segundo-corte-intro-ingenieria.vercel.app
+**Repositorio:** https://github.com/GitCadena/segundo-corte-intro-ingenieria
+**Supabase:** proyecto `segundo-corte-intro-ingenieria` en la organización GitCadena's Org (dashboard.supabase.com)
+
 Aplicación de enseñanza para las sesiones 7 a 11 del microcurrículo (Ingeniería
 Informática, Institución Universitaria Colegio Mayor del Cauca, Popayán).
 
