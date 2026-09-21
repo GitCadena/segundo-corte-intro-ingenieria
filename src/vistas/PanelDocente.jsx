@@ -11,6 +11,31 @@ import glosario from '../data/glosario.js'
  * `docente_grupos`. No hay ningún PIN ni bandera del frontend protegiendo esto:
  * si alguien abriera esta ruta sin permiso, el servidor devolvería cero filas.
  */
+const TAMANO_PAGINA = 1000
+
+/**
+ * `v_progreso_estudiante` trae una fila por estudiante × actividad, así que
+ * con el curso completo supera fácilmente las 1000 filas que Supabase
+ * devuelve por defecto en una sola consulta. Sin paginar, el panel se queda
+ * con las primeras 1000 (las más antiguas) y los estudiantes recién
+ * registrados —los últimos en insertarse— simplemente no llegan a aparecer.
+ */
+async function cargarTodasLasFilas() {
+  const todas = []
+  let desde = 0
+  for (;;) {
+    const { data, error } = await supabase
+      .from('v_progreso_estudiante')
+      .select('*')
+      .range(desde, desde + TAMANO_PAGINA - 1)
+    if (error) throw error
+    todas.push(...data)
+    if (data.length < TAMANO_PAGINA) break
+    desde += TAMANO_PAGINA
+  }
+  return todas
+}
+
 export default function PanelDocente() {
   const [filas, setFilas] = useState([])
   const [cargando, setCargando] = useState(true)
@@ -27,14 +52,10 @@ export default function PanelDocente() {
       )
       return
     }
-    supabase
-      .from('v_progreso_estudiante')
-      .select('*')
-      .then(({ data, error: e }) => {
-        if (e) setError(e.message)
-        else setFilas(data ?? [])
-        setCargando(false)
-      })
+    cargarTodasLasFilas()
+      .then((data) => setFilas(data))
+      .catch((e) => setError(e.message))
+      .finally(() => setCargando(false))
   }, [])
 
   const grupos = useMemo(
