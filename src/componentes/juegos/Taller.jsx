@@ -105,14 +105,16 @@ export default function Taller({ actividad, ctrl }) {
         </ul>
       </div>
 
-      <div className="taller__rubrica">
-        <p className="etiqueta-campo">Con qué se les va a evaluar</p>
-        <ul className="lista lista--rubrica">
-          {actividad.rubrica.map((r, i) => (
-            <li key={i}>{r}</li>
-          ))}
-        </ul>
-      </div>
+      {actividad.rubrica && (
+        <div className="taller__rubrica">
+          <p className="etiqueta-campo">Con qué se les va a evaluar</p>
+          <ul className="lista lista--rubrica">
+            {actividad.rubrica.map((r, i) => (
+              <li key={i}>{r}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <p className="aviso aviso--nota">
         Este taller no lo califica la aplicación: el puntaje que ves en las demás actividades no lo

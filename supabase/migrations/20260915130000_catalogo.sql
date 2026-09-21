@@ -1,5 +1,5 @@
 -- ARCHIVO GENERADO por scripts/generar-catalogo.mjs. No editar a mano.
--- Generado a partir del contenido de src/data/. 63 actividades.
+-- Generado a partir del contenido de src/data/. 56 actividades.
 
 begin;
 
@@ -28,15 +28,8 @@ insert into public.actividades (id, estacion_id, titulo, tipo, nivel, puntos_max
   ('e2-a1-detective', 'calidad', 'Detective de calidad', 'clasificar', 'base', 120, true, ARRAY['calidad', 'adecuacion-funcional', 'usabilidad', 'square']::text[], 0),
   ('e2-a2-friccion', 'calidad', 'Encuentra la fricción', 'formulario-friccion', 'base', 120, true, ARRAY['usabilidad', 'calidad']::text[], 1),
   ('e2-a3-mejora', 'calidad', 'Mejora la interfaz', 'mejora-interfaz', 'base', 110, true, ARRAY['usabilidad']::text[], 2),
-  ('e2-a4-medir', 'calidad', 'Mide la usabilidad', 'calcular', 'base', 130, true, ARRAY['usabilidad', 'tasa-exito']::text[], 3),
-  ('e2-a5-probar', 'calidad', '¿Qué probarías?', 'emparejar', 'base', 110, true, ARRAY['verificable', 'calidad', 'usabilidad']::text[], 4),
-  ('e2-a6-square', 'calidad', 'Ubicar la norma', 'quiz', 'opcional', 80, false, ARRAY['square']::text[], 5),
-  ('e2-a7-subcaracteristicas', 'calidad', 'Cada subcaracterística en su lugar', 'clasificar', 'opcional', 90, false, ARRAY['square', 'usabilidad', 'portabilidad']::text[], 6),
-  ('e2-reto:p1', 'calidad', 'Diagnóstico de calidad de una app real · paso 1', 'emparejar', 'base', 38, true, ARRAY['calidad', 'adecuacion-funcional']::text[], 7),
-  ('e2-reto:p2', 'calidad', 'Diagnóstico de calidad de una app real · paso 2', 'quiz', 'base', 38, true, ARRAY['calidad', 'datos-personales']::text[], 8),
-  ('e2-reto:p3', 'calidad', 'Diagnóstico de calidad de una app real · paso 3', 'calcular', 'base', 37, true, ARRAY['tasa-exito', 'usabilidad']::text[], 9),
-  ('e2-reto:p4', 'calidad', 'Diagnóstico de calidad de una app real · paso 4', 'quiz', 'base', 37, true, ARRAY['usabilidad', 'calidad-en-uso']::text[], 10),
-  ('e2-taller', 'calidad', 'Taller en clase · Auditoría de una app conocida', 'taller', 'base', 0, false, '{}'::text[], 11),
+  ('e2-a7-subcaracteristicas', 'calidad', 'Cada subcaracterística en su lugar', 'clasificar', 'opcional', 90, false, ARRAY['square', 'usabilidad', 'portabilidad']::text[], 3),
+  ('e2-taller', 'calidad', 'Taller en clase · Tu propio caso', 'taller', 'base', 0, false, '{}'::text[], 4),
   ('e3-a1-romper', 'robustez', 'Rompe el formulario', 'romper-formulario', 'base', 140, true, ARRAY['robustez', 'validacion', 'frontera', 'defecto']::text[], 0),
   ('e3-a2-limites', 'robustez', 'Explora los límites', 'limites', 'base', 110, true, ARRAY['frontera', 'validacion']::text[], 1),
   ('e3-a3-compatible', 'robustez', '¿Compatible o portable?', 'clasificar', 'base', 110, true, ARRAY['compatibilidad', 'portabilidad', 'disponibilidad']::text[], 2),

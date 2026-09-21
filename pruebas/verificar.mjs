@@ -535,7 +535,9 @@ for (const e of estaciones) {
     if (!e.comprende?.length) faltan.push('comprende')
     if (!e.ejemplo?.pasos?.length) faltan.push('ejemplo')
     if (!(e.actividades?.length || e.reto)) faltan.push('practica')
-    if (!e.reto) faltan.push('reto')
+    // La Estación 2 retiró su reto: la práctica final la hace el taller
+    // individual "Tu propio caso" (con el código propio del estudiante).
+    if (!e.reto && e.id !== 'calidad') faltan.push('reto')
     if (!e.sintesis?.puntos?.length) faltan.push('sintesis')
     return faltan.length === 0 ? true : `faltan: ${faltan.join(', ')}`
   })

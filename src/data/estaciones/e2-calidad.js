@@ -343,144 +343,6 @@ export default {
 
     /* ------------------------------------------------------------------ 4 */
     {
-      id: 'e2-a4-medir',
-      tipo: 'calcular',
-      nivel: 'base',
-      puntos: 130,
-      titulo: 'Mide la usabilidad',
-      objetivo: 'Calcular las medidas de usabilidad a partir de datos crudos y decidir qué incluir.',
-      instrucciones:
-        'Usa los datos de la prueba. Las fórmulas están a la vista. Cuidado con qué participantes entran en cada cálculo.',
-      conceptoPrevio: 'Tasa de éxito, tiempo en tarea y por qué se usa la mediana.',
-      conceptos: ['usabilidad', 'tasa-exito'],
-      datos: {
-        encabezados: ['Participante', 'Resultado', 'Tiempo (mm:ss)', 'Errores'],
-        filas: [
-          ['P1', 'Completó', '2:10', '1'],
-          ['P2', 'Completó', '3:40', '2'],
-          ['P3', 'Abandonó', '0:45', '1'],
-          ['P4', 'Completó', '1:55', '0'],
-          ['P5', 'Completó', '4:20', '3'],
-          ['P6', 'Reservó el día equivocado', '3:00', '2'],
-          ['P7', 'Completó', '2:30', '1'],
-          ['P8', 'Completó', '6:15', '4'],
-          ['P9', 'Completó', '2:05', '0'],
-          ['P10', 'Abandonó', '5:30', '3'],
-        ],
-        nota: 'Tarea: «Reserve la sala 203 para mañana de 10 a 12». Éxito = reserva creada con sala, día y franja correctos.',
-      },
-      formulas: [
-        'Tasa de éxito (%) = participantes que completaron ÷ total de participantes × 100',
-        'Tiempo en tarea = mediana de los tiempos, contando SOLO a quienes completaron',
-        'Errores por tarea = total de errores de todos los participantes ÷ total de participantes',
-      ],
-      campos: [
-        {
-          id: 'tasa',
-          etiqueta: 'Tasa de éxito (%)',
-          respuestas: ['70'],
-          tolerancia: 0,
-          porQueNo:
-            'Completaron 7 (P1, P2, P4, P5, P7, P8, P9). P6 no cuenta: creó una reserva, pero no la que se le pidió.',
-        },
-        {
-          id: 'mediana',
-          etiqueta: 'Tiempo en tarea, en formato mm:ss',
-          respuestas: ['2:30', '2:30 ', '150', '2:30 min'],
-          tolerancia: 0,
-          texto: true,
-          porQueNo:
-            'Ordena solo los siete tiempos de quienes completaron: 1:55, 2:05, 2:10, 2:30, 3:40, 4:20, 6:15. La mediana es el cuarto: 2:30.',
-        },
-        {
-          id: 'errores',
-          etiqueta: 'Errores por tarea (un decimal)',
-          respuestas: ['1.7', '1,7'],
-          tolerancia: 0.05,
-          porQueNo: 'Suma todos los errores: 1+2+1+0+3+2+1+4+0+3 = 17. Divide entre los 10 participantes.',
-        },
-      ],
-      pistas: [
-        'Para la tasa de éxito, relee la definición de éxito del enunciado y decide con cuidado qué hacer con P6.',
-        'Para el tiempo en tarea, la clave está en qué participantes NO entran. Incluir a quienes abandonaron bajaría artificialmente la mediana.',
-        'Para errores por tarea, sí entran los diez participantes: los errores de quien fracasó son justamente los más informativos.',
-      ],
-      explicacion:
-        'Las tres medidas usan poblaciones distintas a propósito. La tasa de éxito mira a todos. El tiempo en tarea mira solo a quienes lo lograron, porque el tiempo de quien abandonó no mide eficiencia sino rendición. Los errores miran a todos, porque los errores de quien fracasó son la mejor pista de dónde arreglar. Una prueba con 70 % de éxito en la tarea principal no es un detalle de acabado: es el sistema fallando en su razón de ser.',
-    },
-
-    /* ------------------------------------------------------------------ 5 */
-    {
-      id: 'e2-a5-probar',
-      tipo: 'emparejar',
-      nivel: 'base',
-      puntos: 110,
-      titulo: '¿Qué probarías?',
-      objetivo: 'Traducir un requisito en la comprobación observable que lo pone a prueba.',
-      instrucciones:
-        'Empareja cada requisito con la comprobación que permitiría declararlo incumplido. Busca la que mide exactamente lo que el requisito promete.',
-      conceptoPrevio: 'Un requisito verificable se comprueba con una observación, no con una opinión.',
-      conceptos: ['verificable', 'calidad', 'usabilidad'],
-      izquierda: [
-        { id: 'q1', texto: 'El 95 % de las consultas responde en menos de 2 s con 200 usuarios concurrentes.' },
-        { id: 'q2', texto: 'Al menos 8 de cada 10 estudiantes nuevos completan una reserva sin ayuda.' },
-        { id: 'q3', texto: 'Ningún estudiante puede ver las reservas de otro.' },
-        { id: 'q4', texto: 'La disponibilidad mensual del servicio es de al menos 99,5 %.' },
-        { id: 'q5', texto: 'Una reserva no puede solaparse con otra de la misma sala.' },
-      ],
-      derecha: [
-        { id: 'c1', texto: 'Prueba de carga con 200 sesiones simultáneas midiendo el percentil 95 del tiempo de respuesta.' },
-        { id: 'c2', texto: 'Sesión observada con 10 participantes que nunca usaron el sistema, contando cuántos completan la tarea.' },
-        { id: 'c3', texto: 'Con la sesión de un estudiante, solicitar directamente la reserva de otro y verificar que se rechaza.' },
-        { id: 'c4', texto: 'Monitoreo automático cada minuto durante un mes, sumando los minutos fuera de servicio.' },
-        { id: 'c5', texto: 'Intentar crear una reserva de 10 a 12 cuando ya existe una de 11 a 13 en la misma sala.' },
-      ],
-      pares: { q1: 'c1', q2: 'c2', q3: 'c3', q4: 'c4', q5: 'c5' },
-      porQueNo: {
-        q1: 'Un requisito con percentil y concurrencia se comprueba con una prueba de carga que mida ese mismo percentil, no con cronómetro en un solo equipo.',
-        q2: 'Un umbral sobre personas se comprueba observando personas. No hay forma de deducirlo del código.',
-        q3: 'Una regla de acceso se prueba intentando el acceso indebido, no revisando si el botón aparece: ocultar el botón no impide la solicitud.',
-        q4: 'La disponibilidad es una proporción de tiempo: exige medición continua durante el periodo declarado.',
-        q5: 'Una regla de negocio se prueba con el caso que la viola, y conviene además probar los bordes exactos (una reserva que empieza justo cuando termina la otra).',
-      },
-      pistas: [
-        'Cada comprobación debe poder devolver "no se cumplió". Busca en cada requisito qué observación produciría ese veredicto.',
-        'Dos requisitos hablan de personas o de tiempo continuo: esos no se pueden comprobar leyendo el código.',
-        'El de acceso tiene una trampa: comprobar que el botón no aparece NO prueba nada.',
-      ],
-      explicacion:
-        'El emparejamiento correcto muestra un principio que se repite todo el semestre: la comprobación debe medir lo mismo que promete el requisito, en las mismas condiciones. El caso de seguridad es el más instructivo: si la prueba consistiera en "verificar que no se ve el botón", pasaría con una interfaz que oculta el botón y un servidor que responde igual a cualquiera. La comprobación debe atacar el mecanismo, no la apariencia.',
-    },
-
-    /* ------------------------------------------------------------------ 6 */
-    {
-      id: 'e2-a6-square',
-      tipo: 'quiz',
-      nivel: 'opcional',
-      puntos: 80,
-      titulo: 'Ubicar la norma',
-      objetivo: 'No confundir las normas de la familia SQuaRE entre sí.',
-      instrucciones: 'Una sola respuesta correcta.',
-      conceptoPrevio: 'Divisiones de la familia ISO/IEC 25000.',
-      conceptos: ['square'],
-      pregunta: '¿Qué norma de la familia SQuaRE define el modelo de calidad del producto de software?',
-      opciones: ['ISO/IEC 25000', 'ISO/IEC 25010', 'ISO/IEC 25040', 'ISO/IEC 9001'],
-      correcta: 1,
-      porQueNo: {
-        0: 'ISO/IEC 25000 da el vocabulario y la guía general de la familia, pero no contiene el modelo de características.',
-        2: 'ISO/IEC 25040 define el proceso de evaluación: cómo se evalúa, no qué características existen.',
-        3: 'ISO 9001 es gestión de la calidad de una organización. No dice nada sobre el producto software en particular; confundirla con 25010 es el error más común.',
-      },
-      pistas: [
-        'La división 2501n es la de los modelos de calidad. ¿Cuál de las opciones cae en esa división?',
-        'Una de las opciones ni siquiera pertenece a la familia SQuaRE: es de gestión organizacional.',
-      ],
-      explicacion:
-        'ISO/IEC 25010 es el modelo de calidad (producto y calidad en uso). 25000 es el vocabulario, 25040 el proceso de evaluación y 25012 el modelo de calidad de datos. ISO 9001 certifica el sistema de gestión de una empresa: una empresa certificada en 9001 puede entregar software malísimo sin contradicción.',
-    },
-
-    /* ------------------------------------------------------------------ 7 */
-    {
       id: 'e2-a7-subcaracteristicas',
       tipo: 'clasificar',
       nivel: 'opcional',
@@ -518,136 +380,6 @@ export default {
     },
   ],
 
-  reto: {
-    id: 'e2-reto',
-    tipo: 'secuencia',
-    nivel: 'base',
-    puntos: 150,
-    titulo: 'Diagnóstico de calidad de una app real',
-    objetivo: 'Pasar de una queja difusa a un diagnóstico con característica nombrada y medida propuesta.',
-    instrucciones: 'Cuatro pasos sobre un caso nuevo. Cada uno se apoya en el anterior.',
-    conceptoPrevio: 'Toda la estación.',
-    conceptos: ['calidad', 'usabilidad', 'adecuacion-funcional', 'tasa-exito'],
-    contexto:
-      'La app de la biblioteca permite renovar préstamos. Los reclamos del semestre: (a) «renové y al otro día me apareció multa»; (b) «nunca encuentro dónde se renueva»; (c) «entre 6 y 8 de la noche no carga»; (d) «mi compañero vio qué libros tengo prestados».',
-    pasos: [
-      {
-        id: 'p1',
-        tipo: 'emparejar',
-        conceptos: ['calidad', 'adecuacion-funcional'],
-        seccion: { estacion: 'calidad', titulo: 'El modelo de calidad del producto' },
-        instrucciones: 'Paso 1. Asigna a cada reclamo la característica de calidad que nombra el problema.',
-        izquierda: [
-          { id: 'a', texto: '(a) Renové y al otro día me apareció multa' },
-          { id: 'b', texto: '(b) Nunca encuentro dónde se renueva' },
-          { id: 'c', texto: '(c) Entre 6 y 8 de la noche no carga' },
-          { id: 'd', texto: '(d) Mi compañero vio qué libros tengo prestados' },
-        ],
-        derecha: [
-          { id: 'f', texto: 'Adecuación funcional (corrección)' },
-          { id: 'u', texto: 'Usabilidad (operabilidad)' },
-          { id: 'e', texto: 'Eficiencia de desempeño' },
-          { id: 's', texto: 'Seguridad (confidencialidad)' },
-        ],
-        pares: { a: 'f', b: 'u', c: 'e', d: 's' },
-        porQueNo: {
-          a: 'La función existe y se ejecutó; el resultado es distinto del especificado. Eso es corrección funcional.',
-          b: 'La función existe y es correcta: el usuario no logra llegar a ella. Eso es operabilidad.',
-          c: 'Falla asociada a una franja de alta carga: comportamiento temporal bajo carga.',
-          d: 'Acceso a datos por quien no debe verlos: confidencialidad.',
-        },
-        explicacion:
-          'El reclamo (c) admite discusión: si la app no carga del todo, podría argumentarse fiabilidad. Se clasifica como desempeño porque el patrón —una franja horaria concreta, la de mayor uso— apunta a saturación y no a una caída del servicio.',
-      },
-      {
-        id: 'p2',
-        tipo: 'quiz',
-        conceptos: ['calidad', 'datos-personales'],
-        seccion: { estacion: 'calidad', titulo: 'Tres calidades distintas' },
-        pregunta:
-          'Paso 2. Solo hay presupuesto para atender uno este mes. ¿Cuál se atiende primero y con qué argumento?',
-        opciones: [
-          '(b), porque es el que más estudiantes mencionan.',
-          '(d), porque expone datos personales de los usuarios y eso compromete obligaciones legales además de la confianza.',
-          '(c), porque es el más fácil de reproducir.',
-          '(a), porque genera multas y eso cuesta dinero a los estudiantes.',
-        ],
-        correcta: 1,
-        porQueNo: {
-          0: 'La frecuencia importa, pero no por encima de una fuga de datos. Priorizar por cantidad de quejas ignora la gravedad.',
-          2: 'La facilidad de reproducción es un criterio de diagnóstico, no de priorización.',
-          3: 'Es un argumento fuerte y sería el segundo en la lista, pero una multa se puede revertir manualmente; los datos ya vistos no se pueden "des-ver".',
-        },
-        explicacion:
-          'Se prioriza por daño irreversible y por obligación legal, no por volumen de quejas. La exposición de datos de préstamo compromete la Ley 1581 de 2012 y, a diferencia de una multa mal aplicada, no tiene remedio una vez ocurrida. (a) sería el segundo: afecta el bolsillo del estudiante y destruye la confianza en la función principal.',
-      },
-      {
-        id: 'p3',
-        tipo: 'calcular',
-        conceptos: ['tasa-exito', 'usabilidad'],
-        seccion: { estacion: 'calidad', titulo: 'Usabilidad: de la opinión a la evidencia' },
-        instrucciones:
-          'Paso 3. Antes de rediseñar la pantalla de renovación se mide el estado actual. Ocho participantes intentan renovar un préstamo.',
-        datos: {
-          encabezados: ['Participante', 'Resultado', 'Tiempo'],
-          filas: [
-            ['P1', 'Completó', '1:20'],
-            ['P2', 'Abandonó', '3:10'],
-            ['P3', 'Abandonó', '2:40'],
-            ['P4', 'Completó', '0:55'],
-            ['P5', 'Abandonó', '4:00'],
-            ['P6', 'Completó', '1:50'],
-            ['P7', 'Abandonó', '2:30'],
-            ['P8', 'Completó', '3:30'],
-          ],
-          nota: 'Tarea: «Renueve el préstamo del libro que tiene en curso». Éxito = préstamo renovado.',
-        },
-        formulas: [
-          'Tasa de éxito (%) = completaron ÷ total × 100',
-          'Tiempo en tarea = mediana de los tiempos de quienes completaron. Con un número par de valores, es el promedio de los dos centrales.',
-        ],
-        campos: [
-          { id: 'tasa', etiqueta: 'Tasa de éxito (%)', respuestas: ['50'], tolerancia: 0, porQueNo: 'Completaron 4 (P1, P4, P6, P8) de 8 participantes.' },
-          {
-            id: 'mediana',
-            etiqueta: 'Tiempo en tarea (mm:ss)',
-            respuestas: ['1:35', '95'],
-            tolerancia: 0,
-            texto: true,
-            porQueNo:
-              'Tiempos de quienes completaron, ordenados: 0:55, 1:20, 1:50, 3:30 (55 s, 80 s, 110 s, 210 s). Con cuatro valores la mediana es el promedio de los dos centrales: (80 + 110) ÷ 2 = 95 s = 1:35.',
-          },
-        ],
-        explicacion:
-          'Una tasa de éxito del 50 % en la función principal confirma el reclamo (b) con un número. Ahora la conversación con la biblioteca deja de ser «dicen que no lo encuentran» y pasa a ser «la mitad de los usuarios no logra renovar».',
-      },
-      {
-        id: 'p4',
-        tipo: 'quiz',
-        conceptos: ['usabilidad', 'calidad-en-uso'],
-        seccion: { estacion: 'calidad', titulo: 'Escribir una métrica que sirva' },
-        pregunta:
-          'Paso 4. Después del rediseño se vuelve a medir: tasa de éxito 87,5 %, tiempo en tarea 1:05. ¿Qué se puede afirmar con estos datos?',
-        opciones: [
-          'Que la app ya es usable y no requiere más trabajo.',
-          'Que en esta tarea y con este perfil de usuario el rediseño mejoró la tasa de éxito y el tiempo; nada se puede afirmar todavía sobre las otras tareas ni sobre los demás reclamos.',
-          'Que el 87,5 % de todos los estudiantes de la universidad logra renovar.',
-          'Que los reclamos (a), (c) y (d) también quedaron resueltos, porque la app mejoró.',
-        ],
-        correcta: 1,
-        porQueNo: {
-          0: '"Usable" no es un estado que se alcanza: es una medida por tarea y por perfil de usuario. Otras tareas pueden seguir fallando.',
-          2: 'Ocho participantes no permiten estimar un porcentaje poblacional. Sirven para detectar problemas, no para proyectar cifras.',
-          3: 'Los otros tres reclamos son de características distintas —corrección, desempeño y seguridad— y ningún rediseño de pantalla los toca.',
-        },
-        explicacion:
-          'El error que este paso quiere prevenir es generalizar una medición. Una prueba de usabilidad con ocho personas sobre una tarea dice mucho sobre esa tarea y casi nada sobre el resto del sistema. Reportar «87,5 % de éxito» sin decir en qué tarea, con quiénes y cuántos, es presentar una inferencia como si fuera una medición.',
-      },
-    ],
-    explicacion:
-      'El recorrido completo del diagnóstico de calidad: nombrar la característica afectada por cada reclamo, priorizar por daño y no por volumen, medir antes de cambiar, y volver a medir después sin exagerar lo que los datos permiten afirmar.',
-  },
-
   sintesis: {
     puntos: [
       'ISO/IEC 25010 es el modelo de calidad del producto dentro de la familia SQuaRE (ISO/IEC 25000). En el curso se trabaja la edición 2011, de ocho características.',
@@ -671,7 +403,7 @@ export default {
     titulo: 'Taller en clase · Tu propio caso',
     objetivo: 'Aplicar las 8 características de ISO/IEC 25010 sobre un programa que tú mismo construyas.',
     instrucciones:
-      'Trabajo individual. Programa en el lenguaje que mejor manejes (no en el Laboratorio de pseudocódigo de esta app): escribe el código en tu editor de siempre, córrelo ahí, y pega aquí el código y lo que te mostró. El entregable no lo califica esta aplicación — lo revisa la docente con la rúbrica de abajo.',
+      'Trabajo individual. Programa en Python o en Java (no en el Laboratorio de pseudocódigo de esta app): escribe el código en tu editor de siempre, córrelo ahí, y pega aquí el código y lo que te mostró. El entregable no lo califica esta aplicación — lo revisa la docente.',
     conceptoPrevio: 'Toda la estación.',
     enunciado:
       'Te asignamos un caso al azar (abajo). Escribe uno o dos requisitos comprobables para resolverlo, prográmalo, y luego pruébalo tú mismo con las 8 preguntas: son las 8 características de calidad de ISO/IEC 25010, ya con su nombre.',
@@ -699,7 +431,7 @@ export default {
     ],
     campos: [
       { id: 'requisitos', etiqueta: 'Tu(s) requisito(s) comprobable(s) para tu caso (qué se mide, en qué condiciones, con qué umbral)', filas: 3 },
-      { id: 'codigo', etiqueta: 'Tu código completo (en el lenguaje que quieras, no en pseudocódigo)', filas: 10, mono: true },
+      { id: 'codigo', etiqueta: 'Tu código completo, en Python o en Java (no en pseudocódigo)', filas: 10, mono: true },
       { id: 'salida', etiqueta: 'Qué mostró al correrlo, con al menos un caso de prueba', filas: 4, mono: true },
       { id: 'c1', etiqueta: '1. ¿Hace exactamente lo que pedía tu requisito, ni más ni menos? (Adecuación funcional)', filas: 2 },
       { id: 'c2', etiqueta: '2. Dale una entrada vacía o rara a propósito. ¿Se cae o responde con orden? (Fiabilidad)', filas: 2 },
@@ -708,7 +440,7 @@ export default {
       { id: 'c5', etiqueta: '5. ¿Tu programa podría compartir su resultado con otro programa, por ejemplo exportarlo? (Compatibilidad)', filas: 2 },
       { id: 'c6', etiqueta: '6. ¿Lo corriste en otro computador o celular? ¿Funcionó igual ahí? (Portabilidad)', filas: 2 },
       { id: 'c7', etiqueta: '7. Métele un dato absurdo o con símbolos raros. ¿Qué pasa? (Seguridad)', filas: 2 },
-      { id: 'c8', etiqueta: '8. Pídele a alguien que solo LEA tu código, sin correrlo, y te diga qué hace. ¿Pudo? (Mantenibilidad)', filas: 2 },
+      { id: 'c8', etiqueta: '8. Tápate la pantalla y explica en voz alta, en una sola frase, qué hace cada parte de tu código, sin mirarlo. ¿Pudiste de corrido o te trabaste? (Mantenibilidad)', filas: 2 },
     ],
     listaChequeo: [
       'Escribiste al menos un requisito comprobable para tu caso.',
@@ -716,11 +448,6 @@ export default {
       'Pegaste el código completo, no un fragmento suelto.',
       'Respondiste las 8 preguntas sobre TU propio código, no en general.',
       'Al menos una de las 8 respuestas dice honestamente que no cumple, y por qué.',
-    ],
-    rubrica: [
-      'El código corre y resuelve lo que pedían tus propios requisitos. (30 %)',
-      'Cada una de las 8 respuestas describe una prueba que de verdad hiciste sobre tu código, no una opinión genérica. (40 %)',
-      'Al menos una respuesta detecta honestamente una debilidad real del código, con el motivo. (30 %)',
     ],
   },
 }
