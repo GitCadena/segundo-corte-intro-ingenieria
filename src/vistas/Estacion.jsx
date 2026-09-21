@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link, Navigate, useLocation } from 'react-router-dom'
 import { estacionPorId, estaciones, actividadesDe } from '../data/catalogo.js'
 import { useProgreso } from '../estado/ProgresoProvider.jsx'
+import { useSesion } from '../estado/SesionProvider.jsx'
 import Actividad from '../componentes/juegos/index.jsx'
 import Secuencia from '../componentes/juegos/Secuencia.jsx'
 import Bloque from '../componentes/Bloque.jsx'
@@ -17,6 +18,7 @@ export default function Estacion() {
   const ubicacion = useLocation()
   const estacion = estacionPorId(id)
   const { resumen } = useProgreso()
+  const { perfil } = useSesion()
 
   useEffect(() => {
     if (!ubicacion.hash) return
@@ -32,6 +34,18 @@ export default function Estacion() {
   const p = resumen.porEstacion[estacion.id]
   const siguiente = estaciones.find((e) => e.orden === estacion.orden + 1)
   const glosarioClaves = estacion.glosario ?? []
+
+  // Si el taller trae un banco de casos, cada estudiante ya tiene un índice
+  // fijo asignado al registrarse (caso_iso_indice): así su caso queda
+  // sorteado una sola vez y no cambia al recargar la página.
+  const taller =
+    estacion.taller?.casoPersonal && estacion.taller.bancoCasos?.length
+      ? {
+          ...estacion.taller,
+          casoAsignado:
+            estacion.taller.bancoCasos[(perfil?.caso_iso_indice ?? 0) % estacion.taller.bancoCasos.length],
+        }
+      : estacion.taller
 
   return (
     <article className="estacion-vista">
@@ -170,10 +184,10 @@ export default function Estacion() {
       )}
 
       {/* --------------------------- taller ------------------------------- */}
-      {estacion.taller && (
+      {taller && (
         <section className="seccion" id="taller" tabIndex={-1}>
           <h2 className="seccion__titulo">Taller en clase</h2>
-          <Actividad actividad={estacion.taller} glosario={glosarioClaves} />
+          <Actividad actividad={taller} glosario={glosarioClaves} />
         </section>
       )}
 

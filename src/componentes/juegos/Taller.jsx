@@ -46,6 +46,14 @@ export default function Taller({ actividad, ctrl }) {
     <div className="juego juego--taller">
       <p className="enunciado">{actividad.enunciado}</p>
 
+      {actividad.casoAsignado && (
+        <aside className="caso-asignado">
+          <p className="caso-asignado__etiqueta">🎲 Tu caso asignado</p>
+          <p className="caso-asignado__titulo">{actividad.casoAsignado.titulo}</p>
+          <p className="caso-asignado__contexto">{actividad.casoAsignado.contexto}</p>
+        </aside>
+      )}
+
       {actividad.temas && (
         <div className="temas">
           <p className="etiqueta-campo">Temas para repartir entre los grupos</p>
