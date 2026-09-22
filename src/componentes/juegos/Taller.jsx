@@ -71,18 +71,48 @@ export default function Taller({ actividad, ctrl }) {
       )}
 
       <div className="taller__campos">
-        {actividad.campos.map((c) => (
-          <label key={c.id} className="taller__campo">
-            <span className="etiqueta-campo">{c.etiqueta}</span>
-            <textarea
-              className={c.mono ? 'editor' : 'campo campo--area'}
-              rows={c.filas ?? 3}
-              spellCheck={!c.mono}
-              value={valores[c.id] ?? ''}
-              onChange={(e) => setValores((p) => ({ ...p, [c.id]: e.target.value }))}
-            />
-          </label>
-        ))}
+        {actividad.campos.map((c) =>
+          c.tipo === 'seleccion' ? (
+            <div key={c.id} className="taller__campo">
+              <label>
+                <span className="etiqueta-campo">{c.etiqueta}</span>
+                <select
+                  className="campo"
+                  value={valores[c.id] ?? ''}
+                  onChange={(e) => setValores((p) => ({ ...p, [c.id]: e.target.value }))}
+                >
+                  <option value="">Elige una característica…</option>
+                  {c.opciones.map((o) => (
+                    <option key={o} value={o}>
+                      {o}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {valores[c.id] && c.ejemplosPorOpcion?.[valores[c.id]] && (
+                <div className="ejemplos-caracteristica">
+                  <p className="etiqueta-campo">Ejemplos que podrías construir con esa característica</p>
+                  <ul>
+                    {c.ejemplosPorOpcion[valores[c.id]].map((ej, i) => (
+                      <li key={i}>{ej}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          ) : (
+            <label key={c.id} className="taller__campo">
+              <span className="etiqueta-campo">{c.etiqueta}</span>
+              <textarea
+                className={c.mono ? 'editor' : 'campo campo--area'}
+                rows={c.filas ?? 3}
+                spellCheck={!c.mono}
+                value={valores[c.id] ?? ''}
+                onChange={(e) => setValores((p) => ({ ...p, [c.id]: e.target.value }))}
+              />
+            </label>
+          ),
+        )}
       </div>
 
       <p className={`guardado guardado--${estado === 'guardado' ? 'ok' : estado === 'pendiente' ? 'pendiente' : 'proceso'}`}>

@@ -870,6 +870,10 @@ input[type='checkbox'] { width: 22px; height: 22px; flex: none; margin-top: .1re
 .ideas-inspiracion ul { margin: .8rem 0 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: .5rem; }
 .ideas-inspiracion li { color: var(--tinta-suave); }
 
+.ejemplos-caracteristica { background: var(--acento-suave); border-radius: var(--radio); padding: .8rem 1rem; margin-top: .6rem; }
+.ejemplos-caracteristica ul { margin: .5rem 0 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: .4rem; }
+.ejemplos-caracteristica li { color: var(--tinta); font-size: .93rem; }
+
 .vacio { text-align: center; padding: 4rem 1rem; max-width: 620px; margin: 0 auto; }
 
 /* pie */

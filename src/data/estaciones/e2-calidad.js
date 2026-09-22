@@ -401,12 +401,12 @@ export default {
     nivel: 'base',
     puntos: 0,
     titulo: 'Taller en clase · Tu proyecto, tu pasión',
-    objetivo: 'Aplicar las 8 características de ISO/IEC 25010 sobre un proyecto propio que te apasione de verdad.',
+    objetivo: 'Construir algo propio que demuestre, a fondo, UNA característica de calidad de ISO/IEC 25010.',
     instrucciones:
-      'Trabajo individual. El tema lo eliges tú: algo que genuinamente te apasione como futuro ingeniero — una página web, una app, un juego, una herramienta, lo que sea. En el lenguaje o tecnología que prefieras (no el Laboratorio de pseudocódigo de esta app). No tiene que quedar terminado hoy: lo que importa es que avances con evidencia real, no que lo termines en 2 horas. El entregable no lo califica esta aplicación — lo revisa el docente.',
+      'Trabajo individual. El tema lo eliges tú: algo que genuinamente te apasione como futuro ingeniero — una página web, una app, un juego, una herramienta. Primero elige UNA característica de calidad para enfocarte en ella (no las 8: con una bien demostrada basta). Puedes apoyarte en IA para programar más rápido: lo importante es que entiendas y puedas explicar tu propio código, porque al final de la clase lo vas a mostrar en una exposición corta a tus compañeros. No tiene que quedar terminado hoy. El entregable no lo califica esta aplicación — lo revisa el docente.',
     conceptoPrevio: 'Toda la estación.',
     enunciado:
-      'Elige tú mismo qué vas a construir. Escribe uno o dos requisitos comprobables para tu idea, avanza en el código, y pruébalo con las 8 preguntas: son las 8 características de calidad de ISO/IEC 25010, ya con su nombre. Si no se te ocurre nada, abajo tienes ideas de arranque — son solo inspiración, no una lista obligatoria.',
+      'Elige tú mismo qué vas a construir y con cuál característica de calidad te vas a enfocar. Al elegirla te van a aparecer ejemplos de proyectos que la muestran bien. Escribe uno o dos requisitos comprobables, avanza en el código con la ayuda que necesites (IA incluida), y prepárate para explicarlo en clase.',
     ideas: [
       { titulo: 'Turnos para la fila del casino', contexto: 'Asignar un número de turno consecutivo a cada estudiante que llega, sin repetir turno a quien ya tiene uno activo.' },
       { titulo: 'Préstamo de libros de la biblioteca', contexto: 'Registrar el préstamo de un libro y calcular la fecha de devolución, sin permitir prestar un libro que ya está prestado.' },
@@ -418,24 +418,65 @@ export default {
     ],
     campos: [
       { id: 'idea', etiqueta: 'Tu idea: qué es, por qué la elegiste, a quién le serviría', filas: 3 },
+      {
+        id: 'caracteristica',
+        tipo: 'seleccion',
+        etiqueta: 'Elige UNA característica de ISO/IEC 25010 para enfocar tu proyecto en ella',
+        opciones: [
+          'Adecuación funcional',
+          'Fiabilidad',
+          'Usabilidad',
+          'Eficiencia de desempeño',
+          'Compatibilidad',
+          'Portabilidad',
+          'Seguridad',
+          'Mantenibilidad',
+        ],
+        ejemplosPorOpcion: {
+          'Adecuación funcional': [
+            'Una calculadora de propinas que reparte bien la cuenta entre varias personas, sin errores de centavos.',
+            'Un conversor de unidades (km↔millas, °C↔°F) que da exactamente el resultado que promete.',
+          ],
+          Fiabilidad: [
+            'Un formulario que valida cada campo y nunca deja pasar un dato inválido, sin importar qué le escriban.',
+            'Un juego simple (piedra-papel-tijera, adivina el número) que nunca se congela sin importar qué botón presionen.',
+          ],
+          Usabilidad: [
+            'Una landing page de un producto inventado, tan clara que no necesita instrucciones.',
+            'Una lista de tareas con botones tan obvios que cualquiera sabe qué hacer sin que se lo expliques.',
+          ],
+          'Eficiencia de desempeño': [
+            'Un buscador que filtra una lista de cientos de elementos mientras escribes, sin trabarse.',
+            'Un visualizador de un algoritmo de ordenamiento, mostrando qué tan rápido ordena distintos tamaños de lista.',
+          ],
+          Compatibilidad: [
+            'Una app que consuma una API pública real (clima, chistes, criptomonedas) y muestre el resultado.',
+            'Un formulario que exporta lo capturado a un archivo CSV o JSON descargable.',
+          ],
+          Portabilidad: [
+            'Una página 100 % responsiva: se ve y se usa igual de bien en el celular que en el computador.',
+            'Un modo claro/oscuro que se adapta automáticamente al dispositivo.',
+          ],
+          Seguridad: [
+            'Un formulario de login que valida la contraseña sin revelar nunca si el usuario existe o no.',
+            'Una entrada de texto que sanitiza símbolos raros antes de mostrarlos en pantalla, para que no rompan la página.',
+          ],
+          Mantenibilidad: [
+            'Un proyecto pequeño pero con funciones bien nombradas, cada una con una sola responsabilidad clara.',
+            'Reescribir más limpio y comentado un proyecto que ya tengas, para que otra persona lo entienda sin preguntarte.',
+          ],
+        },
+      },
       { id: 'requisitos', etiqueta: 'Uno o dos requisitos comprobables (qué se mide, en qué condiciones, con qué umbral)', filas: 3 },
       { id: 'enlace', etiqueta: 'Dónde se puede ver o ejecutar tu proyecto sin problema (desplegado en cualquier sitio: GitHub Pages, Vercel, Netlify, CodePen, Replit… o instrucciones claras para correrlo si aún no está desplegado)', filas: 2 },
-      { id: 'codigo', etiqueta: 'El fragmento de código que consideres más importante (opcional, por si el enlace deja de funcionar después)', filas: 8, mono: true, opcional: true },
-      { id: 'c1', etiqueta: '1. ¿Hace exactamente lo que pedía tu requisito, ni más ni menos? (Adecuación funcional)', filas: 2 },
-      { id: 'c2', etiqueta: '2. Dale una entrada vacía o rara a propósito. ¿Se cae o responde con orden? (Fiabilidad)', filas: 2 },
-      { id: 'c3', etiqueta: '3. Pídele a alguien que lo use sin explicarle nada. ¿Entendió qué hacer? (Usabilidad)', filas: 2 },
-      { id: 'c4', etiqueta: '4. Pruébalo con muchos datos o clics de una vez. ¿Sigue respondiendo rápido? (Eficiencia de desempeño)', filas: 2 },
-      { id: 'c5', etiqueta: '5. ¿Tu proyecto podría compartir su resultado con otro programa, por ejemplo exportarlo? (Compatibilidad)', filas: 2 },
-      { id: 'c6', etiqueta: '6. ¿Lo abriste en otro navegador o en el celular? ¿Se ve y funciona igual? (Portabilidad)', filas: 2 },
-      { id: 'c7', etiqueta: '7. Métele un dato absurdo o con símbolos raros. ¿Qué pasa? (Seguridad)', filas: 2 },
-      { id: 'c8', etiqueta: '8. Tápate la pantalla y explica en voz alta, en una sola frase, qué hace cada parte de tu código, sin mirarlo. ¿Pudiste de corrido o te trabaste? (Mantenibilidad)', filas: 2 },
+      { id: 'demostracion', etiqueta: 'Cómo tu proyecto demuestra la característica que elegiste (qué hiciste concretamente para lograrlo, no solo por qué la elegiste)', filas: 3 },
     ],
     listaChequeo: [
       'Tu idea es tuya: no la copiaste de la lista de inspiración tal cual.',
+      'Elegiste una sola característica y tu proyecto la demuestra de verdad, no de nombre.',
       'Escribiste al menos un requisito comprobable.',
       'El enlace o las instrucciones realmente funcionan — probaste abrirlo desde cero antes de entregar.',
-      'Respondiste las 8 preguntas sobre TU propio proyecto, no en general.',
-      'Al menos una de las 8 respuestas dice honestamente que no cumple, y por qué.',
+      'Puedes explicar tu código en voz alta, aunque hayas usado IA para escribirlo.',
     ],
   },
 }
