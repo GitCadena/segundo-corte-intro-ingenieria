@@ -280,7 +280,7 @@ function FormRegistro({ alEnviar, grupos, modoDemo, ocupado }) {
         etiqueta="Código estudiantil"
         valor={d.codigoEstudiantil}
         alCambiar={set('codigoEstudiantil')}
-        ayuda="Opcional. Sirve para que la docente te identifique en sus listas; no se usa para iniciar sesión."
+        ayuda="Opcional. Sirve para que el docente te identifique en sus listas; no se usa para iniciar sesión."
         opcional
       />
 

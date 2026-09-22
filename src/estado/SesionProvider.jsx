@@ -65,7 +65,7 @@ export function SesionProvider({ children }) {
     }
     if (!data) {
       setErrorPerfil(
-        'Tu cuenta existe pero no tiene perfil asociado. Avísale a la docente: falta ejecutar la migración que crea el perfil al registrarse.',
+        'Tu cuenta existe pero no tiene perfil asociado. Avísale al docente: falta ejecutar la migración que crea el perfil al registrarse.',
       )
       return
     }

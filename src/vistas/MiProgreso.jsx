@@ -53,7 +53,7 @@ export default function MiProgreso() {
           Puntos obtenidos ÷ puntos posibles × 5,0, contando <strong>solo</strong> las actividades de
           nivel base ({puntosNota} puntos posibles). Se excluyen los desafíos opcionales, los
           talleres y el laboratorio. Es una referencia para que sepas cómo vas: la nota académica del
-          corte la define la docente con el parcial y los entregables, no esta aplicación.
+          corte la define el docente con el parcial y los entregables, no esta aplicación.
         </p>
       </section>
 

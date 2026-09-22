@@ -21,7 +21,7 @@ export default class LimiteDeError extends Component {
   }
 
   componentDidCatch(error, info) {
-    // Queda en la consola para que la docente pueda reportarlo con detalle.
+    // Queda en la consola para que el docente pueda reportarlo con detalle.
     console.error('Error de render en la aplicación del segundo corte:', error, info)
   }
 

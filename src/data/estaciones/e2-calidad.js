@@ -403,7 +403,7 @@ export default {
     titulo: 'Taller en clase · Tu proyecto, tu pasión',
     objetivo: 'Aplicar las 8 características de ISO/IEC 25010 sobre un proyecto propio que te apasione de verdad.',
     instrucciones:
-      'Trabajo individual. El tema lo eliges tú: algo que genuinamente te apasione como futuro ingeniero — una página web, una app, un juego, una herramienta, lo que sea. En el lenguaje o tecnología que prefieras (no el Laboratorio de pseudocódigo de esta app). No tiene que quedar terminado hoy: lo que importa es que avances con evidencia real, no que lo termines en 2 horas. El entregable no lo califica esta aplicación — lo revisa la docente.',
+      'Trabajo individual. El tema lo eliges tú: algo que genuinamente te apasione como futuro ingeniero — una página web, una app, un juego, una herramienta, lo que sea. En el lenguaje o tecnología que prefieras (no el Laboratorio de pseudocódigo de esta app). No tiene que quedar terminado hoy: lo que importa es que avances con evidencia real, no que lo termines en 2 horas. El entregable no lo califica esta aplicación — lo revisa el docente.',
     conceptoPrevio: 'Toda la estación.',
     enunciado:
       'Elige tú mismo qué vas a construir. Escribe uno o dos requisitos comprobables para tu idea, avanza en el código, y pruébalo con las 8 preguntas: son las 8 características de calidad de ISO/IEC 25010, ya con su nombre. Si no se te ocurre nada, abajo tienes ideas de arranque — son solo inspiración, no una lista obligatoria.',

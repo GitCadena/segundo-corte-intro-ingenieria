@@ -52,7 +52,7 @@ export default {
           t: 'clave',
           titulo: 'Qué mide y qué no',
           texto:
-            'Mide si puedes aplicar los conceptos del corte a un caso nuevo. No mide tu nota del parcial, que depende del examen que aplique la docente. Un buen resultado aquí es una señal, no una garantía.',
+            'Mide si puedes aplicar los conceptos del corte a un caso nuevo. No mide tu nota del parcial, que depende del examen que aplique el docente. Un buen resultado aquí es una señal, no una garantía.',
         },
       ],
     },

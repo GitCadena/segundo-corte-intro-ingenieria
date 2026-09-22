@@ -82,7 +82,7 @@ Los nombres son lo que aparece en el desplegable del formulario de registro.
 clave `service_role` y el SQL Editor de la consola, así que un estudiante no
 puede ascenderse aunque manipule las peticiones.
 
-Después de que la docente se registre normalmente, ejecutar en el SQL Editor:
+Después de que el docente se registre normalmente, ejecutar en el SQL Editor:
 
 ```sql
 -- 1. Asignar el rol

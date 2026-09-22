@@ -106,7 +106,7 @@ export default function Inicio() {
       <section className="cierre">
         <h2 className="titulo-seccion">Para empezar</h2>
         <p>
-          Necesitas una cuenta para que tu avance se guarde y para que la docente pueda acompañarte.
+          Necesitas una cuenta para que tu avance se guarde y para que el docente pueda acompañarte.
           El registro pide nombre, apellido, grupo, correo y contraseña; el código estudiantil es
           opcional y no sirve para entrar: es solo un dato de tu perfil.
         </p>
