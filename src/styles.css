@@ -865,10 +865,10 @@ input[type='checkbox'] { width: 22px; height: 22px; flex: none; margin-top: .1re
 .historia-repaso__resultado { text-align: center; padding: 1rem 0; }
 .historia-repaso__marcador { font-family: var(--fuente-titulo); font-size: 1.6rem; font-weight: 700; color: var(--acento-oscuro); margin: 0 0 .5rem; }
 
-.caso-asignado { background: var(--acento-suave); border: 1px solid var(--acento); border-radius: var(--radio); padding: 1rem 1.2rem; margin: 1rem 0 1.4rem; }
-.caso-asignado__etiqueta { margin: 0 0 .3rem; font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--acento-oscuro); }
-.caso-asignado__titulo { margin: 0 0 .3rem; font-family: var(--fuente-titulo); font-size: 1.15rem; font-weight: 700; }
-.caso-asignado__contexto { margin: 0; color: var(--tinta-suave); }
+.ideas-inspiracion { background: var(--papel-suave); border: 1px solid var(--borde); border-radius: var(--radio); padding: .9rem 1.1rem; margin: 1rem 0 1.4rem; }
+.ideas-inspiracion summary { cursor: pointer; font-weight: 600; color: var(--acento-oscuro); }
+.ideas-inspiracion ul { margin: .8rem 0 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: .5rem; }
+.ideas-inspiracion li { color: var(--tinta-suave); }
 
 .vacio { text-align: center; padding: 4rem 1rem; max-width: 620px; margin: 0 auto; }
 

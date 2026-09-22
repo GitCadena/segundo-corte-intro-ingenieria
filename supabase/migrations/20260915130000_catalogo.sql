@@ -29,7 +29,7 @@ insert into public.actividades (id, estacion_id, titulo, tipo, nivel, puntos_max
   ('e2-a2-friccion', 'calidad', 'Encuentra la fricción', 'formulario-friccion', 'base', 120, true, ARRAY['usabilidad', 'calidad']::text[], 1),
   ('e2-a3-mejora', 'calidad', 'Mejora la interfaz', 'mejora-interfaz', 'base', 110, true, ARRAY['usabilidad']::text[], 2),
   ('e2-a7-subcaracteristicas', 'calidad', 'Cada subcaracterística en su lugar', 'clasificar', 'opcional', 90, false, ARRAY['square', 'usabilidad', 'portabilidad']::text[], 3),
-  ('e2-taller', 'calidad', 'Taller en clase · Tu propio caso', 'taller', 'base', 0, false, '{}'::text[], 4),
+  ('e2-taller', 'calidad', 'Taller en clase · Tu proyecto, tu pasión', 'taller', 'base', 0, false, '{}'::text[], 4),
   ('e3-a1-romper', 'robustez', 'Rompe el formulario', 'romper-formulario', 'base', 140, true, ARRAY['robustez', 'validacion', 'frontera', 'defecto']::text[], 0),
   ('e3-a2-limites', 'robustez', 'Explora los límites', 'limites', 'base', 110, true, ARRAY['frontera', 'validacion']::text[], 1),
   ('e3-a3-compatible', 'robustez', '¿Compatible o portable?', 'clasificar', 'base', 110, true, ARRAY['compatibilidad', 'portabilidad', 'disponibilidad']::text[], 2),

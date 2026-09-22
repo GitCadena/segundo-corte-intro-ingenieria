@@ -35,7 +35,7 @@ export default function Taller({ actividad, ctrl }) {
 
   const entregado = ctrl.mejor?.estado === 'completada' || ctrl.mejor?.estado === 'dominada'
   const listaCompleta = actividad.listaChequeo.every((_, i) => marcas[i])
-  const camposLlenos = actividad.campos.every((c) => (valores[c.id] ?? '').trim() !== '')
+  const camposLlenos = actividad.campos.every((c) => c.opcional || (valores[c.id] ?? '').trim() !== '')
 
   async function marcarEntregado() {
     await guardarBorrador(actividad.id, { campos: valores, marcas })
@@ -46,12 +46,17 @@ export default function Taller({ actividad, ctrl }) {
     <div className="juego juego--taller">
       <p className="enunciado">{actividad.enunciado}</p>
 
-      {actividad.casoAsignado && (
-        <aside className="caso-asignado">
-          <p className="caso-asignado__etiqueta">🎲 Tu caso asignado</p>
-          <p className="caso-asignado__titulo">{actividad.casoAsignado.titulo}</p>
-          <p className="caso-asignado__contexto">{actividad.casoAsignado.contexto}</p>
-        </aside>
+      {actividad.ideas && (
+        <details className="ideas-inspiracion">
+          <summary>¿No se te ocurre nada? Ideas de arranque (no es obligatorio usarlas)</summary>
+          <ul>
+            {actividad.ideas.map((idea, i) => (
+              <li key={i}>
+                <strong>{idea.titulo}.</strong> {idea.contexto}
+              </li>
+            ))}
+          </ul>
+        </details>
       )}
 
       {actividad.temas && (
