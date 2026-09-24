@@ -61,11 +61,20 @@ function Armazon() {
 
 function Rutas({ usuario, esDocente }) {
   const ubicacion = useLocation()
+  const { recuperacionPendiente } = useSesion()
 
   useEffect(() => {
     document.getElementById('contenido')?.scrollTo?.(0, 0)
     window.scrollTo(0, 0)
   }, [ubicacion.pathname])
+
+  // El enlace de recuperación de contraseña puede caer en cualquier ruta
+  // (por ejemplo, si se envió desde el panel de Supabase en vez del botón
+  // «Olvidé mi contraseña» de la app). Supabase igual deja al usuario con
+  // sesión iniciada, así que sin este atajo la protección de rutas lo
+  // mandaría directo al panel, sin pasar nunca por la pantalla para
+  // definir la contraseña nueva.
+  if (recuperacionPendiente) return <Acceso />
 
   return (
     <Routes>

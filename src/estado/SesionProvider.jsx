@@ -20,6 +20,7 @@ export function SesionProvider({ children }) {
   const [perfil, setPerfil] = useState(null)
   const [grupos, setGrupos] = useState([])
   const [errorPerfil, setErrorPerfil] = useState(null)
+  const [recuperacionPendiente, setRecuperacionPendiente] = useState(false)
 
   /* ------------------------------ modo demo ------------------------------ */
 
@@ -103,8 +104,14 @@ export function SesionProvider({ children }) {
       setCargando(false)
     })
 
-    const { data: sub } = supabase.auth.onAuthStateChange(async (_evento, sesion) => {
+    const { data: sub } = supabase.auth.onAuthStateChange(async (evento, sesion) => {
       if (!vivo) return
+      // Supabase dispara este evento apenas detecta, en la URL, el enlace de
+      // recuperación de contraseña — sin importar en qué página haya caído.
+      // Con eso alcanza para llevar al estudiante a la pantalla correcta,
+      // aunque el enlace lo haya mandado el panel de Supabase (que no sabe
+      // de la ruta /acceso) en vez del botón «Olvidé mi contraseña» de la app.
+      if (evento === 'PASSWORD_RECOVERY') setRecuperacionPendiente(true)
       const u = sesion?.user ?? null
       setUsuario(u)
       if (u) await cargarPerfil(u.id)
@@ -230,6 +237,7 @@ export function SesionProvider({ children }) {
       perfil,
       grupos,
       errorPerfil,
+      recuperacionPendiente,
       modoDemo: !hayConfiguracion,
       motivoSinConfiguracion,
       esDocente: perfil?.rol === 'docente' || perfil?.rol === 'admin',
@@ -247,6 +255,7 @@ export function SesionProvider({ children }) {
       perfil,
       grupos,
       errorPerfil,
+      recuperacionPendiente,
       registrar,
       iniciarSesion,
       recuperar,
