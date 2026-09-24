@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { HashRouter, Routes, Route, Navigate, NavLink, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, NavLink, useLocation } from 'react-router-dom'
 import { SesionProvider, useSesion } from './estado/SesionProvider.jsx'
 import { ProgresoProvider, useProgreso } from './estado/ProgresoProvider.jsx'
 
@@ -16,13 +16,13 @@ import { catalogoEstaciones } from './data/catalogo.js'
 
 export default function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <SesionProvider>
         <ProgresoProvider>
           <Armazon />
         </ProgresoProvider>
       </SesionProvider>
-    </HashRouter>
+    </BrowserRouter>
   )
 }
 

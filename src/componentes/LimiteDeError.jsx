@@ -39,7 +39,7 @@ export default class LimiteDeError extends Component {
           <button type="button" className="boton boton--principal" onClick={() => window.location.reload()}>
             Recargar la página
           </button>
-          <a className="boton boton--secundario" href="#/panel" onClick={() => window.location.reload()}>
+          <a className="boton boton--secundario" href="/panel" onClick={() => window.location.reload()}>
             Volver al panel
           </a>
         </div>
