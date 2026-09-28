@@ -38,6 +38,7 @@ async function cargarTodasLasFilas() {
 
 export default function PanelDocente() {
   const [filas, setFilas] = useState([])
+  const [borradores, setBorradores] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState(null)
   const [grupo, setGrupo] = useState('todos')
@@ -52,8 +53,16 @@ export default function PanelDocente() {
       )
       return
     }
-    cargarTodasLasFilas()
-      .then((data) => setFilas(data))
+    Promise.all([
+      cargarTodasLasFilas(),
+      // Las políticas del servidor solo dejan ver aquí los talleres (no el
+      // resto de borradores, como el código a medio hacer del Laboratorio).
+      supabase.from('borradores').select('perfil_id, actividad_id, contenido, actualizado_en'),
+    ])
+      .then(([data, resBorradores]) => {
+        setFilas(data)
+        setBorradores(resBorradores.data ?? [])
+      })
       .catch((e) => setError(e.message))
       .finally(() => setCargando(false))
   }, [])
@@ -72,6 +81,24 @@ export default function PanelDocente() {
       ),
     [filas, grupo, estacion],
   )
+
+  const talleresPorId = useMemo(() => {
+    const mapa = {}
+    for (const e of estaciones) {
+      if (e.taller) mapa[e.taller.id] = e.taller
+    }
+    return mapa
+  }, [])
+
+  const borradoresPorPerfil = useMemo(() => {
+    const mapa = new Map()
+    for (const b of borradores) {
+      if (!talleresPorId[b.actividad_id]) continue
+      if (!mapa.has(b.perfil_id)) mapa.set(b.perfil_id, [])
+      mapa.get(b.perfil_id).push(b)
+    }
+    return mapa
+  }, [borradores, talleresPorId])
 
   const estudiantes = useMemo(() => agruparPorEstudiante(filtradas), [filtradas])
   const dificultades = useMemo(() => calcularDificultades(filtradas), [filtradas])
@@ -232,7 +259,14 @@ export default function PanelDocente() {
         </>
       )}
 
-      {detalle && <DetalleEstudiante estudiante={detalle} cerrar={() => setDetalle(null)} />}
+      {detalle && (
+        <DetalleEstudiante
+          estudiante={detalle}
+          talleres={borradoresPorPerfil.get(detalle.perfil_id) ?? []}
+          talleresPorId={talleresPorId}
+          cerrar={() => setDetalle(null)}
+        />
+      )}
 
       <section className="docente__seccion explicacion">
         <p className="explicacion__titulo">Cómo se calculan estas métricas</p>
@@ -341,7 +375,9 @@ function calcularDificultades(filas) {
 
 /* --------------------------------- detalle -------------------------------- */
 
-function DetalleEstudiante({ estudiante, cerrar }) {
+function DetalleEstudiante({ estudiante, talleres, talleresPorId, cerrar }) {
+  const tallerEntregado = (id) => estudiante.filas.find((f) => f.actividad_id === id)?.estado
+
   return (
     <div className="modal" role="dialog" aria-modal="true" aria-labelledby="detalle-titulo">
       <div className="modal__caja">
@@ -385,6 +421,44 @@ function DetalleEstudiante({ estudiante, cerrar }) {
             </tbody>
           </table>
         </div>
+
+        {talleres.length > 0 && (
+          <div className="docente__talleres">
+            <h3 className="titulo-seccion">
+              Talleres ({talleres.length})
+            </h3>
+            <p className="panel__nota">
+              No suman puntos ni nota: son el trabajo que escribió en cada taller. Se guarda solo
+              mientras la actividad no se retire del catálogo.
+            </p>
+            {talleres.map((b) => {
+              const taller = talleresPorId[b.actividad_id]
+              if (!taller) return null
+              const valores = b.contenido?.campos ?? {}
+              return (
+                <article key={b.actividad_id} className="docente__taller">
+                  <header className="docente__taller-cabecera">
+                    <h4>{taller.titulo}</h4>
+                    <span className={`chip ${tallerEntregado(b.actividad_id) ? 'chip--tipo' : ''}`}>
+                      {tallerEntregado(b.actividad_id) ? 'Marcado como entregado' : 'Borrador, sin marcar entregado'}
+                    </span>
+                  </header>
+                  <p className="docente__taller-fecha">
+                    Última edición: {new Date(b.actualizado_en).toLocaleString('es-CO')}
+                  </p>
+                  <dl className="docente__taller-campos">
+                    {taller.campos.map((c) => (
+                      <div key={c.id} className="docente__taller-campo">
+                        <dt>{c.etiqueta}</dt>
+                        <dd>{valores[c.id]?.trim() ? valores[c.id] : '— sin responder —'}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </article>
+              )
+            })}
+          </div>
+        )}
       </div>
     </div>
   )
