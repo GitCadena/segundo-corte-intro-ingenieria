@@ -19,7 +19,7 @@ export default {
 
   aprenderas: {
     objetivo:
-      'Al terminar podrás desarmar cualquier sistema en sus cuatro piezas, distinguir un sistema manual de uno automatizado, y reconocer los cinco elementos de un sistema de información.',
+      'Al terminar podrás desarmar cualquier sistema en sus cinco piezas, distinguir un sistema manual de uno automatizado, y reconocer los cinco elementos de un sistema de información.',
     puntos: [
       'Identificar la entrada, el proceso, la salida y la retroalimentación de un sistema real.',
       'Distinguir un sistema manual de uno automatizado, más allá de si usa o no una pantalla.',
@@ -38,7 +38,7 @@ export default {
         {
           t: 'p',
           texto:
-            'Los libros de texto suelen nombrar varios tipos: sistemas transaccionales (registran operaciones del día a día, como una caja registradora), sistemas de apoyo a decisiones (cruzan datos para sugerir qué hacer, como un reporte de qué producto reponer) y sistemas expertos (imitan el criterio de un especialista, como un diagnóstico automático). No hace falta memorizar la lista: lo que importa es notar que todos comparten las mismas cuatro piezas y los mismos cinco elementos que ya viste.',
+            'Los libros de texto suelen nombrar varios tipos: sistemas transaccionales (registran operaciones del día a día, como una caja registradora), sistemas de apoyo a decisiones (cruzan datos para sugerir qué hacer, como un reporte de qué producto reponer) y sistemas expertos (imitan el criterio de un especialista, como un diagnóstico automático). No hace falta memorizar la lista: lo que importa es notar que todos comparten las mismas cinco piezas y los mismos cinco elementos que ya viste.',
         },
         {
           t: 'clave',
@@ -94,47 +94,112 @@ export default {
     /* ------------------------------------------------------------------ 1 */
     {
       id: 'e3-a1-diseccion',
-      tipo: 'clasificar',
+      tipo: 'diseca-sistema',
       nivel: 'base',
       puntos: 140,
       titulo: 'Diseca un sistema real',
-      objetivo: 'Reconocer la entrada, el proceso, la salida y la retroalimentación en sistemas cotidianos.',
+      objetivo: 'Reconocer la entrada, el proceso, la salida, el control y la retroalimentación de un sistema real.',
       instrucciones:
-        'Estos hechos vienen de cuatro sistemas distintos del campus. Clasifica cada uno en la pieza del modelo a la que pertenece, sin importar de qué sistema venga.',
-      conceptoPrevio: 'Las cuatro piezas de todo sistema: entrada, proceso, salida, retroalimentación.',
-      conceptos: ['sistema', 'entrada', 'proceso-sistema', 'salida', 'retroalimentacion'],
-      grupos: [
-        { id: 'entrada', nombre: 'Entrada' },
-        { id: 'proceso', nombre: 'Proceso' },
-        { id: 'salida', nombre: 'Salida' },
-        { id: 'retro', nombre: 'Retroalimentación' },
+        'Elige un sistema de la lista y arrastra cada ficha a la pieza a la que pertenece. Puedes cambiar de sistema cuando quieras: para completar la actividad basta con terminar bien uno solo.',
+      conceptoPrevio: 'Las cinco piezas de todo sistema: entrada, proceso, salida, control, retroalimentación.',
+      conceptos: ['sistema', 'entrada', 'proceso-sistema', 'salida', 'control', 'retroalimentacion'],
+      piezas: [
+        { id: 'entrada', nombre: 'Entrada', ayuda: 'Lo que llega desde fuera.' },
+        { id: 'proceso', nombre: 'Proceso', ayuda: 'Lo que transforma los datos.' },
+        { id: 'salida', nombre: 'Salida', ayuda: 'El resultado que se entrega.' },
+        { id: 'control', nombre: 'Control', ayuda: 'La regla o acción que regula.' },
+        { id: 'retro', nombre: 'Retroalimentación', ayuda: 'Lo que regresa para orientar un ajuste.' },
       ],
-      items: [
-        { texto: 'El estudiante indica en pantalla qué plato quiere y cómo va a pagar.', grupo: 'entrada', porQue: 'Es el dato con el que arranca todo lo demás: nada se calcula todavía.' },
-        { texto: 'El carné del estudiante se escanea al entrar a la biblioteca.', grupo: 'entrada', porQue: 'Es información que ingresa al sistema, antes de cualquier verificación.' },
-        { texto: 'El monitor marca la hora exacta de llegada del estudiante a la tutoría.', grupo: 'entrada', porQue: 'Es el dato crudo que se captura en el momento.' },
-        { texto: 'La estudiante entrega el libro que quiere fotocopiar en el mostrador.', grupo: 'entrada', porQue: 'Todavía no se ha hecho nada con esa información: apenas ingresa.' },
-        { texto: 'El sistema calcula el total del pedido y aplica el descuento del día.', grupo: 'proceso', porQue: 'Es una transformación: toma un dato y lo convierte en otro.' },
-        { texto: 'El sistema verifica si el carné pertenece a un estudiante activo.', grupo: 'proceso', porQue: 'Es una comprobación, no un resultado final todavía.' },
-        { texto: 'Se calcula cuántas tutorías lleva el estudiante en el semestre.', grupo: 'proceso', porQue: 'Es un cálculo interno, no lo que finalmente se le entrega a alguien.' },
-        { texto: 'Se cuentan las páginas para calcular el costo de la fotocopia.', grupo: 'proceso', porQue: 'Convierte una entrada (el libro) en un valor a cobrar.' },
-        { texto: 'Se imprime el recibo con el total a pagar.', grupo: 'salida', porQue: 'Es el resultado final que recibe la persona que hizo la compra.' },
-        { texto: 'La puerta de la biblioteca se abre y deja pasar al estudiante.', grupo: 'salida', porQue: 'Es la consecuencia final y visible de todo el proceso de verificación.' },
-        { texto: 'Se entrega la constancia de asistencia a la tutoría.', grupo: 'salida', porQue: 'Es lo que la persona se lleva como resultado de ese trámite puntual.' },
-        { texto: 'Se entrega la fotocopia ya lista para llevar.', grupo: 'salida', porQue: 'Es el producto final de ese trámite, lo que la persona vino a buscar.' },
-        { texto: 'Un reporte semanal muestra que el jugo de mora se agota antes del mediodía.', grupo: 'retro', porQue: 'No resuelve el pedido de nadie: sirve para ajustar cuánto pedir la próxima semana.' },
-        { texto: 'La coordinación nota que los lunes casi nadie va a las tutorías y cambia el horario.', grupo: 'retro', porQue: 'Es información sobre el desempeño del sistema, usada para corregirlo.' },
-        { texto: 'El encargado de la fotocopiadora nota que se traba siempre con hojas tamaño oficio y pide revisión técnica.', grupo: 'retro', porQue: 'Es una observación sobre cómo se está comportando el sistema, no un resultado para un usuario puntual.' },
-        { texto: 'La biblioteca revisa qué libros nunca se prestan y decide dejar de comprar esa colección.', grupo: 'retro', porQue: 'Ajusta una decisión futura a partir del comportamiento observado, no resuelve un préstamo puntual.' },
+      casos: [
+        {
+          titulo: 'Cajero automático',
+          contexto: 'Analiza el servicio de retiro: el cajero y la validación bancaria forman el sistema. Distingue la medición de lo ocurrido de la acción que responde a ella.',
+          fichas: [
+            ['entrada', 'La persona introduce su tarjeta.', 'La tarjeta aporta los datos iniciales desde el exterior.'],
+            ['entrada', 'La persona escribe el monto que desea retirar.', 'La solicitud del usuario ingresa al sistema.'],
+            ['proceso', 'Se calcula el saldo que quedaría después del retiro.', 'Se transforman el saldo actual y el monto solicitado mediante un cálculo.'],
+            ['proceso', 'Se calcula la combinación de billetes para entregar el monto.', 'Una operación convierte el monto solicitado en cantidades de billetes.'],
+            ['salida', 'El cajero entrega los billetes a la persona.', 'El dinero entregado es un resultado que sale del sistema.'],
+            ['salida', 'La pantalla muestra el comprobante del retiro.', 'El comprobante comunica el resultado al usuario.'],
+            ['control', 'La regla de seguridad bloquea el acceso tras tres claves incorrectas.', 'Es una regla que limita el acceso y regula la operación.'],
+            ['control', 'Al recibir una alerta de atasco, el sistema detiene el dispensador.', 'La acción correctiva actúa sobre el proceso para detener un fallo.'],
+            ['retro', 'Un sensor informa al sistema que el dispensador está atascado.', 'La medición del estado real regresa al sistema para decidir qué hacer.'],
+            ['retro', 'El contador devuelve cuántos billetes salieron para compararlos con lo esperado.', 'El resultado medido vuelve para detectar si la entrega coincidió con la orden.'],
+          ],
+        },
+        {
+          titulo: 'Pedidos de una cafetería',
+          contexto: 'Analiza el sistema de pedidos y seguimiento de atención, desde el registro hasta la entrega. Incluye la información que usa la administración para corregir el servicio.',
+          fichas: [
+            ['entrada', 'La cajera registra dos cafés y un sándwich.', 'El pedido introduce datos desde el cliente.'],
+            ['entrada', 'El cliente indica que su café debe llevar leche deslactosada.', 'La preferencia es un dato externo que entra al pedido.'],
+            ['proceso', 'Se suman los precios y se calcula el descuento del pedido.', 'El cálculo transforma productos y precios en un total.'],
+            ['proceso', 'Se agrupan las bebidas y los alimentos para preparar las órdenes de cada estación.', 'Los datos del pedido se organizan para producir órdenes de trabajo.'],
+            ['salida', 'Se entrega el pedido preparado al cliente.', 'Los productos entregados son el resultado del servicio.'],
+            ['salida', 'El cliente recibe su factura digital.', 'La factura sale del sistema hacia el cliente.'],
+            ['control', 'La regla impide confirmar pedidos de productos sin existencias.', 'La restricción evita aceptar una operación que no se puede cumplir.'],
+            ['control', 'La administradora abre otra caja cuando la espera supera diez minutos.', 'Es una acción correctiva para regular el tiempo de atención.'],
+            ['retro', 'El registro de entrega devuelve el tiempo real de espera para ajustar la atención.', 'La medición del desempeño regresa para orientar mejoras.'],
+            ['retro', 'La encuesta comunica que los pedidos llegaron fríos para revisar la preparación.', 'La información posterior al servicio vuelve para corregir su funcionamiento.'],
+          ],
+        },
+        {
+          titulo: 'Aplicación de domicilios',
+          contexto: 'Analiza la plataforma que recibe pedidos, coordina la entrega y supervisa el servicio. Clientes, restaurantes y repartidores aportan datos a esa plataforma.',
+          fichas: [
+            ['entrada', 'El cliente escribe la dirección de entrega.', 'La dirección ingresa desde un actor externo.'],
+            ['entrada', 'El restaurante envía su menú y sus precios a la plataforma.', 'La información llega desde el restaurante al sistema.'],
+            ['proceso', 'Se calcula el precio total con el costo del envío.', 'Se transforman los precios en un total.'],
+            ['proceso', 'El algoritmo calcula una ruta entre el restaurante y el destino.', 'Los datos de ubicación se transforman en una ruta.'],
+            ['salida', 'La plataforma envía la orden de preparación al restaurante.', 'La orden sale de la plataforma hacia el restaurante.'],
+            ['salida', 'La app muestra al cliente la hora estimada de llegada.', 'La estimación se entrega al usuario como resultado.'],
+            ['control', 'Una regla impide confirmar un pedido si el pago es rechazado.', 'La condición regula si se permite continuar.'],
+            ['control', 'La plataforma reasigna el pedido al recibir una alerta de avería del vehículo.', 'La reasignación es la respuesta correctiva sobre la entrega.'],
+            ['retro', 'El repartidor reporta una avería para que la plataforma ajuste la entrega.', 'La información del estado real del servicio vuelve al coordinador.'],
+            ['retro', 'La calificación posterior del cliente vuelve al sistema para mejorar el servicio.', 'Es información sobre el resultado usada para ajustar futuras operaciones.'],
+          ],
+        },
+        {
+          titulo: 'Préstamos de una biblioteca',
+          contexto: 'Analiza el sistema informático de préstamos, devoluciones y seguimiento. Usuarios y personal interactúan con él desde el exterior.',
+          fichas: [
+            ['entrada', 'La bibliotecaria escanea el código del libro solicitado.', 'El código se introduce al sistema mediante un lector.'],
+            ['entrada', 'El estudiante introduce su identificación para solicitar el préstamo.', 'La identificación es un dato que ingresa desde el usuario.'],
+            ['proceso', 'Se calcula la fecha de devolución según la duración del préstamo.', 'Se transforma una fecha inicial y un plazo en una fecha límite.'],
+            ['proceso', 'Se relaciona el ejemplar prestado con el registro del estudiante.', 'La operación organiza y vincula datos internos.'],
+            ['salida', 'Se envía al estudiante el comprobante del préstamo.', 'El comprobante se entrega fuera del sistema.'],
+            ['salida', 'La pantalla presenta la lista de préstamos activos que pidió la bibliotecaria.', 'La lista es un resultado presentado a quien consulta.'],
+            ['control', 'La regla no permite más de tres préstamos simultáneos por estudiante.', 'El límite regula qué operaciones se autorizan.'],
+            ['control', 'El sistema suspende nuevos préstamos al detectar una devolución vencida.', 'La suspensión es una acción reguladora para exigir el cumplimiento.'],
+            ['retro', 'La revisión física informa que falta un ejemplar marcado como disponible, para corregir el catálogo.', 'La discrepancia del resultado real regresa para ajustar los datos del sistema.'],
+            ['retro', 'El seguimiento informa cuántas devoluciones se retrasaron para ajustar las políticas de préstamo.', 'La medición del desempeño vuelve a quienes regulan el servicio.'],
+          ],
+        },
+        {
+          titulo: 'Tutorías de Bienestar Universitario',
+          contexto: 'Analiza el sistema de agendamiento y seguimiento de tutorías del campus. Estudiantes y monitores interactúan con él para pedir cupo, tutorearse y mejorar el servicio.',
+          fichas: [
+            ['entrada', 'El estudiante indica en la app qué materia necesita reforzar.', 'La solicitud del estudiante ingresa al sistema desde fuera.'],
+            ['entrada', 'El monitor registra su disponibilidad de horarios en la semana.', 'La disponibilidad es un dato que aporta el monitor al sistema.'],
+            ['proceso', 'El sistema empareja al estudiante con un monitor disponible en esa materia.', 'Los datos de solicitud y disponibilidad se combinan para producir una asignación.'],
+            ['proceso', 'Se calcula cuántas tutorías lleva el estudiante en el semestre.', 'Un cálculo interno acumula información para producir un conteo.'],
+            ['salida', 'El estudiante recibe la confirmación con el monitor, el lugar y la hora.', 'La confirmación es el resultado que se entrega a quien pidió la tutoría.'],
+            ['salida', 'El coordinador ve el reporte de tutorías agendadas esta semana.', 'El reporte es un resultado entregado a quien lo consulta.'],
+            ['control', 'La regla no permite agendar más de dos tutorías activas por estudiante a la vez.', 'Es un límite que regula qué solicitudes se aceptan.'],
+            ['control', 'El sistema cancela automáticamente una tutoría si nadie confirma asistencia diez minutos antes.', 'Es una acción correctiva y programada que regula el uso del recurso.'],
+            ['retro', 'El monitor marca si el estudiante faltó, para que el coordinador decida si suspende el beneficio.', 'La información sobre lo ocurrido regresa para orientar una decisión futura.'],
+            ['retro', 'La encuesta de satisfacción muestra que casi nadie va los lunes, y se decide cambiar el horario.', 'El resultado medido después del servicio vuelve para ajustar cómo funciona.'],
+          ],
+        },
       ],
       pistas: [
-        'Si el hecho describe algo que la persona hace ANTES de que el sistema calcule nada, es entrada.',
-        'Si describe un cálculo o una verificación interna, es proceso.',
-        'Si es lo último que recibe la persona que inició el trámite, es salida.',
-        'Si sirve para decidir algo distinto en el futuro, sin resolver el trámite de hoy, es retroalimentación.',
+        'Si el hecho describe algo que llega desde fuera ANTES de que el sistema calcule nada, es entrada.',
+        'Si describe un cálculo o una verificación interna, es proceso; si es lo último que recibe quien inició el trámite, es salida.',
+        'Si es una regla o una acción que regula el sistema, es control. Si es una medición o un aviso sobre lo que pasó, es retroalimentación.',
+        'Primero llega la retroalimentación (se sabe qué pasó); el control es lo que se hace con esa información.',
       ],
       explicacion:
-        'La trampa más común es confundir salida con retroalimentación: las dos son "algo que el sistema produce", pero la salida resuelve lo que la persona pidió HOY, mientras que la retroalimentación ajusta lo que el sistema va a hacer DESPUÉS. El recibo de la fotocopia es salida; que el técnico decida revisar la máquina por las fallas repetidas es retroalimentación.',
+        'Las dos trampas más comunes: confundir salida con retroalimentación (la salida resuelve el trámite de HOY, la retroalimentación ajusta el sistema para DESPUÉS), y confundir control con retroalimentación (la retroalimentación es la señal que avisa que algo pasó; el control es la regla o la acción que responde a esa señal).',
     },
 
     /* ------------------------------------------------------------------ 2 */
@@ -244,7 +309,7 @@ export default {
           explicacion: 'Los procedimientos son reglas de cómo operar, no dependen de que haya o no un computador. Un archivo en papel puede estar perfectamente organizado con procedimientos claros.',
         },
         {
-          texto: 'Todo sistema, sin importar su tamaño, se puede describir con las mismas cuatro piezas.',
+          texto: 'Todo sistema, sin importar su tamaño, se puede describir con las mismas cinco piezas.',
           verdadero: true,
           explicacion: 'Entrada, proceso, salida y retroalimentación aparecen igual en un cajero automático que en el cuerpo humano: cambia el contenido, no el modelo.',
         },
@@ -254,7 +319,7 @@ export default {
         'Dos de las cinco son verdaderas.',
       ],
       explicacion:
-        'El patrón detrás de los mitos falsos es el mismo: confundir "tiene computador" con "es automatizado", o confundir "el software" con "todo el sistema". Los cinco elementos y las cuatro piezas son el antídoto contra esa confusión.',
+        'El patrón detrás de los mitos falsos es el mismo: confundir "tiene computador" con "es automatizado", o confundir "el software" con "todo el sistema". Los cinco elementos y las cinco piezas son el antídoto contra esa confusión.',
     },
   ],
 
@@ -275,7 +340,7 @@ export default {
         id: 'p1',
         tipo: 'quiz',
         conceptos: ['entrada'],
-        seccion: { estacion: 'sistemas', titulo: 'Las cuatro piezas de todo sistema' },
+        seccion: { estacion: 'sistemas', titulo: 'Las cinco piezas de todo sistema' },
         pregunta: 'Paso 1. Cuando el estudiante entrega su carné y el libro que quiere llevar, ¿qué pieza del sistema es eso?',
         opciones: [
           'Salida, porque el estudiante se está llevando algo.',
@@ -295,7 +360,7 @@ export default {
         id: 'p2',
         tipo: 'clasificar',
         conceptos: ['salida', 'retroalimentacion'],
-        seccion: { estacion: 'sistemas', titulo: 'Las cuatro piezas de todo sistema' },
+        seccion: { estacion: 'sistemas', titulo: 'Las cinco piezas de todo sistema' },
         instrucciones: 'Paso 2. Clasifica estos cuatro hechos del sistema de préstamos.',
         grupos: [
           { id: 'proceso', nombre: 'Proceso' },
@@ -357,7 +422,8 @@ export default {
 
   sintesis: {
     puntos: [
-      'Todo sistema —una cafetería, un cajero, tu cuerpo— se puede desarmar en las mismas cuatro piezas: entrada, proceso, salida y retroalimentación.',
+      'Todo sistema —una cafetería, un cajero, tu cuerpo— se puede desarmar en las mismas cinco piezas: entrada, proceso, salida, control y retroalimentación.',
+      'La retroalimentación informa qué pasó; el control decide qué hacer con esa información. Primero se mide, después se corrige.',
       'La salida resuelve el trámite de hoy; la retroalimentación ajusta el sistema para el futuro. Son las piezas que más se confunden entre sí.',
       'Automatizar no es "usar computador": es que la regla de decisión la ejecute el propio sistema, no una persona caso por caso.',
       'Un sistema de información necesita cinco elementos completos: hardware, software, datos, procedimientos y personas.',
@@ -375,12 +441,12 @@ export default {
     nivel: 'base',
     puntos: 0,
     titulo: 'Taller en clase · Ficha de análisis de un sistema',
-    objetivo: 'Aplicar el modelo de las cuatro piezas a un sistema real de tu propia vida.',
+    objetivo: 'Aplicar el modelo de las cinco piezas a un sistema real de tu propia vida.',
     instrucciones:
       'Trabajo individual. Elige un sistema real que conozcas de verdad —tu trabajo, tu casa, un negocio familiar, un club al que perteneces— y analízalo con el mismo modelo de esta estación. El entregable no lo califica esta aplicación: lo revisa el docente.',
     conceptoPrevio: 'Toda la estación.',
     enunciado:
-      'Describe un sistema real que conozcas bien, con sus cuatro piezas y si es manual o automatizado. Entre mejor lo conozcas, más fácil te va a resultar.',
+      'Describe un sistema real que conozcas bien, con sus cinco piezas y si es manual o automatizado. Entre mejor lo conozcas, más fácil te va a resultar.',
     ideas: [
       { titulo: 'Un negocio familiar', contexto: 'Una tienda, un restaurante, un taller — cómo reciben pedidos, los procesan y entregan el resultado.' },
       { titulo: 'Un equipo o club deportivo', contexto: 'Cómo se inscriben los jugadores, cómo se arman los horarios de entrenamiento, cómo se avisa un cambio.' },
@@ -392,7 +458,8 @@ export default {
       { id: 'entrada', etiqueta: 'Entrada: qué información o materia prima ingresa', filas: 2 },
       { id: 'proceso', etiqueta: 'Proceso: qué transformación se le aplica a esa entrada', filas: 2 },
       { id: 'salida', etiqueta: 'Salida: qué resultado final se entrega, y a quién', filas: 2 },
-      { id: 'retroalimentacion', etiqueta: 'Retroalimentación: qué información de vuelta ayuda a ajustar el sistema', filas: 2 },
+      { id: 'control', etiqueta: 'Control: qué regla o acción regula el funcionamiento del sistema', filas: 2 },
+      { id: 'retroalimentacion', etiqueta: 'Retroalimentación: qué información de vuelta avisa que algo pasó y ayuda a ajustar el sistema', filas: 2 },
       { id: 'tipo', etiqueta: '¿Es manual, automatizado, o una mezcla de los dos? Justifica con un ejemplo concreto', filas: 3 },
     ],
     listaChequeo: [

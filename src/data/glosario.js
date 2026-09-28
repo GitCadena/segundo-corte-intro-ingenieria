@@ -173,8 +173,14 @@ const glosario = {
   retroalimentacion: {
     termino: 'Retroalimentación',
     definicion:
-      'Información de retorno sobre el desempeño de un sistema, que sirve para ajustarlo. No es lo mismo que la salida: la salida resuelve, la retroalimentación corrige.',
+      'Información sobre lo que de verdad ocurrió en un sistema, que vuelve para ajustarlo. No es lo mismo que la salida: la salida resuelve, la retroalimentación informa qué corregir.',
     ejemplo: 'Un reporte semanal muestra que un producto siempre se agota antes del mediodía.',
+  },
+  control: {
+    termino: 'Control (de un sistema)',
+    definicion:
+      'La regla o la acción que regula el funcionamiento de un sistema, en respuesta a una retroalimentación o de forma preventiva. Primero se sabe qué pasó, después se decide qué hacer.',
+    ejemplo: 'Bloquear el acceso a una cuenta después de tres claves incorrectas seguidas.',
   },
   'sistema-automatizado': {
     termino: 'Sistema automatizado',

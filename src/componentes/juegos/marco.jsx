@@ -98,6 +98,7 @@ const ETIQUETA_TIPO = {
   orden: 'Ordenar',
   emparejar: 'Emparejar',
   clasificar: 'Clasificar',
+  'diseca-sistema': 'Diseca un sistema',
   calcular: 'Calcular',
   caso: 'Decidir sobre un caso',
   entrega: 'Elegir alcance',

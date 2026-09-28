@@ -30,7 +30,7 @@ insert into public.actividades (id, estacion_id, titulo, tipo, nivel, puntos_max
   ('e2-a3-mejora', 'calidad', 'Mejora la interfaz', 'mejora-interfaz', 'base', 110, true, ARRAY['usabilidad']::text[], 2),
   ('e2-a7-subcaracteristicas', 'calidad', 'Cada subcaracterística en su lugar', 'clasificar', 'opcional', 90, false, ARRAY['square', 'usabilidad', 'portabilidad']::text[], 3),
   ('e2-taller', 'calidad', 'Taller en clase · Tu proyecto, tu pasión', 'taller', 'base', 0, false, '{}'::text[], 4),
-  ('e3-a1-diseccion', 'sistemas', 'Diseca un sistema real', 'clasificar', 'base', 140, true, ARRAY['sistema', 'entrada', 'proceso-sistema', 'salida', 'retroalimentacion']::text[], 0),
+  ('e3-a1-diseccion', 'sistemas', 'Diseca un sistema real', 'diseca-sistema', 'base', 140, true, ARRAY['sistema', 'entrada', 'proceso-sistema', 'salida', 'control', 'retroalimentacion']::text[], 0),
   ('e3-a2-manual-auto', 'sistemas', 'Manual o automatizado', 'clasificar', 'base', 120, true, ARRAY['sistema-automatizado']::text[], 1),
   ('e3-a3-elementos', 'sistemas', 'Los cinco elementos de un sistema de información', 'clasificar', 'base', 130, true, ARRAY['elementos-si']::text[], 2),
   ('e3-a4-mitos', 'sistemas', 'Mitos sobre los sistemas de información', 'vf', 'opcional', 90, false, ARRAY['sistema', 'sistema-automatizado', 'elementos-si']::text[], 3),

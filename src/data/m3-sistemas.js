@@ -22,11 +22,11 @@ export default {
       ],
     },
     {
-      titulo: 'Las cuatro piezas de todo sistema',
+      titulo: 'Las cinco piezas de todo sistema',
       cuerpo: [
         {
           t: 'p',
-          texto: 'Toda esta estación se resume en cuatro piezas. Aparecen siempre, en cualquier sistema, en cualquier escala.',
+          texto: 'Toda esta estación se resume en cinco piezas. Aparecen siempre, en cualquier sistema, en cualquier escala.',
         },
         {
           t: 'tabla',
@@ -35,14 +35,21 @@ export default {
             ['Entrada', 'Los datos o la materia prima que ingresan', 'La tarjeta y la clave que el usuario digita'],
             ['Proceso', 'La transformación aplicada a esa entrada', 'Verificar la clave y consultar el saldo disponible'],
             ['Salida', 'El resultado ya procesado que el sistema entrega', 'El dinero entregado y el recibo impreso'],
-            ['Retroalimentación', 'Información de retorno sobre el desempeño, para ajustar el sistema', 'El banco nota que ese cajero falla seguido y programa mantenimiento'],
+            ['Control', 'La regla o la acción que regula el funcionamiento del sistema', 'Bloquear el acceso tras tres claves incorrectas seguidas'],
+            ['Retroalimentación', 'Información sobre lo que de verdad ocurrió, que vuelve para ajustar el sistema', 'Un sensor avisa que el dispensador de billetes se atascó'],
           ],
+        },
+        {
+          t: 'clave',
+          titulo: 'Control y retroalimentación no son lo mismo',
+          texto:
+            'La retroalimentación es la señal que informa que algo pasó; el control es la regla o la acción que responde a esa señal y corrige el sistema. Primero se sabe qué pasó (retroalimentación), y con eso se decide qué hacer (control).',
         },
         {
           t: 'clave',
           titulo: 'Ojo con la retroalimentación',
           texto:
-            'Es la pieza que más se confunde con la salida. La salida entrega un resultado a quien lo pidió; la retroalimentación dice si el sistema está funcionando bien y qué habría que corregir. No van al mismo lugar ni cumplen la misma función.',
+            'Es la pieza que más se confunde con la salida. La salida entrega un resultado a quien lo pidió; la retroalimentación dice si el sistema está funcionando bien. No van al mismo lugar ni cumplen la misma función.',
         },
       ],
     },
