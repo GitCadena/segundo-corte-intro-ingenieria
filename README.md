@@ -51,7 +51,7 @@ seguir [`docs/CONFIGURACION.md`](docs/CONFIGURACION.md).
 |---|---|---|---|
 | 1 · Cómo se construye el software | 7 | Proceso, requisitos, roles, alcance | 11 |
 | 2 · ¿Cuándo un software es bueno? | 8 | ISO/IEC 25010, adecuación funcional, usabilidad | 11 |
-| 3 · Que no se rompa | 9 | Robustez, fronteras, compatibilidad, portabilidad | 11 |
+| 3 · Los sistemas de información | 9 | Entrada/proceso/salida/retroalimentación, manual vs. automatizado, elementos de un SI | 8 |
 | 4 · Informática y sociedad | 8 y 9 | Ley de Moore, brecha digital, datos personales | 10 |
 | 5 · Pensar como programador | 10 | Algoritmos, patrones, estructurada y POO | 8 |
 | 6 · Reto final de práctica | 11 | Caso integrador, con cronómetro opcional | 6 |
@@ -65,8 +65,7 @@ taller de clase y el glosario contextual.
 Ordenar (por dependencias, admite varios órdenes válidos) · emparejar ·
 clasificar · verdadero/falso con explicación · calcular con fórmulas a la vista ·
 decidir sobre un caso y ver su consecuencia · elegir alcance con capacidad
-limitada · romper un formulario con validación real · explorar límites · tabla de
-casos de prueba · simulador de crecimiento exponencial · predecir y comprobar ·
+limitada · simulador de crecimiento exponencial · predecir y comprobar ·
 decidir qué datos pedir · seguir variables · armar algoritmos · completar
 pseudocódigo · escribir pseudocódigo · clases y objetos · talleres con lista de
 chequeo.

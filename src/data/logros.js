@@ -33,10 +33,10 @@ const logros = [
   },
   {
     id: 'estacion-3-completa',
-    titulo: 'A prueba de usuarios',
+    titulo: 'Desarmador de sistemas',
     descripcion: 'Completaste todas las actividades base de la estación 3.',
     evidencia: 'Todas las actividades de nivel base de la estación 3, completadas.',
-    condicion: (r) => r.estacionBaseCompleta('robustez'),
+    condicion: (r) => r.estacionBaseCompleta('sistemas'),
   },
   {
     id: 'estacion-4-completa',
@@ -79,7 +79,7 @@ const logros = [
     descripcion: 'Completaste las actividades base de las cinco estaciones de contenido.',
     evidencia: 'Estaciones 1 a 5 con su nivel base completo.',
     condicion: (r) =>
-      ['proceso', 'calidad', 'robustez', 'tic', 'paradigmas'].every((e) => r.estacionBaseCompleta(e)),
+      ['proceso', 'calidad', 'sistemas', 'tic', 'paradigmas'].every((e) => r.estacionBaseCompleta(e)),
   },
   {
     id: 'desafios-opcionales',

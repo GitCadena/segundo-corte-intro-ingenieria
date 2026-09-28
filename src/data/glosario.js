@@ -149,6 +149,45 @@ const glosario = {
     ejemplo: '"No sirve" no es un reporte de defecto; es una queja.',
   },
 
+  /* ---- Estación 3: sistemas de información ---- */
+  sistema: {
+    termino: 'Sistema',
+    definicion: 'Conjunto de elementos relacionados entre sí que trabajan juntos para lograr un objetivo común.',
+    ejemplo: 'Una cafetería es un sistema: personas, caja, inventario y cocina trabajando por un mismo objetivo.',
+  },
+  entrada: {
+    termino: 'Entrada',
+    definicion: 'Los datos o la materia prima que ingresan a un sistema antes de que ocurra cualquier transformación.',
+    ejemplo: 'La tarjeta y la clave que se digitan en un cajero automático.',
+  },
+  'proceso-sistema': {
+    termino: 'Proceso (de un sistema)',
+    definicion: 'La transformación que un sistema aplica a su entrada para producir un resultado.',
+    ejemplo: 'Verificar la clave y consultar el saldo disponible.',
+  },
+  salida: {
+    termino: 'Salida',
+    definicion: 'El resultado ya procesado que un sistema entrega a quien lo necesita.',
+    ejemplo: 'El dinero entregado y el recibo impreso por el cajero.',
+  },
+  retroalimentacion: {
+    termino: 'Retroalimentación',
+    definicion:
+      'Información de retorno sobre el desempeño de un sistema, que sirve para ajustarlo. No es lo mismo que la salida: la salida resuelve, la retroalimentación corrige.',
+    ejemplo: 'Un reporte semanal muestra que un producto siempre se agota antes del mediodía.',
+  },
+  'sistema-automatizado': {
+    termino: 'Sistema automatizado',
+    definicion:
+      'Sistema en el que las reglas de decisión las ejecuta el propio sistema, no solo una persona mirando datos en pantalla.',
+    ejemplo: 'El sistema descuenta del inventario apenas se registra una venta, sin que nadie lo actualice a mano.',
+  },
+  'elementos-si': {
+    termino: 'Elementos de un sistema de información',
+    definicion: 'Los cinco recursos que todo sistema de información necesita: hardware, software, datos, procedimientos y personas.',
+    ejemplo: 'Un computador (hardware) con un programa de ventas (software) no sirve sin alguien (personas) que lo use.',
+  },
+
   /* ---- Estación 4: informática y sociedad ---- */
   'ley-de-moore': {
     termino: 'Ley de Moore',

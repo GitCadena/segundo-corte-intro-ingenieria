@@ -71,7 +71,7 @@ export default {
       {
         titulo: 'Por eso el informe es por concepto',
         texto:
-          'Al terminar verás algo como:\n\nRequisitos comprobables ......... 2 de 2   ✓\nCalidad: características ......... 1 de 2   Repasar estación 2\nPruebas: fronteras ............... 0 de 1   Repasar estación 3\nAlgoritmos: contador/acumulador .. 1 de 1   ✓\nDatos personales: finalidad ...... 1 de 1   ✓\n\nCon eso sabes exactamente qué abrir: la sección «Comprende» de la estación 3 y la actividad de límites.',
+          'Al terminar verás algo como:\n\nRequisitos comprobables ......... 2 de 2   ✓\nCalidad: características ......... 1 de 2   Repasar estación 2\nSistemas: piezas de un sistema .... 0 de 1   Repasar estación 3\nAlgoritmos: contador/acumulador .. 1 de 1   ✓\nDatos personales: finalidad ...... 1 de 1   ✓\n\nCon eso sabes exactamente qué abrir: la sección «Comprende» de la estación 3 y la actividad de disección.',
       },
       {
         titulo: 'Y cada error trae su explicación',
@@ -95,7 +95,7 @@ export default {
     instrucciones:
       'Seis pasos, uno por cada bloque del corte. Puedes activar el cronómetro de 45 minutos o trabajar sin límite. Al final verás el resultado por concepto.',
     conceptoPrevio: 'Las cinco estaciones anteriores.',
-    conceptos: ['requisito', 'verificable', 'calidad', 'frontera', 'algoritmo', 'finalidad'],
+    conceptos: ['requisito', 'verificable', 'calidad', 'sistema', 'algoritmo', 'finalidad'],
     cronometroOpcional: true,
     contexto:
       'El laboratorio de Ingeniería Informática presta equipos (portátiles, proyectores, kits de Arduino). Hoy el monitor anota los préstamos en un cuaderno. Problemas reportados: se pierde el rastro de quién tiene qué, a veces se presta un equipo que ya estaba prestado, y al final del semestre nadie sabe qué equipos faltan. Reglas del laboratorio: un estudiante puede tener máximo 2 equipos prestados a la vez, y el préstamo dura entre 1 y 7 días.',
@@ -206,29 +206,33 @@ export default {
           'Los dos primeros y el cuarto son la distinción central de la estación 2: función incorrecta, función escondida y función ausente se confunden constantemente y las arregla gente distinta. El quinto es el único cuyo afectado no es el usuario final, y esa es la señal que identifica mantenibilidad.',
       },
 
-      /* ---- 4. Proponer entradas de prueba ---- */
+      /* ---- 4. Desarmar el sistema en sus piezas ---- */
       {
         id: 'f4',
-        tipo: 'limites',
-        conceptos: ['frontera', 'validacion'],
-        seccion: { estacion: 'robustez', titulo: 'Diseñar casos límite' },
-        instrucciones:
-          'Paso 4. Elige los valores con los que probarías el campo «Días de préstamo». La regla es: número entero, entre 1 y 7 días.',
-        regla: { min: 1, max: 7, descripcion: 'Días de préstamo: número entero, entre 1 y 7 (ambos incluidos).' },
-        valores: [
-          { valor: '0', clase: 'frontera', necesario: true, porQue: 'Frontera inferior externa: el último valor que debe rechazarse por debajo.' },
-          { valor: '1', clase: 'frontera', necesario: true, porQue: 'Frontera inferior interna: el primer valor que debe aceptarse. Atrapa el error de > en vez de >=.' },
-          { valor: '4', clase: 'normal', necesario: true, porQue: 'Caso normal, lejos de ambos bordes.' },
-          { valor: '5', clase: 'normal', necesario: false, porQue: 'Redundante con 4: misma clase de equivalencia, sin información nueva.' },
-          { valor: '7', clase: 'frontera', necesario: true, porQue: 'Frontera superior interna: atrapa el error de < en vez de <=.' },
-          { valor: '8', clase: 'frontera', necesario: true, porQue: 'Frontera superior externa: el primer valor que debe rechazarse.' },
-          { valor: '3.5', clase: 'invalida', necesario: true, porQue: 'Prueba el formato: está dentro del rango pero no es entero.' },
-          { valor: 'una semana', clase: 'invalida', necesario: true, porQue: 'Prueba el tipo: única entrada no numérica de la lista.' },
-          { valor: '-5', clase: 'invalida', necesario: false, porQue: 'Redundante con 0 para la regla de rango.' },
-          { valor: '1000', clase: 'invalida', necesario: false, porQue: 'Redundante con 8, salvo que se sospeche desbordamiento, que sería otra prueba.' },
+        tipo: 'clasificar',
+        conceptos: ['entrada', 'proceso-sistema', 'salida', 'retroalimentacion'],
+        seccion: { estacion: 'sistemas', titulo: 'Las cuatro piezas de todo sistema' },
+        instrucciones: 'Paso 4. Clasifica cada hecho del sistema de préstamos según la pieza a la que pertenece.',
+        grupos: [
+          { id: 'entrada', nombre: 'Entrada' },
+          { id: 'proceso', nombre: 'Proceso' },
+          { id: 'salida', nombre: 'Salida' },
+          { id: 'retro', nombre: 'Retroalimentación' },
+        ],
+        items: [
+          { texto: 'El monitor anota en el sistema qué equipo pide el estudiante y por cuántos días.', grupo: 'entrada', porQue: 'Es el dato con el que arranca el trámite, antes de cualquier verificación.' },
+          { texto: 'El sistema verifica que el estudiante no tenga ya 2 equipos prestados.', grupo: 'proceso', porQue: 'Es una comprobación interna contra la regla del laboratorio.' },
+          { texto: 'El sistema calcula la fecha exacta de devolución sumando los días indicados.', grupo: 'proceso', porQue: 'Transforma un dato de entrada en un resultado que aún no se ha entregado.' },
+          { texto: 'Se le imprime al estudiante el comprobante con el equipo y la fecha de devolución.', grupo: 'salida', porQue: 'Es el resultado final que la persona se lleva de este trámite puntual.' },
+          { texto: 'El sistema marca el equipo como "no disponible" en la lista que ve el monitor.', grupo: 'salida', porQue: 'Es la consecuencia visible e inmediata de haber registrado el préstamo.' },
+          { texto: 'Al cierre del semestre, un reporte muestra que los kits de Arduino son los que más se dañan.', grupo: 'retro', porQue: 'No resuelve ningún préstamo puntual: sirve para decidir qué comprar o reforzar a futuro.' },
+        ],
+        pistas: [
+          'Lo que arranca el trámite es entrada; lo que la persona se lleva hoy es salida.',
+          'Si la información sirve para decidir algo distinto en el futuro, sin resolver nada de hoy, es retroalimentación.',
         ],
         explicacion:
-          'Seis valores necesarios: las cuatro fronteras (0, 1, 7, 8), un caso normal y dos entradas inválidas que atacan el formato y el tipo. Los cuatro descartados no están mal, simplemente repiten una clase ya cubierta. La disciplina consiste en cubrir todas las clases con los menos casos posibles, no en probar mucho.',
+          'Dos hechos son proceso (verificación y cálculo internos), dos son salida (el comprobante y el cambio de estado del equipo) y uno es retroalimentación (el reporte que orienta una compra futura, no un préstamo puntual). Es la misma distinción de la estación 3: la salida resuelve hoy, la retroalimentación ajusta después.',
       },
 
       /* ---- 5. Resolver un algoritmo ---- */
@@ -287,7 +291,7 @@ FinAlgoritmo`,
 	Escribir "MAXIMO: ", maximo
 FinAlgoritmo`,
         explicacion:
-          'Acumulador, contador y máximo en el mismo ciclo. El caso de 5 días exactos separa >= de >, y el de n = 0 comprueba que el Para evalúa antes de entrar y que nada se reinicializa dentro del ciclo. Son los mismos dos tipos de caso límite que viste en la estación 3, aplicados a un algoritmo.',
+          'Acumulador, contador y máximo en el mismo ciclo. El caso de 5 días exactos separa >= de >, y el de n = 0 comprueba que el Para evalúa antes de entrar y que nada se reinicializa dentro del ciclo: los mismos dos hábitos de probar con cuidado que ya usaste en el resto del corte, aplicados esta vez a un algoritmo.',
       },
 
       /* ---- 6. Accesibilidad y datos personales ---- */
@@ -350,7 +354,7 @@ FinAlgoritmo`,
       'El problema se enuncia como una incapacidad del usuario, nunca como la ausencia de una herramienta.',
       'Las reglas de negocio con números son la fuente más directa de requisitos comprobables.',
       'Función ausente, función incorrecta y función escondida son tres características de calidad distintas.',
-      'Toda restricción «entre A y B» exige cuatro casos de frontera más uno normal, más tipo y formato.',
+      'Cualquier trámite se desarma en entrada, proceso, salida y retroalimentación — y la retroalimentación es la pieza que más se olvida repasar.',
       'Un algoritmo se comprueba con casos límite: una vuelta, cero vueltas y el valor exacto de la frontera.',
       'El dato que no se recoge es el único que no se puede filtrar, y ninguna información debe transmitirse solo por color.',
     ],
@@ -358,5 +362,5 @@ FinAlgoritmo`,
       'Si este reto te salió bien, el parcial cubre lo mismo. Si algo falló, el informe por concepto te dice exactamente qué sección abrir: no vuelvas a leerlo todo, vuelve a lo que falló y repite el reto.',
   },
 
-  glosario: ['requisito', 'verificable', 'calidad', 'frontera', 'algoritmo', 'finalidad'],
+  glosario: ['requisito', 'verificable', 'calidad', 'sistema', 'entrada', 'salida', 'retroalimentacion', 'algoritmo', 'finalidad'],
 }

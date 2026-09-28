@@ -1,12 +1,12 @@
 -- ARCHIVO GENERADO por scripts/generar-catalogo.mjs. No editar a mano.
--- Generado a partir del contenido de src/data/. 56 actividades.
+-- Generado a partir del contenido de src/data/. 53 actividades.
 
 begin;
 
 insert into public.estaciones (id, orden, titulo, sesion) values
   ('proceso', 1, 'Cómo se construye el software', 'Sesión 7'),
   ('calidad', 2, '¿Cuándo un software es bueno?', 'Sesión 8'),
-  ('robustez', 3, 'Que no se rompa', 'Sesión 9'),
+  ('sistemas', 3, 'Los sistemas de información', 'Sesión 9'),
   ('tic', 4, 'Informática y sociedad', 'Sesiones 8 y 9'),
   ('paradigmas', 5, 'Pensar como programador', 'Sesión 10'),
   ('reto-final', 6, 'Reto final de práctica', 'Preparación sesión 11')
@@ -30,18 +30,15 @@ insert into public.actividades (id, estacion_id, titulo, tipo, nivel, puntos_max
   ('e2-a3-mejora', 'calidad', 'Mejora la interfaz', 'mejora-interfaz', 'base', 110, true, ARRAY['usabilidad']::text[], 2),
   ('e2-a7-subcaracteristicas', 'calidad', 'Cada subcaracterística en su lugar', 'clasificar', 'opcional', 90, false, ARRAY['square', 'usabilidad', 'portabilidad']::text[], 3),
   ('e2-taller', 'calidad', 'Taller en clase · Tu proyecto, tu pasión', 'taller', 'base', 0, false, '{}'::text[], 4),
-  ('e3-a1-romper', 'robustez', 'Rompe el formulario', 'romper-formulario', 'base', 140, true, ARRAY['robustez', 'validacion', 'frontera', 'defecto']::text[], 0),
-  ('e3-a2-limites', 'robustez', 'Explora los límites', 'limites', 'base', 110, true, ARRAY['frontera', 'validacion']::text[], 1),
-  ('e3-a3-compatible', 'robustez', '¿Compatible o portable?', 'clasificar', 'base', 110, true, ARRAY['compatibilidad', 'portabilidad', 'disponibilidad']::text[], 2),
-  ('e3-a4-conexion', 'robustez', 'Se cayó la conexión', 'caso', 'base', 110, true, ARRAY['robustez', 'disponibilidad']::text[], 3),
-  ('e3-a5-tabla', 'robustez', 'Diseña las pruebas', 'tabla-pruebas', 'base', 130, true, ARRAY['frontera', 'validacion', 'defecto']::text[], 4),
-  ('e3-a6-disponibilidad', 'robustez', 'Cuánto es un nueve más', 'calcular', 'opcional', 90, false, ARRAY['disponibilidad']::text[], 5),
-  ('e3-a7-reporte', 'robustez', 'Anatomía de un reporte de defecto', 'orden', 'opcional', 80, false, ARRAY['defecto']::text[], 6),
-  ('e3-reto:p1', 'robustez', 'Poner a prueba una función nueva · paso 1', 'limites', 'base', 38, true, ARRAY['frontera', 'validacion']::text[], 7),
-  ('e3-reto:p2', 'robustez', 'Poner a prueba una función nueva · paso 2', 'quiz', 'base', 38, true, ARRAY['defecto', 'validacion']::text[], 8),
-  ('e3-reto:p3', 'robustez', 'Poner a prueba una función nueva · paso 3', 'caso', 'base', 37, true, ARRAY['defecto']::text[], 9),
-  ('e3-reto:p4', 'robustez', 'Poner a prueba una función nueva · paso 4', 'vf', 'base', 37, true, ARRAY['robustez', 'frontera']::text[], 10),
-  ('e3-taller', 'robustez', 'Taller en clase · Reporte de defecto', 'taller', 'base', 0, false, '{}'::text[], 11),
+  ('e3-a1-diseccion', 'sistemas', 'Diseca un sistema real', 'clasificar', 'base', 140, true, ARRAY['sistema', 'entrada', 'proceso-sistema', 'salida', 'retroalimentacion']::text[], 0),
+  ('e3-a2-manual-auto', 'sistemas', 'Manual o automatizado', 'clasificar', 'base', 120, true, ARRAY['sistema-automatizado']::text[], 1),
+  ('e3-a3-elementos', 'sistemas', 'Los cinco elementos de un sistema de información', 'clasificar', 'base', 130, true, ARRAY['elementos-si']::text[], 2),
+  ('e3-a4-mitos', 'sistemas', 'Mitos sobre los sistemas de información', 'vf', 'opcional', 90, false, ARRAY['sistema', 'sistema-automatizado', 'elementos-si']::text[], 3),
+  ('e3-reto:p1', 'sistemas', 'Desarma el sistema de préstamos de la biblioteca · paso 1', 'quiz', 'base', 38, true, ARRAY['entrada']::text[], 4),
+  ('e3-reto:p2', 'sistemas', 'Desarma el sistema de préstamos de la biblioteca · paso 2', 'clasificar', 'base', 38, true, ARRAY['salida', 'retroalimentacion']::text[], 5),
+  ('e3-reto:p3', 'sistemas', 'Desarma el sistema de préstamos de la biblioteca · paso 3', 'quiz', 'base', 37, true, ARRAY['sistema-automatizado']::text[], 6),
+  ('e3-reto:p4', 'sistemas', 'Desarma el sistema de préstamos de la biblioteca · paso 4', 'quiz', 'base', 37, true, ARRAY['elementos-si']::text[], 7),
+  ('e3-taller', 'sistemas', 'Taller en clase · Ficha de análisis de un sistema', 'taller', 'base', 0, false, '{}'::text[], 8),
   ('e4-a1-simulador', 'tic', 'Simulador de duplicación', 'simulador-moore', 'base', 110, true, ARRAY['exponencial', 'ley-de-moore']::text[], 0),
   ('e4-a2-predice', 'tic', 'Predice antes de mover', 'predice', 'base', 110, true, ARRAY['exponencial']::text[], 1),
   ('e4-a3-mitos', 'tic', 'Mito o conclusión válida', 'vf', 'base', 120, true, ARRAY['ley-de-moore', 'exponencial']::text[], 2),
@@ -65,7 +62,7 @@ insert into public.actividades (id, estacion_id, titulo, tipo, nivel, puntos_max
   ('e6-reto-final:f1', 'reto-final', 'Caso completo: préstamo de equipos del laboratorio · paso 1', 'quiz', 'base', 100, true, ARRAY['requisito']::text[], 0),
   ('e6-reto-final:f2', 'reto-final', 'Caso completo: préstamo de equipos del laboratorio · paso 2', 'clasificar', 'base', 100, true, ARRAY['verificable', 'restriccion']::text[], 1),
   ('e6-reto-final:f3', 'reto-final', 'Caso completo: préstamo de equipos del laboratorio · paso 3', 'emparejar', 'base', 100, true, ARRAY['calidad', 'usabilidad', 'adecuacion-funcional']::text[], 2),
-  ('e6-reto-final:f4', 'reto-final', 'Caso completo: préstamo de equipos del laboratorio · paso 4', 'limites', 'base', 100, true, ARRAY['frontera', 'validacion']::text[], 3),
+  ('e6-reto-final:f4', 'reto-final', 'Caso completo: préstamo de equipos del laboratorio · paso 4', 'clasificar', 'base', 100, true, ARRAY['entrada', 'proceso-sistema', 'salida', 'retroalimentacion']::text[], 3),
   ('e6-reto-final:f5', 'reto-final', 'Caso completo: préstamo de equipos del laboratorio · paso 5', 'pseudo', 'base', 100, true, ARRAY['algoritmo', 'contador', 'acumulador']::text[], 4),
   ('e6-reto-final:f6', 'reto-final', 'Caso completo: préstamo de equipos del laboratorio · paso 6', 'caso', 'base', 100, true, ARRAY['finalidad', 'accesibilidad', 'datos-personales']::text[], 5),
   ('laboratorio', 'paradigmas', 'Laboratorio de pseudocódigo', 'laboratorio', 'base', 0, false, '{}'::text[], 99)
@@ -83,7 +80,7 @@ insert into public.logros (id, titulo, descripcion, evidencia) values
   ('primer-dominio', 'Sin pistas', 'Resolviste una actividad al primer intento y sin abrir pistas.', 'Al menos una actividad en estado "dominio demostrado".'),
   ('estacion-1-completa', 'El proceso, entendido', 'Completaste todas las actividades base de la estación 1.', 'Todas las actividades de nivel base de la estación 1, completadas.'),
   ('estacion-2-completa', 'Criterio de calidad', 'Completaste todas las actividades base de la estación 2.', 'Todas las actividades de nivel base de la estación 2, completadas.'),
-  ('estacion-3-completa', 'A prueba de usuarios', 'Completaste todas las actividades base de la estación 3.', 'Todas las actividades de nivel base de la estación 3, completadas.'),
+  ('estacion-3-completa', 'Desarmador de sistemas', 'Completaste todas las actividades base de la estación 3.', 'Todas las actividades de nivel base de la estación 3, completadas.'),
   ('estacion-4-completa', 'Con los pies en la tierra', 'Completaste todas las actividades base de la estación 4.', 'Todas las actividades de nivel base de la estación 4, completadas.'),
   ('estacion-5-completa', 'Pensamiento algorítmico', 'Completaste todas las actividades base de la estación 5.', 'Todas las actividades de nivel base de la estación 5, completadas.'),
   ('algoritmo-ejecutado', 'Tu algoritmo corre', 'Escribiste un algoritmo que pasó todos sus casos de prueba, incluidos los límites.', 'Una actividad de pseudocódigo completada.'),

@@ -1,6 +1,6 @@
 import e1 from './estaciones/e1-proceso.js'
 import e2 from './estaciones/e2-calidad.js'
-import e3 from './estaciones/e3-robustez.js'
+import e3 from './estaciones/e3-sistemas.js'
 import e4 from './estaciones/e4-sociedad.js'
 import e5 from './estaciones/e5-programador.js'
 import e6 from './estaciones/e6-reto-final.js'
