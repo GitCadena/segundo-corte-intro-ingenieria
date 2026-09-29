@@ -375,6 +375,24 @@ function calcularDificultades(filas) {
 
 /* --------------------------------- detalle -------------------------------- */
 
+/**
+ * Convierte cualquier URL suelta dentro de la respuesta de un taller en un
+ * enlace clicable (por ejemplo, el enlace a la imagen de IA que pega el
+ * estudiante junto con el prompt). El resto del texto queda igual.
+ */
+function conEnlaces(texto) {
+  const partes = texto.split(/(https?:\/\/[^\s]+)/g)
+  return partes.map((parte, i) =>
+    /^https?:\/\//.test(parte) ? (
+      <a key={i} href={parte} target="_blank" rel="noopener noreferrer">
+        {parte}
+      </a>
+    ) : (
+      parte
+    ),
+  )
+}
+
 function DetalleEstudiante({ estudiante, talleres, talleresPorId, cerrar }) {
   const tallerEntregado = (id) => estudiante.filas.find((f) => f.actividad_id === id)?.estado
 
@@ -450,7 +468,7 @@ function DetalleEstudiante({ estudiante, talleres, talleresPorId, cerrar }) {
                     {taller.campos.map((c) => (
                       <div key={c.id} className="docente__taller-campo">
                         <dt>{c.etiqueta}</dt>
-                        <dd>{valores[c.id]?.trim() ? valores[c.id] : '— sin responder —'}</dd>
+                        <dd>{valores[c.id]?.trim() ? conEnlaces(valores[c.id]) : '— sin responder —'}</dd>
                       </div>
                     ))}
                   </dl>

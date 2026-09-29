@@ -52,6 +52,7 @@ export default {
 
   ejemplo: {
     titulo: 'Del casino del campus a un sistema completo',
+    diagrama: true,
     contexto:
       'El casino del campus vende comida a la hora del almuerzo. Vamos a desarmarlo pieza por pieza, con el mismo modelo de toda la estación.',
     pasos: [
@@ -440,32 +441,95 @@ export default {
     tipo: 'taller',
     nivel: 'base',
     puntos: 0,
-    titulo: 'Taller en clase · Ficha de análisis de un sistema',
-    objetivo: 'Aplicar el modelo de las cinco piezas a un sistema real de tu propia vida.',
+    titulo: 'Taller en clase · Encuentra la falla',
+    objetivo: 'Detectar qué pieza le falta o le falla a un sistema real, y proponer cómo corregirla.',
     instrucciones:
-      'Trabajo individual. Elige un sistema real que conozcas de verdad —tu trabajo, tu casa, un negocio familiar, un club al que perteneces— y analízalo con el mismo modelo de esta estación. El entregable no lo califica esta aplicación: lo revisa el docente.',
+      'Trabajo individual. A cada estudiante le toca un caso distinto, asignado automáticamente por la aplicación (no lo eliges tú, así cada quien trabaja sobre un problema diferente). Parte del entregable es una sola imagen generada con IA (Copilot Designer, Bing Image Creator, ChatGPT o similar) que muestre la falla de tu caso: no hace falta que sea perfecta, con un prompt de una o dos frases basta. El entregable no lo califica esta aplicación: lo revisa el docente.',
     conceptoPrevio: 'Toda la estación.',
     enunciado:
-      'Describe un sistema real que conozcas bien, con sus cinco piezas y si es manual o automatizado. Entre mejor lo conozcas, más fácil te va a resultar.',
-    ideas: [
-      { titulo: 'Un negocio familiar', contexto: 'Una tienda, un restaurante, un taller — cómo reciben pedidos, los procesan y entregan el resultado.' },
-      { titulo: 'Un equipo o club deportivo', contexto: 'Cómo se inscriben los jugadores, cómo se arman los horarios de entrenamiento, cómo se avisa un cambio.' },
-      { titulo: 'La rutina de tu casa', contexto: 'El sistema de turnos para usar la lavadora, o de quién cocina cada día — sí cuenta como sistema.' },
-      { titulo: 'Un grupo o comunidad en línea', contexto: 'Cómo entra alguien nuevo, cómo se modera el contenido, cómo se sabe si algo salió mal.' },
+      'Tu caso ya trae un sistema que falla en algo concreto. Identifica qué pieza (entrada, proceso, salida, control o retroalimentación) es la que falta o está mal diseñada, y busca —investigando un poco, no inventando— cómo se resolvería de verdad.',
+    casos: [
+      {
+        titulo: 'El cajero que promete de más',
+        falla:
+          'El cajero automático de un banco acepta la solicitud de retiro y le confirma al usuario el monto ANTES de comprobar si la máquina todavía tiene suficientes billetes para entregarlo. A veces aprueba el retiro y después no logra completarlo.',
+      },
+      {
+        titulo: 'El domicilio que desaparece',
+        falla:
+          'Una plataforma de domicilios dice recibir el pedido y ya. Si el restaurante lo rechaza (porque se acabó el plato, por ejemplo), la app nunca le avisa al cliente: este solo ve que el pedido nunca llega y no sabe por qué.',
+      },
+      {
+        titulo: 'El libro que nadie reclama',
+        falla:
+          'El sistema de préstamos de la biblioteca guarda la fecha límite de cada libro, pero nadie —ni el sistema ni el personal— revisa esa fecha después de prestarlo. Un libro puede llevar tres meses vencido y solo se descubre cuando otro estudiante lo pide.',
+      },
+      {
+        titulo: 'La caja que sigue vendiendo lo que ya no hay',
+        falla:
+          'En una cafetería, cuando un producto se agota a mitad del día, la caja lo sigue dejando cobrar igual. La única forma de que deje de venderse es que alguien de cocina camine hasta la caja y avise de viva voz.',
+      },
+      {
+        titulo: 'La tutoría que no distingue nada',
+        falla:
+          'El sistema de tutorías de Bienestar Universitario trata igual a un estudiante que cancela con un día de anticipación y a uno que simplemente no llega. No queda ningún registro de la diferencia, así que no hay forma de saber quién de verdad abusa del servicio.',
+      },
+      {
+        titulo: 'El reporte que nadie prioriza',
+        falla:
+          'En el grupo de mensajería de un curso, cualquiera puede reportar un mensaje ofensivo, pero todos los reportes quedan en una sola lista sin ningún orden. Un reporte grave puede tardar una semana en revisarse porque quedó debajo de veinte reportes triviales.',
+      },
+      {
+        titulo: 'El parqueadero que cuenta mal',
+        falla:
+          'El sistema del parqueadero del campus resta un cupo cada vez que un sensor detecta un carro entrando. Pero si un carro se devuelve por la misma entrada sin pasar por la salida (por un error o un cambio de opinión), el sistema nunca le vuelve a sumar ese cupo.',
+      },
+      {
+        titulo: 'El equipo que queda "ocupado" vacío',
+        falla:
+          'El sistema de reserva de equipos del laboratorio de cómputo bloquea un equipo apenas alguien reserva un turno. Si esa persona nunca llega, el equipo figura "ocupado" toda la hora aunque esté completamente vacío y nadie más pueda usarlo.',
+      },
     ],
     campos: [
-      { id: 'sistema', etiqueta: 'Qué sistema elegiste y cuál es su objetivo', filas: 2 },
-      { id: 'entrada', etiqueta: 'Entrada: qué información o materia prima ingresa', filas: 2 },
-      { id: 'proceso', etiqueta: 'Proceso: qué transformación se le aplica a esa entrada', filas: 2 },
-      { id: 'salida', etiqueta: 'Salida: qué resultado final se entrega, y a quién', filas: 2 },
-      { id: 'control', etiqueta: 'Control: qué regla o acción regula el funcionamiento del sistema', filas: 2 },
-      { id: 'retroalimentacion', etiqueta: 'Retroalimentación: qué información de vuelta avisa que algo pasó y ayuda a ajustar el sistema', filas: 2 },
-      { id: 'tipo', etiqueta: '¿Es manual, automatizado, o una mezcla de los dos? Justifica con un ejemplo concreto', filas: 3 },
+      {
+        id: 'falla',
+        etiqueta: 'En tus palabras: ¿qué sale mal en tu caso y a quién perjudica?',
+        filas: 3,
+      },
+      {
+        id: 'pieza',
+        etiqueta:
+          '¿Qué pieza del sistema (entrada, proceso, salida, control o retroalimentación) es la que falta o está mal diseñada? Justifica por qué es esa y no otra.',
+        filas: 3,
+      },
+      {
+        id: 'investigacion',
+        etiqueta:
+          'Busca cómo un sistema real resuelve un problema parecido (otra app, otro negocio, algo que hayas visto funcionar bien) y resume en 2-3 líneas qué encontraste',
+        filas: 3,
+      },
+      {
+        id: 'solucion',
+        etiqueta: 'Tu solución: qué agregarías o cambiarías exactamente para corregir la falla',
+        filas: 3,
+      },
+      {
+        id: 'verificacion',
+        etiqueta: '¿Cómo sabrías que tu solución de verdad funcionó? Qué medirías o qué reporte revisarías',
+        filas: 2,
+      },
+      {
+        id: 'imagenIA',
+        etiqueta:
+          'Pega aquí el enlace (Drive, Canva, imgur, etc.) de la imagen que generaste con IA mostrando la falla, y el prompt exacto que usaste para crearla',
+        filas: 3,
+      },
     ],
     listaChequeo: [
-      'El sistema que elegiste lo conoces de verdad, no lo inventaste para la tarea.',
-      'La salida y la retroalimentación que describiste son cosas distintas entre sí.',
-      'La justificación de manual/automatizado da un ejemplo concreto, no solo la palabra.',
+      'La pieza que señalaste (entrada, proceso, salida, control o retroalimentación) es la correcta y está justificada, no solo nombrada.',
+      'La investigación cita un sistema real concreto, no una idea inventada de la nada.',
+      'La solución ataca la causa de la falla, no solo describe el síntoma otra vez.',
+      'La imagen muestra específicamente TU falla (no un sistema genérico) y el enlace realmente abre.',
     ],
   },
 }

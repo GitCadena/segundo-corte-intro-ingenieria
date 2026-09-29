@@ -417,6 +417,9 @@ select {
 
 /* ejemplo desarrollado */
 .ejemplo__contexto { font-size: 1.02rem; color: var(--tinta-suave); }
+.ejemplo__diagrama { margin: 1.2rem 0; padding: 1rem 1.2rem 1.2rem; background: var(--papel); border: 1px solid var(--borde); border-radius: var(--radio-grande); text-align: center; }
+.ejemplo__diagrama svg { max-width: 480px; }
+.ejemplo__diagrama-pie { margin: .6rem 0 0; font-size: .85rem; color: var(--tinta-tenue); }
 .ejemplo__pasos { list-style: none; counter-reset: paso; padding: 0; margin: 1.5rem 0; display: flex; flex-direction: column; gap: 1.2rem; }
 .ejemplo__paso { background: var(--papel); border: 1px solid var(--borde); border-left: 4px solid var(--acento); border-radius: 0 var(--radio) var(--radio) 0; padding: 1.2rem; }
 .ejemplo__paso-titulo { color: var(--acento-oscuro); margin-bottom: .4em; }
@@ -800,6 +803,9 @@ input[type='checkbox'] { width: 22px; height: 22px; flex: none; margin-top: .1re
 .taller__lista, .taller__rubrica { margin: 1.5rem 0; }
 .temas { margin: 1.2rem 0; padding: 1rem 1.2rem; background: var(--papel-suave); border-radius: var(--radio); border: 1px solid var(--borde); }
 .temas ol { margin: 0; padding-left: 1.3rem; font-size: .92rem; }
+.taller__caso-asignado { margin: 1.2rem 0; padding: 1rem 1.2rem; background: var(--papel-suave); border-radius: var(--radio); border: 1px solid var(--acento); }
+.taller__caso-asignado h4 { margin: .3rem 0 .4rem; }
+.taller__caso-asignado p:last-child { margin: 0; color: var(--tinta-suave); }
 
 /* progreso y docente */
 .progreso, .docente, .glosario-vista { display: flex; flex-direction: column; gap: 2rem; }

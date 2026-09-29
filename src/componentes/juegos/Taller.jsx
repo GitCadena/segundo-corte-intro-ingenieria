@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useProgreso } from '../../estado/ProgresoProvider.jsx'
+import { mezclar } from './marco.jsx'
 
 /**
  * Taller en clase.
@@ -8,15 +9,27 @@ import { useProgreso } from '../../estado/ProgresoProvider.jsx'
  * curso. Lo que sí hace es guardar el trabajo como borrador para que no se
  * pierda, con estado de guardado visible, y mostrar la rúbrica desde el
  * principio para que el estudiante sepa con qué se le va a evaluar.
+ *
+ * Cuando `actividad.casos` existe, cada estudiante recibe un caso fijo y
+ * determinista (según su propio id + el id de la actividad), no uno elegido
+ * por él: así se reparte la carga de trabajo del docente entre casos
+ * distintos sin depender de que cada quien elija uno diferente.
  */
 export default function Taller({ actividad, ctrl }) {
-  const { borradores, guardarBorrador } = useProgreso()
+  const { borradores, guardarBorrador, perfil } = useProgreso()
   const guardado = borradores[actividad.id]?.contenido ?? {}
   const [valores, setValores] = useState(guardado.campos ?? {})
   const [marcas, setMarcas] = useState(guardado.marcas ?? {})
   const [estado, setEstado] = useState('inactivo')
   const temporizador = useRef(null)
   const primeraCarga = useRef(true)
+
+  const caso = useMemo(() => {
+    if (!actividad.casos?.length) return null
+    const semilla = (perfil?.id ?? 'anonimo') + ':' + actividad.id
+    const [elegido] = mezclar(actividad.casos, semilla)
+    return elegido
+  }, [actividad.casos, actividad.id, perfil?.id])
 
   // Autoguardado con retardo: no se escribe en cada tecla.
   useEffect(() => {
@@ -39,12 +52,20 @@ export default function Taller({ actividad, ctrl }) {
 
   async function marcarEntregado() {
     await guardarBorrador(actividad.id, { campos: valores, marcas })
-    await ctrl.enviar(true, { datos: { entregado: true } })
+    await ctrl.enviar(true, { datos: { entregado: true, caso: caso?.titulo ?? null } })
   }
 
   return (
     <div className="juego juego--taller">
       <p className="enunciado">{actividad.enunciado}</p>
+
+      {caso && (
+        <div className="taller__caso-asignado">
+          <p className="etiqueta-campo">Tu caso asignado (no lo cambies: cada estudiante tiene uno distinto)</p>
+          <h4>{caso.titulo}</h4>
+          <p>{caso.falla}</p>
+        </div>
+      )}
 
       {actividad.ideas && (
         <details className="ideas-inspiracion">

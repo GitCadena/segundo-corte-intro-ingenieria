@@ -6,6 +6,7 @@ import Actividad from '../componentes/juegos/index.jsx'
 import Secuencia from '../componentes/juegos/Secuencia.jsx'
 import Bloque from '../componentes/Bloque.jsx'
 import Termino from '../componentes/Termino.jsx'
+import DiagramaSistema from '../componentes/DiagramaSistema.jsx'
 
 /**
  * Una estación, siempre con las mismas seis secciones:
@@ -101,6 +102,12 @@ export default function Estacion() {
           <p className="ejemplo__contexto">
             <Termino texto={estacion.ejemplo.contexto} glosario={glosarioClaves} />
           </p>
+          {estacion.ejemplo.diagrama && (
+            <div className="ejemplo__diagrama">
+              <DiagramaSistema />
+              <p className="ejemplo__diagrama-pie">El mismo esquema aplica a cualquier sistema: cambia lo que hay dentro de cada caja, no la forma.</p>
+            </div>
+          )}
           <ol className="ejemplo__pasos">
             {estacion.ejemplo.pasos.map((paso, i) => (
               <li key={i} className="ejemplo__paso">
