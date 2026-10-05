@@ -107,7 +107,7 @@ const ETIQUETA_TIPO = {
   'romper-formulario': 'Simulador',
   'formulario-friccion': 'Simulador',
   'mejora-interfaz': 'Simulador',
-  'simulador-moore': 'Simulador',
+  'explora-moore': 'Explorar un simulador',
   predice: 'Predecir y comprobar',
   'datos-necesarios': 'Decidir sobre datos',
   traza: 'Seguir variables',

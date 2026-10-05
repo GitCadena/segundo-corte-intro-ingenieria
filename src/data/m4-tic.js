@@ -29,20 +29,27 @@ export default {
       ],
     },
     {
-      titulo: 'Calcular con crecimiento exponencial',
+      titulo: 'Qué es crecer de forma exponencial',
       cuerpo: [
         {
-          t: 'codigo',
-          etiqueta: 'Fórmula y ejemplo',
-          texto: `valor_final = valor_inicial × 2^(t / p)
-
-Ejemplo: 5 000 millones, p = 2 años, t = 6 años
-         5 000 × 2^(6/2) = 40 000 millones`,
+          t: 'p',
+          texto: 'Crecer de forma exponencial es multiplicar por el mismo factor en cada periodo, en vez de sumar siempre la misma cantidad. En la ley de Moore el factor es 2 (duplicar) cada dos años aproximadamente.',
+        },
+        {
+          t: 'tabla',
+          encabezados: ['Años desde 1971', 'Sumando 2.300 cada 2 años', 'Duplicando cada 2 años'],
+          filas: [
+            ['0', '2.300', '2.300'],
+            ['2', '4.600', '4.600'],
+            ['4', '6.900', '9.200'],
+            ['8', '11.500', '36.800'],
+            ['12', '16.100', '147.200'],
+          ],
         },
         {
           t: 'clave',
           titulo: 'La intuición humana falla',
-          texto: 'Treinta duplicaciones son mil millones de veces el valor inicial.',
+          texto: 'Al principio los dos crecimientos se parecen y por eso engañan. Después se separan cada vez más: treinta duplicaciones son mil millones de veces el valor inicial.',
         },
       ],
     },

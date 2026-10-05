@@ -567,7 +567,7 @@ prueba('mecánicas · están los diez formatos exigidos', () => {
     'Decidir sobre un caso': ['caso', 'entrega', 'datos-necesarios'],
     'Armar algoritmos': ['algoritmo'],
     'Completar pseudocódigo': ['completar', 'pseudo'],
-    Simuladores: ['simulador-moore', 'romper-formulario', 'formulario-friccion', 'mejora-interfaz', 'predice'],
+    Simuladores: ['explora-moore', 'romper-formulario', 'formulario-friccion', 'mejora-interfaz', 'predice'],
     Talleres: ['taller'],
   }
   const faltan = Object.entries(exigidos)

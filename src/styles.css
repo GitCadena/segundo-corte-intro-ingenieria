@@ -978,3 +978,10 @@ body.proyeccion .bloque-codigo pre { font-size: 1.15rem; }
 body.proyeccion .parrafo,
 body.proyeccion .enunciado,
 body.proyeccion .opcion { font-size: 1.05em; }
+
+/* explora la ley de Moore */
+.explora__marco { margin: 1rem 0 .5rem; border: 1px solid var(--borde); border-radius: var(--radio); overflow: hidden; background: var(--papel); }
+.explora__iframe { display: block; width: 100%; height: 880px; border: 0; }
+@media (max-width: 740px) { .explora__iframe { height: 1330px; } }
+.explora__aparte { font-size: .85rem; color: var(--tinta-tenue); margin: 0 0 1.2rem; }
+.explora__accion { margin: 0 0 .5rem; padding: .5rem .8rem; background: var(--acento-suave); border-radius: var(--radio); font-size: .95rem; }

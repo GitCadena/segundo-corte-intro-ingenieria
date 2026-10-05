@@ -51,6 +51,24 @@ export default {
         },
       ],
     },
+    'Qué es crecer de forma exponencial': {
+      titulo: 'La fórmula y la regla del 72 (opcional)',
+      cuerpo: [
+        {
+          t: 'codigo',
+          etiqueta: 'Fórmula',
+          texto: `valor final = valor inicial × 2^(tiempo ÷ periodo)
+
+Ejemplo: 2.300 transistores en 1971, duplicando cada 2 años.
+En 1975 han pasado 4 años: 2.300 × 2^(4 ÷ 2) = 2.300 × 4 = 9.200`,
+        },
+        {
+          t: 'p',
+          texto:
+            'Atajo mental, la regla del 72: si algo crece un cierto porcentaje por periodo, divide 72 entre ese porcentaje y tendrás, aproximadamente, cuántos periodos tarda en duplicarse. Con 8 % mensual: 72 ÷ 8 = 9 meses.',
+        },
+      ],
+    },
     'Qué dice y qué no dice la Ley de Moore': {
       titulo: 'Por qué el doble de transistores no da el doble de velocidad',
       cuerpo: [
@@ -146,79 +164,116 @@ export default {
   },
 
   ejemplo: {
-    titulo: 'Duplicar tres veces no es triplicar',
-    contexto: '«Crece 100 unidades cada dos años» y «se duplica cada dos años» suenan parecidas. Vamos a ver dónde se separan.',
+    titulo: 'Del Intel 4004 al chip lleno: duplicar no es sumar',
+    contexto:
+      'En 1971 un chip tenía 2.300 transistores. Vamos a entender qué observó Moore sin hacer cuentas: en la primera actividad lo vas a ver moverse en un simulador.',
     pasos: [
       {
-        titulo: '1. Los dos crecimientos, lado a lado',
-        texto:
-          'Año | Lineal (+100) | Exponencial (×2)\n 0  |     100       |      100\n 6  |     400       |      800\n12  |     700       |    6.400\n\nA los 2 años son casi iguales. A los 12, uno vale 700 y el otro 6.400.',
+        titulo: '1. Qué es un transistor',
+        texto: 'Un interruptor microscópico. Un chip procesa información combinando muchísimos: desde miles hasta miles de millones.',
       },
       {
-        titulo: '2. La fórmula',
-        texto: 'valor final = inicial × 2^(tiempo ÷ periodo). Con 12 años y periodo de 2: 100 × 2⁶ = 6.400. Seis duplicaciones multiplican por 64, no por 6.',
+        titulo: '2. Qué observó Moore',
+        texto: 'En 1965 notó que la cantidad de transistores por chip se duplicaba cada cierto tiempo. En 1975 él mismo ajustó ese tiempo a unos dos años.',
       },
       {
-        titulo: '3. El error de intuición',
-        texto: 'Se subestima el exponencial a largo plazo. Por eso conviene predecir antes de calcular: obliga a enfrentar el error propio.',
+        titulo: '3. Duplicar no es sumar',
+        texto: 'Con 2.300 transistores en 1971, duplicar cada dos años da 4.600 en 1973 y 9.200 en 1975. Sumar siempre 2.300 daría 6.900 en 1975. Al principio se parecen; después se separan cada vez más.',
       },
       {
-        titulo: '4. Qué sí se puede concluir de la Ley de Moore',
-        texto: 'Que la densidad de transistores se ha duplicado cada ~2 años, y que la tendencia se ha desacelerado por límites físicos.',
+        titulo: '4. Por qué sorprende',
+        texto: 'Una hoja de papel de 0,1 mm doblada por la mitad 20 veces alcanzaría unos 105 metros. La intuición espera centímetros porque piensa en sumar, no en duplicar.',
       },
       {
-        titulo: '5. Qué NO se puede concluir',
-        texto: '«Mi programa correrá el doble de rápido» — los transistores van a más núcleos, no a un solo hilo. «Ya no hace falta optimizar» — dejó de ser cierto cuando la frecuencia se estancó.',
+        titulo: '5. Qué SÍ y qué NO dice la ley de Moore',
+        texto: 'Sí dice que cada ~2 años caben el doble de transistores en un chip. No dice que tu programa corra el doble de rápido, ni que se vaya a cumplir para siempre.',
       },
       {
         titulo: '6. Qué tiene que ver con el campus',
         texto: 'El hardware más barato no reparte beneficios por igual: un sitio pesado funciona bien solo para quien tiene equipo nuevo.',
       },
     ],
-    cierre: 'El crecimiento exponencial explica el computador en tu bolsillo. No explica que tu programa vaya a ser más rápido solo.',
+    cierre: 'Duplicar una y otra vez explica por qué un computador cabe hoy en tu bolsillo. No explica que tu programa vaya a ser más rápido solo.',
   },
 
   actividades: [
     /* ------------------------------------------------------------------ 1 */
     {
       id: 'e4-a1-simulador',
-      tipo: 'simulador-moore',
+      tipo: 'explora-moore',
       nivel: 'base',
       puntos: 110,
-      titulo: 'Simulador de duplicación',
-      objetivo: 'Ver con tus propios datos cómo se separan el crecimiento lineal y el exponencial.',
+      titulo: 'Explora la ley de Moore',
+      objetivo: 'Ver con tus propios ojos cómo caben cada vez más transistores en el mismo chip.',
       instrucciones:
-        'Cambia el valor inicial, el periodo de duplicación y el tiempo total. Observa la tabla y el gráfico. Después responde las preguntas: se contestan leyendo el simulador, no de memoria.',
-      conceptoPrevio: 'Valor final = valor inicial × 2^(tiempo ÷ periodo).',
+        'Mueve los controles del simulador, mira lo que pasa y elige lo que observas. No hay que calcular nada: cada paso te explica lo que viste.',
+      conceptoPrevio: 'La cantidad de transistores por chip se duplica cada cierto periodo (cerca de dos años).',
       conceptos: ['exponencial', 'ley-de-moore'],
-      inicial: { valorInicial: 100, periodo: 2, tiempo: 12, incrementoLineal: 100 },
-      preguntas: [
+      simulador: '/ley-moore/index.html',
+      pasos: [
         {
-          id: 'q1',
-          texto: 'Con valor inicial 100, periodo 2 años y 12 años, ¿cuántas duplicaciones completas ocurren?',
-          respuestas: ['6'],
-          porQueNo: 'Duplicaciones = tiempo ÷ periodo = 12 ÷ 2.',
+          id: 'o1',
+          accion: 'Deja el año en 1971 y el periodo en 24 meses. Mira «Transistores por chip».',
+          pregunta: '¿Cuántos transistores tiene el chip en 1971?',
+          opciones: ['230', 'Unos 2.300 (en pantalla: 2.3 mil)', 'Unos 23.000', 'Unos 2,3 millones'],
+          correcta: 1,
+          explicacion: 'Es el punto de partida real del modelo: el Intel 4004, con 2.300 transistores. En pantalla aparece como «2.3 mil», que es lo mismo.',
         },
         {
-          id: 'q2',
-          texto: 'Con esos mismos valores, ¿cuál es el valor final del crecimiento exponencial?',
-          respuestas: ['6400', '6.400'],
-          porQueNo: '100 × 2⁶ = 100 × 64 = 6.400.',
+          id: 'o2',
+          accion: 'Mueve el año a 1973 y luego a 1975. Fíjate en cómo cambia el número.',
+          pregunta: 'Cada dos años, el número de transistores…',
+          opciones: ['Suma siempre la misma cantidad (+2.300)', 'Se duplica (×2)', 'Se triplica', 'Se queda igual'],
+          correcta: 1,
+          explicacion: 'Pasa de 2.3 mil a 4.6 mil y luego a 9.2 mil: cada salto es el doble del anterior. Sumar 2.300 cada vez habría dado 6.9 mil en 1975. Esa diferencia, pequeña al principio, es la que vuelve explosivo lo exponencial.',
         },
         {
-          id: 'q3',
-          texto: 'Pon el periodo en 3 años dejando lo demás igual. ¿Cuál es ahora el valor final exponencial?',
-          respuestas: ['1600', '1.600'],
-          porQueNo: 'Con periodo 3 hay 12 ÷ 3 = 4 duplicaciones: 100 × 2⁴ = 1.600. Alargar el periodo de 2 a 3 años reduce el resultado a la cuarta parte.',
+          id: 'o3',
+          accion: 'Mueve el año hasta 2015 y mira la superficie del chip.',
+          pregunta: '¿Qué ves en la superficie del chip?',
+          opciones: [
+            'Casi vacía, igual que en 1971',
+            'Llena de bloques muy pequeños, en el mismo espacio',
+            'Un chip mucho más grande',
+            'Los mismos pocos bloques, pero más grandes',
+          ],
+          correcta: 1,
+          explicacion: 'El tamaño del chip no cambia: lo que cambia es el tamaño de cada transistor, que se encoge (de 10 µm en 1971 a unos 5 nm en 2015 dentro del modelo). Por eso caben cada vez más en el mismo espacio.',
+        },
+        {
+          id: 'o4',
+          accion: 'Deja el año en 2015 y cambia el periodo de duplicación de 24 a 36 meses. Mira «Transistores por chip».',
+          pregunta: '¿Qué le pasa al número de transistores?',
+          opciones: [
+            'Casi no cambia',
+            'Baja un poco',
+            'Baja muchísimo: de miles de millones a decenas de millones',
+            'Sube',
+          ],
+          correcta: 2,
+          explicacion: 'Con 24 meses hay unos 9.6 mil millones; con 36 meses, unos 60 millones. Alargar el periodo «solo» un año suena a poco y deja el resultado en una fracción. Por eso importa tanto que la ley de Moore se haya ido desacelerando.',
+        },
+        {
+          id: 'o5',
+          accion: 'Lee la nota verde que está arriba del simulador.',
+          pregunta: '¿Son reales las cifras que muestra el simulador después de 1971?',
+          opciones: [
+            'Sí, son los transistores de los chips reales de cada año',
+            'No: son un modelo idealizado; solo el dato de 1971 es real',
+            'Sí, pero solo hasta 2015',
+            'No se sabe de dónde salen',
+          ],
+          correcta: 1,
+          explicacion: 'El simulador calcula todo desde 1971 con una regla de duplicación. No es la historia real de los chips ni una predicción. Y solo muestra cantidad de transistores: no velocidad, ni calor, ni costo.',
         },
       ],
       pistas: [
-        'El número de duplicaciones es el tiempo dividido entre el periodo. Es el exponente del 2.',
-        'Para el valor final, calcula primero 2 elevado al número de duplicaciones y después multiplica por el valor inicial.',
-        'Al cambiar el periodo de 2 a 3 años, las duplicaciones bajan de 6 a 4. Dos duplicaciones menos significan dividir por 4.',
+        'Los números están en el panel izquierdo del simulador: «Transistores por chip» cambia cuando mueves el año o el periodo.',
+        'Si dudas, mueve el control otra vez y compara el número antes y después.',
+        'No hace falta calcular: basta con leer lo que muestra el simulador.',
       ],
       explicacion:
-        'El detalle que más sorprende es el tercero: alargar el periodo de duplicación de 2 a 3 años —un cambio que suena menor— reduce el resultado a la cuarta parte. Por eso la desaceleración de la Ley de Moore importa tanto: no es que el progreso se detenga, es que cada año de retraso en el periodo de duplicación se compone con todos los anteriores.',
+        'La idea de la sesión en una frase: cada ~2 años caben el doble de transistores en el mismo chip, y «el doble, una y otra vez» crece mucho más rápido de lo que la intuición espera. Lo que el simulador no muestra —velocidad, calor, costo— es justo lo que la ley de Moore tampoco dice.',
     },
 
     /* ------------------------------------------------------------------ 2 */
@@ -227,80 +282,67 @@ export default {
       tipo: 'predice',
       nivel: 'base',
       puntos: 110,
-      titulo: 'Predice antes de mover',
+      titulo: 'Predice antes de mirar',
       objetivo: 'Enfrentar tu propia intuición sobre el crecimiento exponencial antes de ver el resultado.',
       instrucciones:
-        'Primero escribe tu predicción sin calcular. Después ejecuta la simulación y compara. Se puntúa por completar el ciclo predicción-comprobación-explicación, no por acertar la predicción: equivocarse aquí es precisamente lo que enseña.',
-      conceptoPrevio: 'La fórmula del crecimiento exponencial.',
+        'Primero elige lo que crees, sin calcular. Después comprueba. Se puntúa por completar el ejercicio, no por acertar: equivocarse aquí es justo lo que enseña.',
+      conceptoPrevio: 'Duplicar una y otra vez crece mucho más rápido que sumar siempre la misma cantidad.',
       conceptos: ['exponencial'],
       escenarios: [
         {
           id: 's1',
-          enunciado:
-            'Una hoja de papel de 0,1 mm se dobla por la mitad 20 veces (cada doblez duplica el grosor). ¿Qué grosor tendría?',
-          opciones: ['Unos 2 cm', 'Unos 10 cm', 'Unos 105 metros', 'Unos 2 kilómetros'],
+          enunciado: 'En 1971 un chip tenía 2.300 transistores. Si se duplican cada 2 años, ¿cuántos tendría en 1975?',
+          opciones: ['4.600', '6.900', '9.200', '23.000'],
           correcta: 2,
-          valorInicial: 0.1,
-          periodo: 1,
-          tiempo: 20,
-          unidad: 'mm',
-          resultado: 104857.6,
+          valorInicial: 2300,
+          periodo: 2,
+          tiempo: 4,
+          unidad: 'transistores',
+          resultado: 9200,
           explicacion:
-            '0,1 mm × 2²⁰ = 0,1 × 1.048.576 = 104.857,6 mm ≈ 105 metros, un edificio de unos 30 pisos. Casi todo el mundo responde «unos centímetros»: la intuición lineal falla de forma espectacular con 20 duplicaciones.',
+            'De 1971 a 1975 hay dos duplicaciones: 2.300 → 4.600 → 9.200. Quien respondió 6.900 sumó 2.300 dos veces: pensó en crecimiento lineal. Es lo mismo que viste en el simulador.',
         },
         {
           id: 's2',
-          enunciado:
-            'Un procesador tiene hoy 10.000 millones de transistores. Si la densidad se duplicara cada 2 años, ¿cuántos tendría en 10 años?',
-          opciones: ['50.000 millones', '100.000 millones', '320.000 millones', '1 billón'],
+          enunciado: 'Una hoja de papel de 0,1 mm se dobla por la mitad 20 veces; cada doblez duplica el grosor. ¿Qué grosor tendría?',
+          opciones: ['Unos 2 cm', 'Unos 10 cm', 'Unos 105 metros', 'Unos 2 kilómetros'],
           correcta: 2,
-          valorInicial: 10000,
-          periodo: 2,
-          tiempo: 10,
-          unidad: 'millones de transistores',
-          resultado: 320000,
           explicacion:
-            '10 años ÷ 2 = 5 duplicaciones. 10.000 × 2⁵ = 10.000 × 32 = 320.000 millones. La respuesta «50.000 millones» es la intuición lineal (sumar 10.000 por periodo); la correcta es 32 veces el valor inicial, no 5 veces.',
+            'Veinte duplicaciones multiplican por más de un millón: 0,1 mm se vuelve unos 105 metros, como un edificio de 30 pisos. Casi todo el mundo responde «unos centímetros»: la intuición piensa en sumar, no en duplicar.',
         },
         {
           id: 's3',
-          enunciado:
-            'Un archivo de registro crece 5 % cada día. Si hoy pesa 1 GB, ¿cuánto pesará en un año (365 días)?',
-          opciones: ['Unos 2 GB', 'Unos 18 GB', 'Unos 54 millones de GB', 'Unos 500 GB'],
-          correcta: 2,
-          valorInicial: 1,
-          periodo: 14.2,
-          tiempo: 365,
-          unidad: 'GB',
-          resultado: 54211842,
+          enunciado: 'Un nenúfar cubre un lago y su superficie se duplica cada día. Tarda 30 días en cubrir todo el lago. ¿En qué día cubría la mitad?',
+          opciones: ['Día 15', 'Día 20', 'Día 25', 'Día 29'],
+          correcta: 3,
           explicacion:
-            'Un 5 % diario duplica aproximadamente cada 14,2 días (porque 1,05^14,2 ≈ 2). En 365 días caben unas 25,7 duplicaciones, y 1,05^365 ≈ 54,2 millones. Un crecimiento que suena modesto —«apenas 5 % al día»— es exponencial, y por eso los archivos de registro sin rotación llenan discos sin que nadie lo vea venir.',
+            'Si cada día se duplica, el día anterior al final estaba la mitad: el día 29. Hasta el día 25 el lago se ve casi vacío (cerca del 3 %). Lo exponencial parece lento hasta que de pronto ya no queda tiempo.',
         },
       ],
       remate: {
-        pregunta: 'Los tres escenarios comparten un mismo error de intuición. ¿Cuál es?',
+        pregunta: 'Los tres casos comparten un mismo error de intuición. ¿Cuál es?',
         opciones: [
-          'Se subestima el resultado porque los números iniciales son pequeños.',
-          'Se estima multiplicando el valor inicial por el número de periodos, cuando lo que corresponde es elevar 2 a esa cantidad de duplicaciones.',
-          'Se olvida convertir las unidades de medida.',
-          'Se confunde el periodo de duplicación con el tiempo total.',
+          'Se piensa que crece sumando la misma cantidad, cuando en realidad se multiplica.',
+          'Se olvida convertir las unidades.',
+          'Los números iniciales eran demasiado pequeños.',
+          'Se confunde el año con el mes.',
         ],
-        correcta: 1,
+        correcta: 0,
         porQueNo: {
-          0: 'El tamaño del valor inicial no tiene nada que ver: el mismo error aparece partiendo de 0,1 mm o de 10.000 millones.',
-          2: 'En los tres escenarios las unidades se mantienen. El error está en la operación, no en la conversión.',
-          3: 'Es un error posible, pero no el que comparten los tres: aquí el periodo está dado con claridad y aun así la intuición falla.',
+          1: 'En los tres casos las unidades están claras. El error está en cómo se imagina el crecimiento.',
+          2: 'El tamaño del número inicial no importa: el error aparece igual con 2.300 transistores o con 0,1 mm.',
+          3: 'Las fechas están bien dadas en los tres casos; lo que falla es la intuición.',
         },
         explicacion:
-          'El error es tratar un crecimiento multiplicativo como si fuera aditivo: pensar «son 5 periodos, entonces unas 5 veces más» en vez de «son 5 duplicaciones, entonces 32 veces más». Es el mismo salto de razonamiento que convierte la Ley de Moore en promesas que no dice.',
+          'Tratamos un crecimiento que multiplica como si sumara. Es el mismo salto de razonamiento detrás de las promesas que la ley de Moore no hace.',
       },
       pistas: [
-        'Cuenta primero cuántas duplicaciones caben en el tiempo dado: es el tiempo dividido entre el periodo.',
-        'Recuerda que 2¹⁰ ≈ 1.000 y 2²⁰ ≈ 1.000.000. Con esos dos anclajes puedes estimar casi cualquier caso de memoria.',
-        'Si tu respuesta se parece a «el valor inicial multiplicado por el número de periodos», estás pensando de forma lineal.',
+        'Cuenta primero cuántas veces se duplica; cada duplicación multiplica por 2, no suma.',
+        'Si tu respuesta es «lo de antes más lo mismo», estás pensando en crecimiento lineal.',
+        'En el lago, pregúntate: ¿qué día antes de llenarse estaba a la mitad?',
       ],
       explicacion:
-        'Los tres escenarios comparten el mismo error de intuición: se estima multiplicando por el número de periodos en vez de elevar 2 a esa potencia. El tercero es el más útil profesionalmente: «crece 5 % diario» suena inofensivo y es exponencial. Cuando en un proyecto alguien diga «el crecimiento es apenas de un pequeño porcentaje por periodo», calcula antes de tranquilizarte.',
+        'Los tres casos comparten el mismo error: se imagina que crece sumando cuando en realidad se multiplica. Por eso conviene predecir antes de mirar: obliga a enfrentar la intuición propia.',
     },
 
     /* ------------------------------------------------------------------ 3 */
@@ -626,42 +668,25 @@ export default {
     pasos: [
       {
         id: 'p1',
-        tipo: 'calcular',
+        tipo: 'quiz',
         conceptos: ['exponencial'],
-        seccion: { estacion: 'tic', titulo: 'Calcular con crecimiento exponencial' },
-        instrucciones:
-          'Paso 1. Estimar el crecimiento del almacenamiento. Se subirán 40 GB de contenido el primer mes y el volumen mensual crecerá 8 % cada mes.',
-        datos: {
-          encabezados: ['Dato', 'Valor'],
-          filas: [
-            ['Volumen del mes 1', '40 GB'],
-            ['Crecimiento mensual', '8 %'],
-            ['Factor mensual', '1,08'],
-          ],
-          nota: 'Se pregunta por el volumen SUBIDO en ese mes, no por el acumulado.',
+        seccion: { estacion: 'tic', titulo: 'Qué es crecer de forma exponencial' },
+        pregunta:
+          'Paso 1. La plataforma recibirá 40 GB de contenido el primer mes, y cada mes se subirá 8 % más que el mes anterior. Para planear el almacenamiento, ¿qué conviene suponer?',
+        opciones: [
+          'Que el volumen sube siempre lo mismo cada mes (unos 3,2 GB más), así que basta con mirar el consumo de hoy.',
+          'Que el volumen crece de forma exponencial: cada mes sube más que el anterior, así que la capacidad se planea contra la curva y no contra el consumo actual.',
+          'Que un 8 % es poco, así que se puede ignorar el crecimiento.',
+          'Que el crecimiento se detendrá solo cuando haga falta.',
+        ],
+        correcta: 1,
+        porQueNo: {
+          0: 'Eso sería crecimiento lineal. Con un 8 % mensual el aumento de cada mes es mayor que el del anterior.',
+          2: '«Apenas un 8 %» suena inofensivo y es exponencial: el volumen se duplica más o menos cada 9 meses.',
+          3: 'Nada garantiza que el crecimiento se detenga: hay que planear con lo que se espera, no con lo que se desea.',
         },
-        formulas: [
-          'Volumen del mes n = 40 × 1,08^(n−1)',
-          'Periodo de duplicación aproximado = 72 ÷ porcentaje de crecimiento   (regla del 72)',
-        ],
-        campos: [
-          {
-            id: 'mes12',
-            etiqueta: 'Volumen subido en el mes 12 (GB, entero más cercano)',
-            respuestas: ['93'],
-            tolerancia: 1,
-            porQueNo: '40 × 1,08¹¹ = 40 × 2,3316 ≈ 93,3 GB. Ojo con el exponente: en el mes 12 han transcurrido 11 periodos de crecimiento, no 12.',
-          },
-          {
-            id: 'duplica',
-            etiqueta: 'Cada cuántos meses se duplica, aproximadamente (regla del 72)',
-            respuestas: ['9'],
-            tolerancia: 0.5,
-            porQueNo: '72 ÷ 8 = 9 meses.',
-          },
-        ],
         explicacion:
-          'La regla del 72 es la herramienta de estimación mental más útil que se llevan de esta sesión: dividiendo 72 entre el porcentaje de crecimiento por periodo se obtiene aproximadamente el número de periodos que tarda en duplicarse. Con 8 % mensual, el volumen se duplica cada 9 meses; en tres años se habrá multiplicado por 16.',
+          'Un crecimiento porcentual constante es exponencial. Con 8 % mensual el volumen se duplica cada 9 meses aproximadamente: en tres años se habrá multiplicado por unas 16 veces. Por eso se planea contra la curva, no contra el consumo actual.',
       },
       {
         id: 'p2',

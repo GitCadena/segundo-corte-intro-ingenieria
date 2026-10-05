@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { mezclar, coincideNumero } from './marco.jsx'
+import { mezclar } from './marco.jsx'
 
 /* ================================ ENTREGA ================================= */
 /* Elegir el alcance de una entrega con capacidad limitada.                   */
@@ -765,147 +765,88 @@ export function TablaPruebas({ actividad, ctrl }) {
   )
 }
 
-/* ============================ SIMULADOR DE MOORE ========================== */
+/* ========================= EXPLORA LA LEY DE MOORE ======================== */
+/* Simulador 3D incrustado más pasos de observación. No hay que calcular: cada  */
+/* paso pide mover un control, mirar la pantalla y elegir lo que se ve. Se      */
+/* puntúa por completar la exploración; cada paso explica lo que se observó.   */
 
-export function SimuladorMoore({ actividad, ctrl }) {
-  const [p, setP] = useState(actividad.inicial)
-  const [respuestas, setRespuestas] = useState({})
+export function ExploraMoore({ actividad, ctrl }) {
+  const [elegidas, setElegidas] = useState({})
   const bloqueado = ctrl.acertado
-  const revisado = ctrl.resultado !== null
+  const completo = actividad.pasos.every((p) => elegidas[p.id] !== undefined)
 
-  const serie = useMemo(() => {
-    const filas = []
-    const paso = Math.max(p.periodo, p.tiempo / 12)
-    for (let t = 0; t <= p.tiempo + 1e-9; t += paso) {
-      filas.push({
-        t: Math.round(t * 100) / 100,
-        exp: p.valorInicial * Math.pow(2, t / p.periodo),
-        lin: p.valorInicial + (p.incrementoLineal * t) / p.periodo,
-      })
-    }
-    return filas
-  }, [p])
-
-  const maximo = Math.max(...serie.map((f) => Math.max(f.exp, f.lin)), 1)
-  const duplicaciones = p.tiempo / p.periodo
-  const final = p.valorInicial * Math.pow(2, duplicaciones)
-
-  async function verificar() {
-    const fallos = actividad.preguntas.filter(
-      (q) => !q.respuestas.some((r) => coincideNumero(respuestas[q.id] ?? '', r, 0.5)),
-    )
-    const correcto = fallos.length === 0
-    await ctrl.enviar(correcto, {
-      datos: { respuestas, parametros: p },
-      mensaje: correcto ? null : `${actividad.preguntas.length - fallos.length} de ${actividad.preguntas.length} correctas.`,
+  async function registrar() {
+    const aciertos = actividad.pasos.filter((p) => elegidas[p.id] === p.correcta).length
+    await ctrl.enviar(true, {
+      datos: { elegidas },
+      mensaje: `Observaste bien ${aciertos} de ${actividad.pasos.length} pasos. Lo que se puntúa es haber recorrido la exploración y leído la explicación de cada paso.`,
     })
   }
 
   return (
-    <div className="juego juego--moore">
-      <div className="controles">
-        <Deslizador etiqueta="Valor inicial" valor={p.valorInicial} min={1} max={1000} paso={1} alCambiar={(v) => setP((s) => ({ ...s, valorInicial: v }))} />
-        <Deslizador etiqueta="Periodo de duplicación (años)" valor={p.periodo} min={1} max={6} paso={0.5} alCambiar={(v) => setP((s) => ({ ...s, periodo: v }))} />
-        <Deslizador etiqueta="Tiempo total (años)" valor={p.tiempo} min={2} max={30} paso={1} alCambiar={(v) => setP((s) => ({ ...s, tiempo: v }))} />
-        <Deslizador etiqueta="Incremento lineal por periodo" valor={p.incrementoLineal} min={0} max={500} paso={10} alCambiar={(v) => setP((s) => ({ ...s, incrementoLineal: v }))} />
+    <div className="juego juego--explora">
+      <div className="explora__marco">
+        <iframe
+          className="explora__iframe"
+          src={actividad.simulador}
+          title="Simulador de la ley de Moore"
+          loading="lazy"
+          allow="fullscreen"
+        />
       </div>
-
-      <div className="resumen-simulador" role="status">
-        <p>
-          <strong>{Math.round(duplicaciones * 100) / 100}</strong> duplicaciones ·{' '}
-          <strong>{formatear(final)}</strong> al final (exponencial) frente a{' '}
-          <strong>{formatear(p.valorInicial + p.incrementoLineal * duplicaciones)}</strong> (lineal)
-        </p>
-      </div>
-
-      <div className="grafico" role="img" aria-label={`Gráfico comparativo: al final el crecimiento exponencial llega a ${formatear(final)} y el lineal a ${formatear(p.valorInicial + p.incrementoLineal * duplicaciones)}`}>
-        {serie.map((f, i) => (
-          <div key={i} className="grafico__columna">
-            <span className="grafico__barra grafico__barra--exp" style={{ height: `${(f.exp / maximo) * 100}%` }} />
-            <span className="grafico__barra grafico__barra--lin" style={{ height: `${(f.lin / maximo) * 100}%` }} />
-            <span className="grafico__etiqueta">{f.t}</span>
-          </div>
-        ))}
-      </div>
-      <p className="grafico__leyenda">
-        <span className="llave llave--exp" /> Exponencial · <span className="llave llave--lin" /> Lineal · eje horizontal en años
+      <p className="explora__aparte">
+        ¿No se ve el chip en 3D? Ábrelo en una{' '}
+        <a href={actividad.simulador} target="_blank" rel="noopener noreferrer">
+          pestaña nueva
+        </a>{' '}
+        y vuelve aquí para responder. Es un modelo idealizado: solo el dato de 1971 es real.
       </p>
 
-      <div className="tabla-envoltura">
-        <table className="tabla">
-          <thead>
-            <tr>
-              <th>Año</th>
-              <th>Exponencial (×2 por periodo)</th>
-              <th>Lineal (+{p.incrementoLineal} por periodo)</th>
-              <th>Diferencia</th>
-            </tr>
-          </thead>
-          <tbody>
-            {serie.map((f, i) => (
-              <tr key={i}>
-                <td>{f.t}</td>
-                <td>{formatear(f.exp)}</td>
-                <td>{formatear(f.lin)}</td>
-                <td>{formatear(f.exp - f.lin)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="campos">
-        {actividad.preguntas.map((q) => {
-          const bien = revisado && q.respuestas.some((r) => coincideNumero(respuestas[q.id] ?? '', r, 0.5))
-          const mal = revisado && !bien
+      <ol className="predice">
+        {actividad.pasos.map((p) => {
+          const elegida = elegidas[p.id]
+          const hecho = elegida !== undefined
           return (
-            <div key={q.id} className={`campo-calculo ${bien ? 'campo-calculo--ok' : ''} ${mal ? 'campo-calculo--mal' : ''}`}>
-              <label>
-                <span className="campo-calculo__etiqueta">{q.texto}</span>
-                <input
-                  className="campo"
-                  inputMode="decimal"
-                  value={respuestas[q.id] ?? ''}
-                  disabled={bloqueado}
-                  onChange={(e) => {
-                    setRespuestas((s) => ({ ...s, [q.id]: e.target.value }))
-                    if (revisado) ctrl.reintentar()
-                  }}
-                />
-              </label>
-              {mal && <p className="campo-calculo__ayuda">{q.porQueNo}</p>}
-            </div>
+            <li key={p.id} className="predice__item">
+              <p className="explora__accion">
+                <strong>Haz esto:</strong> {p.accion}
+              </p>
+              <p className="predice__enunciado">{p.pregunta}</p>
+              {!hecho ? (
+                <ul className="opciones opciones--compactas">
+                  {p.opciones.map((op, i) => (
+                    <li key={i}>
+                      <button type="button" className="opcion" onClick={() => setElegidas((s) => ({ ...s, [p.id]: i }))}>
+                        <span className="opcion__letra" aria-hidden="true">{String.fromCharCode(65 + i)}</span>
+                        <span className="opcion__texto">{op}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className={elegida === p.correcta ? 'predice__resultado predice__resultado--ok' : 'predice__resultado'}>
+                  <p>
+                    <strong>Tu respuesta:</strong> {p.opciones[elegida]}
+                    <br />
+                    <strong>Lo que se ve:</strong> {p.opciones[p.correcta]}
+                  </p>
+                  <p className="predice__explicacion">{p.explicacion}</p>
+                </div>
+              )}
+            </li>
           )
         })}
-      </div>
+      </ol>
 
-      {!bloqueado && (
-        <button type="button" className="boton boton--principal" onClick={verificar} disabled={ctrl.enviando}>
-          Verificar respuestas
+      {!bloqueado && completo && (
+        <button type="button" className="boton boton--principal" onClick={registrar} disabled={ctrl.enviando}>
+          Registrar la exploración
         </button>
       )}
+      {!bloqueado && !completo && (
+        <p className="ayuda-teclado">Completa los {actividad.pasos.length} pasos para registrar la exploración.</p>
+      )}
     </div>
-  )
-}
-
-function Deslizador({ etiqueta, valor, min, max, paso, alCambiar }) {
-  return (
-    <label className="deslizador">
-      <span className="deslizador__etiqueta">
-        {etiqueta}: <strong>{valor}</strong>
-      </span>
-      <input type="range" min={min} max={max} step={paso} value={valor} onChange={(e) => alCambiar(Number(e.target.value))} />
-      <input
-        className="campo campo--mini"
-        type="number"
-        min={min}
-        max={max}
-        step={paso}
-        value={valor}
-        onChange={(e) => alCambiar(Number(e.target.value))}
-        aria-label={`${etiqueta}, valor exacto`}
-      />
-    </label>
   )
 }
 
@@ -981,10 +922,15 @@ export function Predice({ actividad, ctrl }) {
                   <p>
                     <strong>Tu predicción:</strong> {e.opciones[predicciones[e.id]]}
                     <br />
-                    <strong>Resultado real:</strong> {e.opciones[e.correcta]} ({formatear(e.resultado)} {e.unidad})
-                    <br />
-                    <strong>Cálculo:</strong> {e.valorInicial} × 2^({e.tiempo} ÷ {e.periodo}) ={' '}
-                    {formatear(e.resultado)} {e.unidad}
+                    <strong>Resultado real:</strong> {e.opciones[e.correcta]}
+                    {e.resultado !== undefined && ` (${formatear(e.resultado)} ${e.unidad})`}
+                    {e.resultado !== undefined && (
+                      <>
+                        <br />
+                        <strong>Cálculo:</strong> {e.valorInicial} × 2^({e.tiempo} ÷ {e.periodo}) ={' '}
+                        {formatear(e.resultado)} {e.unidad}
+                      </>
+                    )}
                   </p>
                   <p className="predice__explicacion">{e.explicacion}</p>
                 </div>
