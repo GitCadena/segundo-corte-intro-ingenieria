@@ -49,7 +49,7 @@ insert into public.actividades (id, estacion_id, titulo, tipo, nivel, puntos_max
   ('e4-reto:p2', 'tic', 'Un servicio digital para todo el campus · paso 2', 'entrega', 'base', 38, true, ARRAY['brecha-digital', 'accesibilidad']::text[], 7),
   ('e4-reto:p3', 'tic', 'Un servicio digital para todo el campus · paso 3', 'datos-necesarios', 'base', 37, true, ARRAY['finalidad', 'datos-personales']::text[], 8),
   ('e4-reto:p4', 'tic', 'Un servicio digital para todo el campus · paso 4', 'quiz', 'base', 37, true, ARRAY['datos-personales', 'finalidad']::text[], 9),
-  ('e4-taller', 'tic', 'Taller en clase · Un servicio digital del campus', 'taller', 'base', 0, false, '{}'::text[], 10),
+  ('e4-taller', 'tic', 'Taller en grupo · Cuatro experimentos con el simulador', 'taller', 'base', 0, false, '{}'::text[], 10),
   ('e5-a1-traza', 'paradigmas', 'Sigue las variables', 'traza', 'base', 110, true, ARRAY['variable', 'asignacion', 'contador', 'acumulador']::text[], 0),
   ('e5-a2-armar', 'paradigmas', 'Arma el algoritmo', 'algoritmo', 'base', 130, true, ARRAY['algoritmo', 'contador', 'variable']::text[], 1),
   ('e5-a3-decision', 'paradigmas', 'Completa la decisión', 'completar', 'base', 120, true, ARRAY['algoritmo', 'frontera']::text[], 2),

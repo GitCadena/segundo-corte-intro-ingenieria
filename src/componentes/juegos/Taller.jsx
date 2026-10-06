@@ -59,6 +59,18 @@ export default function Taller({ actividad, ctrl }) {
     <div className="juego juego--taller">
       <p className="enunciado">{actividad.enunciado}</p>
 
+      {actividad.simulador && (
+        <>
+          <div className="explora__marco">
+            <iframe className="explora__iframe" src={actividad.simulador} title="Simulador de la ley de Moore" loading="lazy" allow="fullscreen" />
+          </div>
+          <p className="explora__aparte">
+            ¿No se ve el chip en 3D? Ábranlo en una{' '}
+            <a href={actividad.simulador} target="_blank" rel="noopener noreferrer">pestaña nueva</a>. Es un modelo idealizado: solo el dato de 1971 es real.
+          </p>
+        </>
+      )}
+
       {caso && (
         <div className="taller__caso-asignado">
           <p className="etiqueta-campo">Tu caso asignado (no lo cambies: cada estudiante tiene uno distinto)</p>
