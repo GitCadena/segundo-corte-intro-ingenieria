@@ -30,13 +30,13 @@ export default function Resultados({ sesion, resumen, cuenta, estadoGuardado, mo
           <span className="lab-cifra__valor">{num(resumen.academico)}</span>
           <span className="lab-cifra__de">de 100</span>
           <span className="lab-cifra__etiqueta">Puntuación académica</span>
-          <span className="lab-cifra__nota">Cuánto del proyecto quedó bien. Corregir no resta.</span>
+          <span className="lab-cifra__nota">Qué tan completo y razonado quedó el proyecto (de 80 a 100).</span>
         </div>
         <div className="lab-cifra">
           <span className="lab-cifra__valor">{num(resumen.competitivo)}</span>
           <span className="lab-cifra__de">de 100</span>
           <span className="lab-cifra__etiqueta">Puntuación competitiva</span>
-          <span className="lab-cifra__nota">Precisión en el primer intento y componentes completados.</span>
+          <span className="lab-cifra__nota">Cuánto coincide su criterio con lo más habitual del ciclo.</span>
         </div>
         <div className="lab-cifra">
           <span className="lab-cifra__valor">{resumen.completos}</span>

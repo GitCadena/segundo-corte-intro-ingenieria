@@ -85,7 +85,7 @@ export function construirPdf(sesion, resumen, cuenta) {
     ...filas.map((celdas) => ({ t: 'fila', celdas, xs })),
     { t: 'linea' },
     { t: 'p', texto: `Puntuación académica: ${num(resumen.academico)} de 100` },
-    { t: 'p', texto: `Puntuación competitiva: ${num(resumen.competitivo)} de 100 (precisión en el primer intento y componentes completados; el tiempo solo desempata)` },
+    { t: 'p', texto: `Puntuación competitiva: ${num(resumen.competitivo)} de 100 (coincidencia con lo más habitual del ciclo; el tiempo solo desempata)` },
     { t: 'p', texto: `Componentes completados: ${resumen.completos} de ${resumen.totalComponentes} · Intentos totales: ${resumen.intentos}` },
     { t: 'h', texto: 'Resumen de lo construido' },
     ...resumenDeLoConstruido(sesion, resumen).flatMap((l) => [

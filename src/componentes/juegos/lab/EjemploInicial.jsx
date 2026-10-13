@@ -21,7 +21,7 @@ export default function EjemploInicial({ onListo }) {
   const colocada = colocadas[PIEZA.id]
 
   function comprobar() {
-    setIntento(colocada === PIEZA.zona ? 'ok' : 'mal')
+    setIntento(colocada === PIEZA.zona ? 'ok' : 'otra')
   }
 
   return (
@@ -37,7 +37,7 @@ export default function EjemploInicial({ onListo }) {
         colocadas={colocadas}
         retro={intento ? { [PIEZA.id]: intento } : {}}
         revisiones={1}
-        bloqueado={intento === 'ok'}
+        bloqueado={!!intento}
         onColocar={(id, z) => {
           setColocadas({ [id]: z })
           setIntento(null)
@@ -47,15 +47,15 @@ export default function EjemploInicial({ onListo }) {
           setIntento(null)
         }}
       />
-      {intento !== 'ok' ? (
+      {!intento ? (
         <button type="button" className="boton boton--secundario" disabled={!colocada} onClick={comprobar}>
-          Comprobar
+          Ver comentario
         </button>
       ) : (
         <div className="lab-ejemplo__ok">
           <p>
-            Así funciona todo el laboratorio: ubican, comprueban, y si algo no está bien lo corrigen. Corregir no resta de la nota
-            académica.
+            Así funciona todo el laboratorio: ubican según su criterio y al final ven comentarios. No hay una única respuesta, y
+            los comentarios no son errores.
           </p>
           <button type="button" className="boton boton--principal" onClick={onListo}>
             Empezar el laboratorio

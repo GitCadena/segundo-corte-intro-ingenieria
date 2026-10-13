@@ -302,8 +302,8 @@ export default function PanelDocente() {
         ) : (
           <div className="docente__lab-cuerpo">
             <p className="panel__nota">
-              Ordenados por puntuación competitiva (precisión en el primer intento y componentes completados). El tiempo solo desempata.
-              La puntuación académica es la que corresponde a la calificación: corregir no resta.
+              Ordenados por puntuación competitiva (coincidencia con lo más habitual del ciclo). El tiempo solo desempata.
+              La puntuación académica es la que corresponde a la calificación y va de 80 a 100 si el equipo terminó los cinco componentes.
             </p>
             <button type="button" className="boton boton--secundario" onClick={() => exportarLaboratorioCSV(laboratorios)}>
               Exportar laboratorio a CSV

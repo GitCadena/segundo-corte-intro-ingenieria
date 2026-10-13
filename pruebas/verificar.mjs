@@ -772,55 +772,77 @@ function jugarPerfecto(modo) {
   return ses
 }
 
+// Una partida con otro criterio: todo en la primera zona y conexiones con razón propia.
+function jugarDistinto(modo) {
+  let ses = sesionNueva(modo)
+  const zonas = { ruta: 'f1', flujo: 'captura', calidad: 'oportuna', transferencia: 'f1' }
+  for (const c of ['ruta', 'flujo', 'calidad', 'transferencia']) {
+    for (const it of Lab.itemsDe(c, modo)) ses = Lab.colocar(ses, c, it.id, c === 'transferencia' && it.grupo === 'elementos' ? 'captura' : zonas[c])
+    ses = Lab.revisar(ses, c)
+  }
+  const pares = [['n1', 'n3'], ['n3', 'n5'], ['n5', 'n7'], ['n2', 'n4'], ['n4', 'n6'], ['n1', 'n7'], ['n2', 'n6'], ['n3', 'n7'], ['n7', 'n1'], ['n6', 'n2']]
+  for (const [d, h] of pares) ses = Lab.intentarEnlace(ses, d, h, 0, 'Porque lo vemos así en equipo').sesion
+  if (modo === '120') ses = Lab.revisarDecision(ses, ['f1']).sesion
+  return ses
+}
+
 for (const modo of ['60', '120']) {
-  prueba(`laboratorio · ${modo} min · una partida perfecta da 100 académicos y 100 competitivos`, () => {
+  prueba(`laboratorio · ${modo} min · una partida con la ubicación habitual da 100 y 100`, () => {
     const r = Lab.resumenSesion(jugarPerfecto(modo), new Date('2026-10-13T10:40:00'))
     return r.academico === 100 && r.competitivo === 100 && r.terminada && r.completos === 5
       ? true
       : `acad=${r.academico} comp=${r.competitivo} completos=${r.completos}`
   })
+
+  prueba(`laboratorio · ${modo} min · con un criterio distinto nadie baja de 80 y se puede terminar sin errores marcados`, () => {
+    const ses = jugarDistinto(modo)
+    const r = Lab.resumenSesion(ses, new Date('2026-10-13T10:40:00'))
+    if (!r.terminada || r.completos !== 5) return `no terminó: completos=${r.completos}`
+    if (r.academico < 80 || r.academico > 100 || r.competitivo < 80 || r.competitivo > 100) return `fuera de 80 a 100: ${r.academico}/${r.competitivo}`
+    if (r.componentes.some((c) => c.puntos < c.max * 0.8)) return 'un componente bajó de su 80 %'
+    return JSON.stringify(ses).includes('"mal"') ? 'quedó una marca «mal» en la sesión' : true
+  })
 }
 
-prueba('laboratorio · equivocarse y corregir permite la nota máxima, pero baja la competitiva', () => {
-  let ses = sesionNueva('60')
-  const items = Lab.itemsRuta('60')
-  items.forEach((it, i) => {
-    ses = Lab.colocar(ses, 'ruta', it.id, i % 2 === 0 ? 'f1' : it.zona)
-  })
-  ses = Lab.revisar(ses, 'ruta')
-  const primera = Lab.resultadosPorComponente(ses).find((c) => c.id === 'ruta')
-  if (primera.completo || primera.puntos >= 30) return 'no debería estar completo tras el primer intento'
-  for (const it of items) ses = Lab.colocar(ses, 'ruta', it.id, it.zona)
-  ses = Lab.revisar(ses, 'ruta')
-  const final = Lab.resultadosPorComponente(ses).find((c) => c.id === 'ruta')
-  return final.completo && final.puntos === 30 && final.competitivo < 30 && final.competitivo >= 15
+prueba('laboratorio · una ubicación vecina es defendible y vale más que una lejana', () => {
+  const it = Lab.itemsRuta('60').find((x) => x.zona === 'f3')
+  const puntos = (zona) => {
+    let ses = sesionNueva('60')
+    for (const x of Lab.itemsRuta('60')) ses = Lab.colocar(ses, 'ruta', x.id, x.id === it.id ? zona : x.zona)
+    ses = Lab.revisar(ses, 'ruta')
+    return { nivel: ses.ruta.retro[it.id], puntos: Lab.resultadosPorComponente(ses).find((c) => c.id === 'ruta').puntos }
+  }
+  const exacta = puntos('f3')
+  const vecina = puntos('f4')
+  const lejana = puntos('f7')
+  return exacta.nivel === 'ok' && vecina.nivel === 'alt' && lejana.nivel === 'otra' && exacta.puntos > vecina.puntos && vecina.puntos > lejana.puntos && lejana.puntos >= 24
     ? true
-    : `puntos=${final.puntos} competitivo=${final.competitivo}`
+    : JSON.stringify([exacta, vecina, lejana])
 })
 
-prueba('laboratorio · no se revisa un componente a medias ni se reabre uno completo', () => {
+prueba('laboratorio · no se cierra un componente a medias ni se reabre uno cerrado', () => {
   let ses = sesionNueva('60')
   const items = Lab.itemsRuta('60')
   ses = Lab.colocar(ses, 'ruta', items[0].id, items[0].zona)
-  if (Lab.revisar(ses, 'ruta').ruta.revisiones !== 0) return 'revisó con piezas sin ubicar'
+  if (Lab.revisar(ses, 'ruta').ruta.revisiones !== 0) return 'cerró con piezas sin ubicar'
   for (const it of items) ses = Lab.colocar(ses, 'ruta', it.id, it.zona)
   ses = Lab.revisar(ses, 'ruta')
   const cerrada = Lab.colocar(ses, 'ruta', items[0].id, 'f7')
-  return cerrada.ruta.colocadas[items[0].id] === items[0].zona ? true : 'un componente completo se pudo modificar'
+  return cerrada.ruta.colocadas[items[0].id] === items[0].zona ? true : 'un componente cerrado se pudo modificar'
 })
 
-prueba('laboratorio · las conexiones inválidas o con razón equivocada no se aceptan y cuentan como intento', () => {
-  let ses = sesionNueva('60')
-  let r = Lab.intentarEnlace(ses, 'n1', 'n5', 0)
-  if (r.resultado.tipo !== 'sin-relacion' || r.sesion.dependencias.rechazos !== 1) return 'no rechazó una conexión sin relación'
-  ses = r.sesion
+prueba('laboratorio · las conexiones propias se aceptan con razón; las habituales aceptan cualquier razón', () => {
+  const ses = sesionNueva('60')
+  let r = Lab.intentarEnlace(ses, 'n1', 'n5', null, 'corto')
+  if (r.resultado.tipo !== 'falta' || r.sesion.dependencias.enlaces.length !== 0) return 'aceptó una conexión propia sin razón'
+  r = Lab.intentarEnlace(ses, 'n1', 'n5', null, 'Porque así lo vemos nosotros')
+  if (r.resultado.tipo !== 'aceptada' || r.sesion.dependencias.enlaces[0].credito !== 0.6) return 'no aceptó la conexión propia'
   const l1 = ENLACES.find((e) => e.id === 'l1')
-  r = Lab.intentarEnlace(ses, l1.desde, l1.hacia, (l1.correcta + 1) % 3)
-  if (r.resultado.tipo !== 'razon-incorrecta' || r.sesion.dependencias.rechazos !== 2 || r.sesion.dependencias.enlaces.length !== 0) return 'aceptó una razón equivocada'
-  r = Lab.intentarEnlace(r.sesion, l1.desde, l1.hacia, l1.correcta)
-  if (r.resultado.tipo !== 'aceptada') return 'no aceptó la conexión correcta'
-  const repetida = Lab.intentarEnlace(r.sesion, l1.desde, l1.hacia, l1.correcta)
-  return repetida.resultado.tipo === 'repetida' && repetida.sesion.dependencias.enlaces.length === 1 ? true : 'duplicó una conexión'
+  const otra = Lab.intentarEnlace(ses, l1.desde, l1.hacia, (l1.correcta + 1) % 3)
+  if (otra.resultado.tipo !== 'aceptada' || otra.sesion.dependencias.enlaces[0].credito !== 0.8) return 'rechazó una razón distinta de la habitual'
+  const repetida = Lab.intentarEnlace(r.sesion, 'n1', 'n5', null, 'Porque así lo vemos nosotros')
+  const atras = Lab.intentarEnlace(ses, 'n7', 'n1', null, 'Para empezar de nuevo si falla').sesion.dependencias.enlaces[0]
+  return repetida.resultado.tipo === 'repetida' && atras.tipo === 'revision' ? true : 'duplicó o no reconoció el regreso'
 })
 
 prueba('laboratorio · la clasificación del docente ordena por precisión y el tiempo solo desempata', () => {

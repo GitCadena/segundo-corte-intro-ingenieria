@@ -17,6 +17,8 @@ import {
   ELEMENTOS_FLUJO,
   SITUACIONES_CALIDAD,
   ENLACES,
+  ETAPAS_FLUJO,
+  ALTERNAS_CALIDAD,
   RESULTADOS,
   REVISION,
   SECTORES,
@@ -24,7 +26,7 @@ import {
   COMPONENTES,
   REQUISITOS_DEPENDENCIAS,
 } from '../data/lab-cdvs.js'
-import { faseDe } from '../data/cdvs-fases.js'
+import { FASES, faseDe } from '../data/cdvs-fases.js'
 
 const VERSION = 1
 
@@ -32,15 +34,24 @@ const visibles = (lista, modo) => lista.filter((x) => modo === '120' || !x.ampli
 
 /* ------------------------- contenido según modalidad ---------------------- */
 
-export const itemsRuta = (modo) => visibles(ACCIONES_RUTA, modo).map((a) => ({ ...a, zona: a.fase }))
-export const itemsFlujo = (modo) => visibles(ELEMENTOS_FLUJO, modo).map((e) => ({ ...e, zona: e.etapa }))
-export const itemsCalidad = (modo) => visibles(SITUACIONES_CALIDAD, modo).map((q) => ({ ...q, zona: q.caracteristica }))
+const vecinas = (orden, id) => {
+  const i = orden.indexOf(id)
+  return [orden[i - 1], orden[i + 1]].filter(Boolean)
+}
+const ORDEN_FASES = FASES.map((f) => f.id)
+const ORDEN_ETAPAS = ETAPAS_FLUJO.map((e) => e.id)
+
+// Una ubicación «defendible» es la de la fase o etapa vecina: el ciclo se solapa.
+export const itemsRuta = (modo) => visibles(ACCIONES_RUTA, modo).map((a) => ({ ...a, zona: a.fase, alt: vecinas(ORDEN_FASES, a.fase) }))
+export const itemsFlujo = (modo) => visibles(ELEMENTOS_FLUJO, modo).map((e) => ({ ...e, zona: e.etapa, alt: vecinas(ORDEN_ETAPAS, e.etapa) }))
+export const itemsCalidad = (modo) =>
+  visibles(SITUACIONES_CALIDAD, modo).map((q) => ({ ...q, zona: q.caracteristica, alt: ALTERNAS_CALIDAD[q.caracteristica] ?? [] }))
 export const sectoresDe = (modo) => visibles(SECTORES, modo)
 
 export function itemsTransferencia(modo) {
   return sectoresDe(modo).flatMap((s) => [
-    ...s.acciones.map((a) => ({ ...a, zona: a.fase, grupo: 'acciones', sector: s.id })),
-    ...s.elementos.map((e) => ({ ...e, zona: e.etapa, grupo: 'elementos', sector: s.id })),
+    ...s.acciones.map((a) => ({ ...a, zona: a.fase, alt: vecinas(ORDEN_FASES, a.fase), grupo: 'acciones', sector: s.id })),
+    ...s.elementos.map((e) => ({ ...e, zona: e.etapa, alt: vecinas(ORDEN_ETAPAS, e.etapa), grupo: 'elementos', sector: s.id })),
   ])
 }
 
@@ -97,8 +108,7 @@ export function crearSesion({ alias, integrantes, modo, id, ahora = new Date() }
     calidad: clasificacionVacia(),
     dependencias: {
       enlaces: [],
-      rechazos: 0,
-      revision: { elegidas: [], intentos: 0, primeroOk: null, completo: false },
+      revision: { elegidas: [], intentos: 0, primeroOk: null, credito: 0, completo: false },
     },
     transferencia: clasificacionVacia(),
   }
@@ -117,18 +127,26 @@ export function normalizarSesion(obj) {
 
 /* ---------------------------- clasificaciones ----------------------------- */
 
+// Criterio propio: no hay una única respuesta. La ubicación habitual vale 1; una
+// defendible (fase o función vecina, o característica cercana) vale 0,7; cualquier
+// otra lectura vale 0,4. Nada se marca como «mal».
+const CREDITO = { ok: 1, alt: 0.7, otra: 0.4 }
+
 function evaluar(items, colocadas) {
-  const ok = {}
-  let correctos = 0
+  const retro = {}
+  let credito = 0
+  let exactos = 0
   for (const it of items) {
-    const bien = colocadas[it.id] === it.zona
-    ok[it.id] = bien
-    if (bien) correctos += 1
+    const z = colocadas[it.id]
+    const nivel = z === it.zona ? 'ok' : (it.alt ?? []).includes(z) ? 'alt' : 'otra'
+    retro[it.id] = nivel
+    credito += CREDITO[nivel]
+    if (nivel === 'ok') exactos += 1
   }
-  return { ok, correctos, total: items.length, completo: items.length > 0 && correctos === items.length }
+  return { retro, credito, exactos, total: items.length }
 }
 
-const estaCompleta = (estado) => !!estado.revisado && estado.revisado.correctos === estado.revisado.total
+const estaCompleta = (estado) => !!estado.revisado
 
 /** Coloca (o cambia de zona) una pieza. Un componente completo queda cerrado. */
 export function colocar(sesion, componente, itemId, zona) {
@@ -149,92 +167,83 @@ export function devolver(sesion, componente, itemId) {
   return { ...sesion, [componente]: { ...estado, colocadas, retro } }
 }
 
-/** Revisa un componente de clasificación. Solo cuenta si ya se colocó todo. */
+/** Cierra un componente de clasificación con comentarios. Solo si ya se colocó todo. */
 export function revisar(sesion, componente) {
   const estado = sesion[componente]
   const items = itemsDe(componente, sesion.modo)
   if (estaCompleta(estado)) return sesion
   if (Object.keys(estado.colocadas).length < items.length) return sesion
   const r = evaluar(items, estado.colocadas)
-  const retro = {}
-  for (const it of items) retro[it.id] = r.ok[it.id] ? 'ok' : 'mal'
   return {
     ...sesion,
     [componente]: {
       ...estado,
       revisiones: estado.revisiones + 1,
-      primero: estado.primero ?? r.correctos,
-      revisado: { correctos: r.correctos, total: r.total },
-      retro,
+      primero: r.exactos,
+      revisado: { correctos: r.credito, exactos: r.exactos, total: r.total },
+      retro: r.retro,
     },
   }
 }
 
 /* ------------------------------- dependencias ------------------------------ */
 
-const tituloResultado = (id) => RESULTADOS.find((r) => r.id === id)?.corto ?? id
-
-export function mensajeRechazo(desde, hacia) {
-  const inverso = ENLACES.find((e) => e.desde === hacia && e.hacia === desde && e.tipo === 'avance')
-  if (inverso) {
-    return `El flujo natural va al revés: primero «${tituloResultado(hacia)}» y después «${tituloResultado(desde)}».`
-  }
-  return `Entre «${tituloResultado(desde)}» y «${tituloResultado(hacia)}» no hay una dependencia directa: antes se necesitan otros resultados.`
-}
+const posResultado = (id) => RESULTADOS.findIndex((r) => r.id === id)
 
 /**
- * Intenta construir una conexión. Devuelve la sesión nueva y el resultado:
- * { tipo: 'aceptada' | 'repetida' | 'sin-relacion' | 'razon-incorrecta', mensaje }
+ * Registra una conexión elegida por el equipo. Cualquier par distinto es válido:
+ * si coincide con una dependencia habitual del ciclo se elige la razón entre
+ * opciones (cualquiera se acepta); si no, el equipo escribe su propia razón.
+ * Devuelve { sesion, resultado: { tipo: 'aceptada' | 'repetida' | 'falta', mensaje } }.
  */
-export function intentarEnlace(sesion, desde, hacia, opcion) {
-  if (desde === hacia) return { sesion, resultado: { tipo: 'sin-relacion', mensaje: 'Elige dos resultados distintos.', contada: false } }
+export function intentarEnlace(sesion, desde, hacia, opcion, razon = '') {
+  if (!desde || !hacia || desde === hacia) return { sesion, resultado: { tipo: 'falta', mensaje: 'Elige dos resultados distintos.' } }
   const dep = sesion.dependencias
-  const enlace = ENLACES.find((e) => e.desde === desde && e.hacia === hacia)
+  const id = `${desde}>${hacia}`
+  if (dep.enlaces.some((e) => e.id === id)) return { sesion, resultado: { tipo: 'repetida', mensaje: 'Esa conexión ya está construida.' } }
 
-  if (!enlace) {
-    return {
-      sesion: { ...sesion, dependencias: { ...dep, rechazos: dep.rechazos + 1 } },
-      resultado: { tipo: 'sin-relacion', mensaje: mensajeRechazo(desde, hacia), contada: true },
-    }
-  }
-  if (dep.enlaces.some((e) => e.id === enlace.id)) {
-    return { sesion, resultado: { tipo: 'repetida', mensaje: 'Esa conexión ya está construida.', contada: false } }
-  }
-  if (opcion !== enlace.correcta) {
-    return {
-      sesion: { ...sesion, dependencias: { ...dep, rechazos: dep.rechazos + 1 } },
-      resultado: {
-        tipo: 'razon-incorrecta',
-        mensaje: 'La conexión tiene sentido, pero la razón que elegiste no la explica. Piensa qué aporta el primer resultado al segundo.',
-        contada: true,
-      },
-    }
+  const habitual = ENLACES.find((e) => e.desde === desde && e.hacia === hacia)
+  const tipo = posResultado(hacia) < posResultado(desde) ? 'revision' : 'avance'
+  let credito
+  let mensaje
+  let texto = ''
+  if (habitual) {
+    if (opcion === null || opcion === undefined) return { sesion, resultado: { tipo: 'falta', mensaje: 'Elige la razón que más se acerque a lo que piensan.' } }
+    credito = opcion === habitual.correcta ? 1 : 0.8
+    mensaje = credito === 1 ? habitual.porque : `Es otra forma de verlo. Lo más habitual: ${habitual.porque}`
+    texto = habitual.opciones[opcion] ?? ''
+  } else {
+    texto = (razon ?? '').trim()
+    if (texto.length < 8) return { sesion, resultado: { tipo: 'falta', mensaje: 'Escriban en una frase por qué creen que existe esa conexión.' } }
+    credito = 0.6
+    mensaje = 'Conexión propia anotada. No es la más habitual del ciclo, pero con su razón puede tener sentido: coméntenla con el docente.'
   }
   return {
-    sesion: { ...sesion, dependencias: { ...dep, enlaces: [...dep.enlaces, { id: enlace.id, desde, hacia, tipo: enlace.tipo }] } },
-    resultado: { tipo: 'aceptada', mensaje: enlace.porque, contada: true },
+    sesion: { ...sesion, dependencias: { ...dep, enlaces: [...dep.enlaces, { id, desde, hacia, tipo, credito, razon: texto }] } },
+    resultado: { tipo: 'aceptada', mensaje },
   }
 }
 
-/** Revisión de decisiones (solo modalidad de 120 minutos). */
+export function quitarEnlace(sesion, id) {
+  const dep = sesion.dependencias
+  return { ...sesion, dependencias: { ...dep, enlaces: dep.enlaces.filter((e) => e.id !== id) } }
+}
+
+/** Revisión de decisiones (solo modalidad de 120 minutos): se acepta cualquier selección. */
 export function revisarDecision(sesion, elegidas) {
   const dep = sesion.dependencias
   if (dep.revision.completo) return { sesion, ok: true }
-  const a = [...elegidas].sort().join(',')
-  const b = [...REVISION.correctas].sort().join(',')
-  const ok = a === b
+  const buenas = REVISION.correctas
+  const comunes = elegidas.filter((x) => buenas.includes(x)).length
+  const union = new Set([...elegidas, ...buenas]).size
+  const credito = union === 0 ? 0 : comunes / union
   return {
-    ok,
+    ok: true,
     sesion: {
       ...sesion,
       dependencias: {
         ...dep,
-        revision: {
-          elegidas: [...elegidas],
-          intentos: dep.revision.intentos + 1,
-          primeroOk: dep.revision.primeroOk ?? ok,
-          completo: ok,
-        },
+        revision: { elegidas: [...elegidas], intentos: dep.revision.intentos + 1, primeroOk: credito === 1, credito, completo: true },
       },
     },
   }
@@ -243,36 +252,35 @@ export function revisarDecision(sesion, elegidas) {
 export function estadoDependencias(sesion) {
   const dep = sesion.dependencias
   const req = REQUISITOS_DEPENDENCIAS[sesion.modo]
-  const aceptadas = new Set(dep.enlaces.map((e) => e.id))
-  const avances = req.avance.filter((id) => aceptadas.has(id)).length
-  const revisionesHechas = ENLACES.filter((e) => e.tipo === 'revision' && aceptadas.has(e.id)).length
-  const revisiones = Math.min(req.revisiones, revisionesHechas)
-  const total = req.avance.length + req.revisiones
-  const correctos = avances + revisiones
+  const total = req.avance.length
+  const hechas = dep.enlaces.length
+  const atras = dep.enlaces.filter((e) => e.tipo === 'revision').length
   const decision = sesion.modo === '120'
-  const completo = correctos === total && (!decision || dep.revision.completo)
-  return { avances, revisiones, correctos, total, decision, completo, necesariasAvance: req.avance.length, necesariasRevision: req.revisiones }
+  const completo = hechas >= total && atras >= req.revisiones && (!decision || dep.revision.completo)
+  return { hechas, total, atras, necesariasAtras: req.revisiones, decision, completo }
 }
 
 /* -------------------------------- resultados ------------------------------- */
 
 const redondear = (n) => Math.round(n * 10) / 10
+// Nadie baja de 80: lo construido con criterio ya es un buen trabajo; el resto sube hasta 100.
+const piso = (max, ratio) => redondear(max * (0.8 + 0.2 * Math.max(0, Math.min(1, ratio))))
 
 function resultadoClasificacion(sesion, id) {
   const max = PUNTOS[id]
   const e = sesion[id]
   const total = itemsDe(id, sesion.modo).length
-  const ratio = e.revisado ? e.revisado.correctos / e.revisado.total : 0
   const completo = estaCompleta(e)
-  const precision = e.primero !== null ? e.primero / total : 0
+  const ratio = completo ? e.revisado.correctos / e.revisado.total : 0
+  const exactos = completo ? (e.revisado.exactos ?? e.revisado.correctos) / total : 0
   return {
     id,
     max,
-    puntos: redondear(max * ratio),
-    competitivo: redondear(max * (completo ? 0.5 : 0) + max * 0.5 * precision),
+    puntos: completo ? piso(max, ratio) : 0,
+    competitivo: completo ? piso(max, exactos) : 0,
     completo,
     intentos: e.revisiones,
-    avance: ratio,
+    avance: completo ? 1 : 0,
   }
 }
 
@@ -280,24 +288,20 @@ function resultadoDependencias(sesion) {
   const max = PUNTOS.dependencias
   const est = estadoDependencias(sesion)
   const dep = sesion.dependencias
-  const parteEnlaces = est.decision ? 20 : 25
-  const parteDecision = est.decision ? 5 : 0
-  const puntos = parteEnlaces * (est.correctos / est.total) + (est.decision && dep.revision.completo ? parteDecision : 0)
-  // Precisión: conexiones aceptadas sobre el total de conexiones intentadas;
-  // en la modalidad ampliada, la revisión de decisiones cuenta como un intento
-  // más y solo suma si salió bien al primer intento.
-  const intentosEnlace = dep.enlaces.length + dep.rechazos
-  const denominador = intentosEnlace + (est.decision ? 1 : 0)
-  const aciertos = dep.enlaces.length + (est.decision && dep.revision.primeroOk ? 1 : 0)
-  const precision = denominador > 0 ? aciertos / denominador : 0
+  const credito = dep.enlaces.reduce((acc, e) => acc + (e.credito ?? 1), 0)
+  const exactos = dep.enlaces.filter((e) => (e.credito ?? 1) === 1).length
+  const decisionRatio = est.decision ? dep.revision.credito ?? 0 : 0
+  const mezcla = (parte) => (est.decision ? 0.8 * parte + 0.2 * decisionRatio : parte)
+  const ratio = mezcla(Math.min(1, credito / est.total))
+  const ratioExacto = mezcla(Math.min(1, exactos / est.total))
   return {
     id: 'dependencias',
     max,
-    puntos: redondear(puntos),
-    competitivo: redondear(max * (est.completo ? 0.5 : 0) + max * 0.5 * Math.min(1, precision)),
+    puntos: est.completo ? piso(max, ratio) : 0,
+    competitivo: est.completo ? piso(max, ratioExacto) : 0,
     completo: est.completo,
-    intentos: intentosEnlace + dep.revision.intentos,
-    avance: est.total === 0 ? 0 : est.correctos / est.total,
+    intentos: dep.enlaces.length + dep.revision.intentos,
+    avance: est.completo ? 1 : Math.min(1, est.hechas / est.total),
   }
 }
 

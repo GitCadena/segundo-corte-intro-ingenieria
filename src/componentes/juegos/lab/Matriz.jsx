@@ -23,15 +23,19 @@ export default function Matriz({ items, colocadas, retro, revisiones, bloqueado,
         <tbody>
           {items.map((it) => {
             const estado = retro[it.id]
+            const habitual = CARACTERISTICAS.find((c) => c.id === it.zona)?.nombre
             return (
-              <tr key={it.id} className={estado ? `lab-matriz__fila--${estado}` : ''}>
+              <tr key={it.id}>
                 <th scope="row">
-                  {estado && <span aria-hidden="true">{estado === 'ok' ? '✓ ' : '✗ '}</span>}
                   {it.texto}
-                  {estado === 'mal' && !bloqueado && (
-                    <span className="lab-matriz__nota">{revisiones <= 1 ? `Pista: ${it.pista}` : `Por qué: ${it.porque}`}</span>
+                  {bloqueado && (
+                    <span className="lab-matriz__nota">
+                      {estado === 'ok' && `Coincide con lo más habitual. ${it.porque}`}
+                      {estado === 'alt' && `También se puede defender. Lo más habitual es «${habitual}». ${it.porque}`}
+                      {estado === 'otra' && `Es otra lectura posible. Lo más habitual es «${habitual}». ${it.porque}`}
+                      {!estado && it.porque}
+                    </span>
                   )}
-                  {bloqueado && <span className="lab-matriz__nota">{it.porque}</span>}
                 </th>
                 {CARACTERISTICAS.map((c) => (
                   <td key={c.id} className="lab-matriz__celda">

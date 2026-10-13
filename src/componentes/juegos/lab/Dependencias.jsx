@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { RESULTADOS, ENLACES, REVISION } from '../../../data/lab-cdvs.js'
 import { FASES } from '../../../data/cdvs-fases.js'
-import { intentarEnlace, estadoDependencias, revisarDecision } from '../../../lib/labCdvs.js'
+import { intentarEnlace, quitarEnlace, estadoDependencias, revisarDecision } from '../../../lib/labCdvs.js'
 
 const ANCHO_NODO = 118
 const ALTO_NODO = 54
@@ -34,9 +34,9 @@ export default function Dependencias({ sesion, onCambio }) {
   const [hacia, setHacia] = useState('')
   const [pendiente, setPendiente] = useState(null) // enlace válido esperando su razón
   const [opcion, setOpcion] = useState(null)
+  const [razon, setRazon] = useState('')
   const [mensaje, setMensaje] = useState(null)
   const [elegidas, setElegidas] = useState(sesion.dependencias.revision.elegidas)
-  const [mensajeDecision, setMensajeDecision] = useState(null)
 
   const est = estadoDependencias(sesion)
   const dep = sesion.dependencias
@@ -57,37 +57,31 @@ export default function Dependencias({ sesion, onCambio }) {
       setMensaje({ tipo: 'sin-relacion', mensaje: 'Elige dos resultados distintos.' })
       return
     }
-    const valido = ENLACES.find((e) => e.desde === desde && e.hacia === hacia)
-    if (!valido) {
-      const r = intentarEnlace(sesion, desde, hacia, null)
-      onCambio(r.sesion)
-      setMensaje(r.resultado)
-      return
-    }
-    if (dep.enlaces.some((e) => e.id === valido.id)) {
+    if (dep.enlaces.some((e) => e.id === `${desde}>${hacia}`)) {
       setMensaje({ tipo: 'repetida', mensaje: 'Esa conexión ya está construida.' })
       return
     }
-    setPendiente(valido)
+    // Si coincide con una dependencia habitual se elige la razón; si no, se escribe la propia.
+    setPendiente(ENLACES.find((e) => e.desde === desde && e.hacia === hacia) ?? { propia: true })
     setOpcion(null)
+    setRazon('')
     setMensaje(null)
   }
 
   function confirmar() {
-    const r = intentarEnlace(sesion, desde, hacia, opcion)
+    const r = intentarEnlace(sesion, desde, hacia, pendiente?.propia ? null : opcion, razon)
     onCambio(r.sesion)
     setMensaje(r.resultado)
     if (r.resultado.tipo === 'aceptada') {
       setPendiente(null)
       setDesde('')
       setHacia('')
+      setRazon('')
     }
   }
 
   function enviarDecision() {
-    const r = revisarDecision(sesion, elegidas)
-    onCambio(r.sesion)
-    setMensajeDecision(r.ok ? { ok: true, texto: REVISION.porque } : { ok: false, texto: 'Todavía no: piensa qué decisiones dependían de que el paciente tuviera correo. Corrige tu selección.' })
+    onCambio(revisarDecision(sesion, elegidas).sesion)
   }
 
   const enlacesPendientes = !est.completo || (est.decision && !decisionCompleta)
@@ -95,9 +89,9 @@ export default function Dependencias({ sesion, onCambio }) {
   return (
     <div className="lab-dep">
       <p className="lab-ayuda">
-        Conecten los resultados de las fases: ¿qué resultado necesita otro para poder existir? Para cada conexión hay que elegir la razón.
-        Además de las que siguen el ciclo, construyan {est.necesariasRevision === 1 ? 'una conexión' : `${est.necesariasRevision} conexiones`} que
-        vuelva{est.necesariasRevision === 1 ? '' : 'n'} a una decisión anterior.
+        Armen el ciclo como ustedes creen que debe ser: conecten los resultados de las fases (¿qué resultado necesita otro para poder existir?).
+        No hay un único camino. Hagan al menos {est.total} conexiones, y que {est.necesariasAtras === 1 ? 'una' : `${est.necesariasAtras}`} de
+        ellas vuelva{est.necesariasAtras === 1 ? '' : 'n'} a una decisión anterior.
       </p>
 
       <div className="lab-dep__diagrama">
@@ -181,20 +175,36 @@ export default function Dependencias({ sesion, onCambio }) {
           {pendiente && (
             <fieldset className="lab-dep__razon">
               <legend>¿Por qué «{nombreResultado(desde)}» alimenta a «{nombreResultado(hacia)}»?</legend>
-              {pendiente.opciones.map((o, i) => (
-                <label key={i} className="lab-dep__opcion">
-                  <input type="radio" name="razon" checked={opcion === i} onChange={() => setOpcion(i)} />
-                  <span>{o}</span>
-                </label>
-              ))}
-              <button type="button" className="boton boton--principal boton--pequeno" disabled={opcion === null} onClick={confirmar}>
+              {pendiente.propia ? (
+                <textarea
+                  className="campo"
+                  rows={2}
+                  maxLength={160}
+                  value={razon}
+                  placeholder="Escriban en una frase su razón"
+                  onChange={(e) => setRazon(e.target.value)}
+                />
+              ) : (
+                pendiente.opciones.map((o, i) => (
+                  <label key={i} className="lab-dep__opcion">
+                    <input type="radio" name="razon" checked={opcion === i} onChange={() => setOpcion(i)} />
+                    <span>{o}</span>
+                  </label>
+                ))
+              )}
+              <button
+                type="button"
+                className="boton boton--principal boton--pequeno"
+                disabled={pendiente.propia ? razon.trim().length < 8 : opcion === null}
+                onClick={confirmar}
+              >
                 Confirmar conexión
               </button>
             </fieldset>
           )}
 
           {mensaje && (
-            <p className={'lab-mensaje ' + (mensaje.tipo === 'aceptada' ? 'lab-mensaje--ok' : 'lab-mensaje--mal')} role="status">
+            <p className="lab-mensaje lab-mensaje--ok" role="status">
               {mensaje.tipo === 'aceptada' ? <strong>Conexión construida. </strong> : null}
               {mensaje.mensaje}
             </p>
@@ -203,21 +213,23 @@ export default function Dependencias({ sesion, onCambio }) {
       )}
 
       <p className="lab-progreso">
-        Conexiones del ciclo: {est.avances} de {est.necesariasAvance} · Conexiones que vuelven atrás: {est.revisiones} de {est.necesariasRevision}
+        Conexiones: {est.hechas} de {est.total} · De ellas, las que vuelven atrás: {est.atras} de {est.necesariasAtras}
       </p>
 
       {dep.enlaces.length > 0 && (
         <ul className="lab-dep__lista">
-          {dep.enlaces.map((e) => {
-            const def = ENLACES.find((x) => x.id === e.id)
-            return (
-              <li key={e.id}>
-                <strong>{nombreResultado(e.desde)}</strong> → <strong>{nombreResultado(e.hacia)}</strong>
-                {e.tipo === 'revision' && <span className="chip chip--opcional"> vuelve atrás</span>}
-                <span className="lab-dep__porque">{def?.porque}</span>
-              </li>
-            )
-          })}
+          {dep.enlaces.map((e) => (
+            <li key={e.id}>
+              <strong>{nombreResultado(e.desde)}</strong> → <strong>{nombreResultado(e.hacia)}</strong>
+              {e.tipo === 'revision' && <span className="chip chip--opcional"> vuelve atrás</span>}
+              {e.razon && <span className="lab-dep__porque">{e.razon}</span>}
+              {!est.completo && (
+                <button type="button" className="boton boton--texto" onClick={() => onCambio(quitarEnlace(sesion, e.id))}>
+                  Quitar
+                </button>
+              )}
+            </li>
+          ))}
         </ul>
       )}
 
@@ -240,12 +252,12 @@ export default function Dependencias({ sesion, onCambio }) {
           </div>
           {!decisionCompleta && (
             <button type="button" className="boton boton--secundario" disabled={elegidas.length === 0} onClick={enviarDecision}>
-              Revisar decisión
+              Registrar decisión
             </button>
           )}
-          {(decisionCompleta || mensajeDecision) && (
-            <p className={'lab-mensaje ' + (decisionCompleta ? 'lab-mensaje--ok' : 'lab-mensaje--mal')} role="status">
-              {decisionCompleta ? REVISION.porque : mensajeDecision?.texto}
+          {decisionCompleta && (
+            <p className="lab-mensaje lab-mensaje--ok" role="status">
+              Su decisión quedó registrada. Lo más habitual: {REVISION.porque}
             </p>
           )}
         </fieldset>

@@ -32,11 +32,11 @@ const ZONAS_FASES = FASES.map((f) => ({ id: f.id, titulo: `${f.numero}. ${f.cort
 const ZONAS_ETAPAS = ETAPAS_FLUJO.map((e) => ({ id: e.id, titulo: e.nombre, ayuda: e.ayuda }))
 
 const AYUDAS = {
-  ruta: 'Arrastren cada acción a la fase del ciclo de vida a la que pertenece. Algunas se parecen entre requerimientos, análisis y diseño: piensen en qué se está haciendo realmente.',
-  flujo: 'Organicen los elementos del hospital según lo que le pasa a la información: se captura, se procesa, se almacena o se distribuye.',
-  calidad: 'Relacionen cada decisión del sistema con la característica de la información que busca.',
+  ruta: 'Ubiquen cada acción en la fase donde creen que va. No hay una sola forma de verlo: algunas acciones se pueden defender en dos fases. Decidan como equipo, con su criterio.',
+  flujo: 'Organicen los elementos del hospital según lo que le pasa a la información: se captura, se procesa, se almacena o se distribuye. Decidan con su criterio.',
+  calidad: 'Relacionen cada decisión del sistema con la característica de la información que creen que busca. Pueden defender su elección.',
   dependencias: '',
-  transferencia: 'El mismo proceso, otro contexto. Ubiquen las acciones en las fases y los elementos en las funciones de la información.',
+  transferencia: 'El mismo proceso, otro contexto. Ubiquen las acciones en las fases y los elementos en las funciones de la información, con su criterio.',
 }
 
 /* ------------------------- almacenamiento local de respaldo ------------------------- */
@@ -389,17 +389,16 @@ function BarraRevision({ id, sesion, aplicar, total }) {
     <div className="lab-revision">
       <p className="lab-progreso">
         {colocadas} de {total} {id === 'calidad' ? 'decisiones relacionadas' : 'piezas ubicadas'}
-        {estado.revisado && !completo && ` · en tu última revisión acertaste ${estado.revisado.correctos} de ${estado.revisado.total}`}
       </p>
       {!completo && (
         <button type="button" className="boton boton--principal" disabled={!todas} onClick={() => aplicar((s) => revisar(s, id))}>
-          Revisar
+          Terminar y ver comentarios
         </button>
       )}
-      {!completo && !todas && <p className="ayuda-teclado">Completa todas para poder revisar.</p>}
-      {!completo && estado.revisado && (
-        <p className="lab-mensaje lab-mensaje--mal" role="status">
-          Todavía hay piezas por corregir. Las marcadas con ✗ traen una pista; muévelas y vuelve a revisar. Corregir no resta de la nota académica.
+      {!completo && !todas && <p className="ayuda-teclado">Ubiquen todas las piezas para poder terminar.</p>}
+      {completo && (
+        <p className="lab-mensaje lab-mensaje--ok" role="status">
+          Su ubicación quedó registrada. Los comentarios no son errores: muestran otras formas de ver el ciclo y lo más habitual.
         </p>
       )}
     </div>

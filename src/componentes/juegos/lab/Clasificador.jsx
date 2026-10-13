@@ -76,18 +76,18 @@ export default function Clasificador({
               <div className="lab-zona__lista" onDragOver={(e) => e.preventDefault()} onDrop={(e) => soltar(e, z.id)}>
                 {dentro.map((it) => {
                   const estado = retro[it.id]
+                  const habitual = zonas.find((x) => x.id === it.zona)?.titulo
                   return (
-                    <div key={it.id} className={'lab-colocada' + (estado === 'ok' ? ' lab-colocada--ok' : '') + (estado === 'mal' ? ' lab-colocada--mal' : '')}>
-                      <p>
-                        {estado && <span aria-hidden="true">{estado === 'ok' ? '✓ ' : '✗ '}</span>}
-                        {it.texto}
-                      </p>
-                      {estado === 'mal' && !bloqueado && (
+                    <div key={it.id} className="lab-colocada">
+                      <p>{it.texto}</p>
+                      {bloqueado && it.porque && (
                         <p className="lab-colocada__nota">
-                          {revisiones <= 1 ? `Pista: ${it.pista}` : `Por qué: ${it.porque}`}
+                          {estado === 'ok' && `Coincide con lo más habitual. ${it.porque}`}
+                          {estado === 'alt' && `También se puede defender aquí. Lo más habitual es «${habitual}». ${it.porque}`}
+                          {estado === 'otra' && `Es otra lectura posible. Lo más habitual es «${habitual}». ${it.porque}`}
+                          {!estado && it.porque}
                         </p>
                       )}
-                      {bloqueado && it.porque && <p className="lab-colocada__nota">{it.porque}</p>}
                       {!bloqueado && (
                         <button type="button" className="boton boton--texto" onClick={() => onDevolver(it.id)}>
                           Quitar
