@@ -48,8 +48,8 @@ const logros = [
   {
     id: 'estacion-5-completa',
     titulo: 'Pensamiento algorítmico',
-    descripcion: 'Completaste todas las actividades base de la estación 5.',
-    evidencia: 'Todas las actividades de nivel base de la estación 5, completadas.',
+    descripcion: 'Completaste todas las actividades base de la estación 6.',
+    evidencia: 'Todas las actividades de nivel base de la estación 6, completadas.',
     condicion: (r) => r.estacionBaseCompleta('paradigmas'),
   },
   {
@@ -76,8 +76,8 @@ const logros = [
   {
     id: 'ruta-completa',
     titulo: 'Ruta principal terminada',
-    descripcion: 'Completaste las actividades base de las cinco estaciones de contenido.',
-    evidencia: 'Estaciones 1 a 5 con su nivel base completo.',
+    descripcion: 'Completaste las actividades base de las cinco estaciones con puntaje (el laboratorio del ciclo de vida se evalúa aparte).',
+    evidencia: 'Estaciones 1, 2, 3, 4 y 6 con su nivel base completo.',
     condicion: (r) =>
       ['proceso', 'calidad', 'sistemas', 'tic', 'paradigmas'].every((e) => r.estacionBaseCompleta(e)),
   },

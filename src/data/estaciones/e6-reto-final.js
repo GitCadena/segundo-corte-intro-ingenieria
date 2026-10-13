@@ -1,5 +1,5 @@
 /**
- * Estación 6 · Reto final de práctica (preparación para la sesión 11).
+ * Estación 7 · Reto final de práctica (preparación para la sesión 11).
  *
  * No es el parcial: es el ensayo. No genera nota académica. El cronómetro es
  * opcional a propósito, porque practicar bajo presión es útil pero aprender
@@ -8,7 +8,7 @@
 
 export default {
   id: 'reto-final',
-  orden: 6,
+  orden: 7,
   sesion: 'Preparación sesión 11',
   titulo: 'Reto final de práctica',
   gancho: 'Un caso completo, del problema al algoritmo. Mismo alcance del parcial, sin nota.',

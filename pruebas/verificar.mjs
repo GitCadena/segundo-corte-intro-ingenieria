@@ -18,6 +18,13 @@ import { estaciones, catalogoActividades, datosActividad } from '../src/data/cat
 import glosario from '../src/data/glosario.js'
 import logros from '../src/data/logros.js'
 import { calcularPuntaje, calcularEstado } from '../src/lib/puntaje.js'
+import { FASES } from '../src/data/cdvs-fases.js'
+import {
+  LAB_ID, ACCIONES_RUTA, ELEMENTOS_FLUJO, ETAPAS_FLUJO, SITUACIONES_CALIDAD, CARACTERISTICAS, RESULTADOS, ENLACES,
+  REQUISITOS_DEPENDENCIAS, REVISION, PUNTOS, SECTORES,
+} from '../src/data/lab-cdvs.js'
+import * as Lab from '../src/lib/labCdvs.js'
+import { crearPdf } from '../src/lib/pdfSimple.js'
 
 let ok = 0
 let fallos = []
@@ -352,7 +359,7 @@ prueba('catálogo · identificadores únicos', () => {
 })
 
 prueba('catálogo · toda actividad puntuable tiene puntos positivos', () => {
-  const malas = catalogoActividades.filter((a) => a.tipo !== 'taller' && a.tipo !== 'laboratorio' && a.puntos <= 0)
+  const malas = catalogoActividades.filter((a) => a.tipo !== 'taller' && a.tipo !== 'laboratorio' && a.tipo !== 'laboratorio-cdvs' && a.puntos <= 0)
   return malas.length === 0 ? true : malas.map((a) => a.id).join(', ')
 })
 
@@ -521,7 +528,7 @@ for (const e of estaciones) {
       a.objetivo && a.instrucciones && a.conceptoPrevio ? true : 'faltan campos de la ficha',
     )
     prueba(`ficha · ${a.id} · pistas progresivas y explicación`, () =>
-      (a.pistas?.length ?? 0) >= 2 && a.explicacion ? true : `pistas=${a.pistas?.length ?? 0}`,
+      (a.tipo === 'laboratorio-cdvs' || (a.pistas?.length ?? 0) >= 2) && a.explicacion ? true : `pistas=${a.pistas?.length ?? 0}`,
     )
     prueba(`ficha · ${a.id} · conceptos declarados existen en el glosario`, () => {
       const malos = (a.conceptos ?? []).filter((c) => !glosario[c])
@@ -537,7 +544,8 @@ for (const e of estaciones) {
     if (!(e.actividades?.length || e.reto)) faltan.push('practica')
     // La Estación 2 retiró su reto: la práctica final la hace el taller
     // individual "Tu propio caso" (con el código propio del estudiante).
-    if (!e.reto && e.id !== 'calidad') faltan.push('reto')
+    // La Estación 5 (ciclo de vida) tiene una sola actividad principal de clase: el laboratorio.
+    if (!e.reto && e.id !== 'calidad' && e.id !== 'cdvs') faltan.push('reto')
     if (!e.sintesis?.puntos?.length) faltan.push('sintesis')
     return faltan.length === 0 ? true : `faltan: ${faltan.join(', ')}`
   })
@@ -637,6 +645,230 @@ prueba('estado · dominio solo sin pistas y sin fallos', () => {
   return a === 'dominada' && b === 'completada' && c === 'completada' && d === 'intentada' && e === 'completada'
     ? true
     : `${a}/${b}/${c}/${d}/${e}`
+})
+
+
+/* ============ 8. Laboratorio del ciclo de vida (Estación 5) ============== */
+
+const NOMBRES_KENDALL = [
+  'Identificar problemas, oportunidades y objetivos',
+  'Determinar los requerimientos de información',
+  'Analizar las necesidades del sistema',
+  'Diseñar el sistema recomendado',
+  'Desarrollar y documentar el software',
+  'Probar y mantener el sistema',
+  'Implementar y evaluar el sistema',
+]
+
+prueba('ciclo de vida · las siete fases usan los nombres de Kendall y Kendall, en orden', () => {
+  const nombres = FASES.map((f) => f.nombre)
+  return JSON.stringify(nombres) === JSON.stringify(NOMBRES_KENDALL) && FASES.every((f, i) => f.id === `f${i + 1}` && f.numero === i + 1)
+    ? true
+    : nombres.join(' | ')
+})
+
+prueba('ciclo de vida · cada fase trae pregunta, explicación, actividades, resultado y ejemplo', () => {
+  const malas = FASES.filter((f) => !f.pregunta || !f.explicacion || !(f.queHacen?.length >= 3) || !f.resultado || !f.ejemplo)
+  return malas.length === 0 ? true : malas.map((f) => f.id).join(', ')
+})
+
+prueba('estaciones · el orden es 1..N sin repetir y la nueva va quinta', () => {
+  const ordenes = estaciones.map((e) => e.orden)
+  const ok1 = ordenes.every((o, i) => o === i + 1)
+  const cdvs = estaciones.find((e) => e.id === 'cdvs')
+  return ok1 && cdvs?.orden === 5 && estaciones.find((e) => e.id === 'paradigmas')?.orden === 6 ? true : ordenes.join(',')
+})
+
+prueba('laboratorio · está en el catálogo con su tipo y no suma a la nota', () => {
+  const a = catalogoActividades.find((x) => x.id === LAB_ID)
+  return a && a.tipo === 'laboratorio-cdvs' && a.puntos === 0 && a.cuentaNota === false ? true : JSON.stringify(a)
+})
+
+prueba('laboratorio · los puntos de los componentes suman 100', () => {
+  const t = Object.values(PUNTOS).reduce((x, y) => x + y, 0)
+  return t === 100 ? true : `suman ${t}`
+})
+
+prueba('laboratorio · ruta: ids únicos, fases válidas y al menos dos acciones por fase en cada modalidad', () => {
+  const ids = ACCIONES_RUTA.map((a) => a.id)
+  if (new Set(ids).size !== ids.length) return 'ids repetidos'
+  const validas = FASES.map((f) => f.id)
+  if (ACCIONES_RUTA.some((a) => !validas.includes(a.fase) || !a.pista || !a.porque || !a.texto)) return 'acción incompleta o con fase inválida'
+  for (const modo of ['60', '120']) {
+    for (const f of FASES) {
+      const n = Lab.itemsRuta(modo).filter((a) => a.fase === f.id).length
+      if (n < 2) return `${modo}: la fase ${f.id} tiene ${n}`
+    }
+  }
+  return true
+})
+
+prueba('laboratorio · flujo: etapas válidas y al menos dos elementos por etapa', () => {
+  const etapas = ETAPAS_FLUJO.map((e) => e.id)
+  if (ELEMENTOS_FLUJO.some((e) => !etapas.includes(e.etapa) || !e.pista || !e.porque)) return 'elemento inválido'
+  for (const modo of ['60', '120']) {
+    for (const e of etapas) if (Lab.itemsFlujo(modo).filter((x) => x.etapa === e).length < 2) return `${modo}: poca cobertura de ${e}`
+  }
+  return true
+})
+
+prueba('laboratorio · calidad: cada característica tiene al menos dos situaciones', () => {
+  const car = CARACTERISTICAS.map((c) => c.id)
+  if (SITUACIONES_CALIDAD.some((q) => !car.includes(q.caracteristica) || !q.pista || !q.porque)) return 'situación inválida'
+  for (const modo of ['60', '120']) {
+    for (const c of car) if (Lab.itemsCalidad(modo).filter((q) => q.caracteristica === c).length < 2) return `${modo}: poca cobertura de ${c}`
+  }
+  return true
+})
+
+prueba('laboratorio · dependencias: enlaces coherentes, con tres opciones y una correcta', () => {
+  const nodos = RESULTADOS.map((r) => r.id)
+  const pos = (id) => nodos.indexOf(id)
+  for (const e of ENLACES) {
+    if (pos(e.desde) < 0 || pos(e.hacia) < 0) return `${e.id}: nodo inexistente`
+    if (e.opciones.length !== 3 || !(e.correcta >= 0 && e.correcta < 3)) return `${e.id}: opciones`
+    if (e.tipo === 'revision' && !(pos(e.hacia) < pos(e.desde))) return `${e.id}: una revisión debe volver atrás`
+    if (e.tipo === 'avance' && !(pos(e.hacia) > pos(e.desde))) return `${e.id}: un avance debe ir adelante`
+  }
+  for (const modo of ['60', '120']) {
+    const req = REQUISITOS_DEPENDENCIAS[modo]
+    if (req.avance.some((id) => ENLACES.find((e) => e.id === id)?.tipo !== 'avance')) return `${modo}: un requerido no es de avance`
+    const disponibles = ENLACES.filter((e) => e.tipo === 'revision').length
+    if (req.revisiones > disponibles) return `${modo}: pide más revisiones de las que existen`
+  }
+  const cadena = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6'].map((id) => ENLACES.find((e) => e.id === id))
+  return cadena.every((e, i) => e.desde === nodos[i] && e.hacia === nodos[i + 1]) ? true : 'la cadena n1→n7 no está completa'
+})
+
+prueba('laboratorio · la revisión de decisiones apunta a fases que existen', () =>
+  REVISION.correctas.every((id) => FASES.some((f) => f.id === id)) && REVISION.correctas.length >= 2 ? true : 'revisión inválida',
+)
+
+prueba('laboratorio · transferencia: cada sector tiene siete acciones (una por fase como mínimo) y cuatro elementos', () => {
+  for (const s of SECTORES) {
+    const fases = new Set(s.acciones.map((a) => a.fase))
+    if (fases.size !== 7) return `${s.id}: cubre ${fases.size} fases`
+    const etapas = new Set(s.elementos.map((e) => e.etapa))
+    if (etapas.size !== 4) return `${s.id}: cubre ${etapas.size} etapas`
+  }
+  return true
+})
+
+function sesionNueva(modo) {
+  return Lab.crearSesion({ alias: 'Equipo prueba', integrantes: ['Ana Pérez', 'Luis Gómez', 'Rosa Díaz'], modo, id: 'sesion-prueba', ahora: new Date('2026-10-13T10:00:00') })
+}
+
+function jugarPerfecto(modo) {
+  let ses = sesionNueva(modo)
+  for (const c of ['ruta', 'flujo', 'calidad', 'transferencia']) {
+    for (const it of Lab.itemsDe(c, modo)) ses = Lab.colocar(ses, c, it.id, it.zona)
+    ses = Lab.revisar(ses, c)
+  }
+  for (const e of ENLACES) {
+    if (modo === '60' && e.id === 'l8') continue
+    ses = Lab.intentarEnlace(ses, e.desde, e.hacia, e.correcta).sesion
+  }
+  if (modo === '120') ses = Lab.revisarDecision(ses, REVISION.correctas).sesion
+  return ses
+}
+
+for (const modo of ['60', '120']) {
+  prueba(`laboratorio · ${modo} min · una partida perfecta da 100 académicos y 100 competitivos`, () => {
+    const r = Lab.resumenSesion(jugarPerfecto(modo), new Date('2026-10-13T10:40:00'))
+    return r.academico === 100 && r.competitivo === 100 && r.terminada && r.completos === 5
+      ? true
+      : `acad=${r.academico} comp=${r.competitivo} completos=${r.completos}`
+  })
+}
+
+prueba('laboratorio · equivocarse y corregir permite la nota máxima, pero baja la competitiva', () => {
+  let ses = sesionNueva('60')
+  const items = Lab.itemsRuta('60')
+  items.forEach((it, i) => {
+    ses = Lab.colocar(ses, 'ruta', it.id, i % 2 === 0 ? 'f1' : it.zona)
+  })
+  ses = Lab.revisar(ses, 'ruta')
+  const primera = Lab.resultadosPorComponente(ses).find((c) => c.id === 'ruta')
+  if (primera.completo || primera.puntos >= 30) return 'no debería estar completo tras el primer intento'
+  for (const it of items) ses = Lab.colocar(ses, 'ruta', it.id, it.zona)
+  ses = Lab.revisar(ses, 'ruta')
+  const final = Lab.resultadosPorComponente(ses).find((c) => c.id === 'ruta')
+  return final.completo && final.puntos === 30 && final.competitivo < 30 && final.competitivo >= 15
+    ? true
+    : `puntos=${final.puntos} competitivo=${final.competitivo}`
+})
+
+prueba('laboratorio · no se revisa un componente a medias ni se reabre uno completo', () => {
+  let ses = sesionNueva('60')
+  const items = Lab.itemsRuta('60')
+  ses = Lab.colocar(ses, 'ruta', items[0].id, items[0].zona)
+  if (Lab.revisar(ses, 'ruta').ruta.revisiones !== 0) return 'revisó con piezas sin ubicar'
+  for (const it of items) ses = Lab.colocar(ses, 'ruta', it.id, it.zona)
+  ses = Lab.revisar(ses, 'ruta')
+  const cerrada = Lab.colocar(ses, 'ruta', items[0].id, 'f7')
+  return cerrada.ruta.colocadas[items[0].id] === items[0].zona ? true : 'un componente completo se pudo modificar'
+})
+
+prueba('laboratorio · las conexiones inválidas o con razón equivocada no se aceptan y cuentan como intento', () => {
+  let ses = sesionNueva('60')
+  let r = Lab.intentarEnlace(ses, 'n1', 'n5', 0)
+  if (r.resultado.tipo !== 'sin-relacion' || r.sesion.dependencias.rechazos !== 1) return 'no rechazó una conexión sin relación'
+  ses = r.sesion
+  const l1 = ENLACES.find((e) => e.id === 'l1')
+  r = Lab.intentarEnlace(ses, l1.desde, l1.hacia, (l1.correcta + 1) % 3)
+  if (r.resultado.tipo !== 'razon-incorrecta' || r.sesion.dependencias.rechazos !== 2 || r.sesion.dependencias.enlaces.length !== 0) return 'aceptó una razón equivocada'
+  r = Lab.intentarEnlace(r.sesion, l1.desde, l1.hacia, l1.correcta)
+  if (r.resultado.tipo !== 'aceptada') return 'no aceptó la conexión correcta'
+  const repetida = Lab.intentarEnlace(r.sesion, l1.desde, l1.hacia, l1.correcta)
+  return repetida.resultado.tipo === 'repetida' && repetida.sesion.dependencias.enlaces.length === 1 ? true : 'duplicó una conexión'
+})
+
+prueba('laboratorio · la clasificación del docente ordena por precisión y el tiempo solo desempata', () => {
+  const base = { alias: 'A', completos: 5, terminada: true }
+  const lista = [
+    { ...base, alias: 'Lento', competitivo: 90, segundos: 3000 },
+    { ...base, alias: 'Rápido', competitivo: 90, segundos: 1500 },
+    { ...base, alias: 'Preciso', competitivo: 99, segundos: 3500 },
+  ].sort(Lab.compararCompetitivo)
+  return lista.map((l) => l.alias).join(',') === 'Preciso,Rápido,Lento' ? true : lista.map((l) => l.alias).join(',')
+})
+
+prueba('laboratorio · el registro exige nombres completos y no repetidos', () => {
+  const bien = Lab.validarRegistro({ alias: 'Los Ingenieros', integrantes: ['Ana Pérez', 'Luis Gómez', 'Rosa Díaz', ''] })
+  const sinApellido = Lab.validarRegistro({ alias: 'Equipo', integrantes: ['Ana', 'Luis Gómez', 'Rosa Díaz', ''] })
+  const repetido = Lab.validarRegistro({ alias: 'Equipo', integrantes: ['Ana Pérez', 'ana pérez', 'Rosa Díaz', ''] })
+  const sinAlias = Lab.validarRegistro({ alias: ' ', integrantes: ['Ana Pérez', 'Luis Gómez', 'Rosa Díaz', ''] })
+  const faltaTercero = Lab.validarRegistro({ alias: 'Equipo', integrantes: ['Ana Pérez', 'Luis Gómez', '', ''] })
+  return bien.ok && !sinApellido.ok && !repetido.ok && !sinAlias.ok && !faltaTercero.ok
+    ? true
+    : JSON.stringify([bien.ok, sinApellido.ok, repetido.ok, sinAlias.ok, faltaTercero.ok])
+})
+
+prueba('laboratorio · una sesión guardada se recupera igual', () => {
+  const ses = jugarPerfecto('60')
+  const vuelta = Lab.normalizarSesion(JSON.parse(JSON.stringify(ses)))
+  const a = Lab.resumenSesion(ses, new Date('2026-10-13T11:00:00'))
+  const b = Lab.resumenSesion(vuelta, new Date('2026-10-13T11:00:00'))
+  return JSON.stringify(a) === JSON.stringify(b) && Lab.normalizarSesion({ version: 99 }) === null ? true : 'la sesión cambió al guardarla'
+})
+
+prueba('pdf · el comprobante es un PDF válido: cabecera, tabla de referencias y fin de archivo', () => {
+  const bytes = crearPdf([
+    { t: 'titulo', texto: 'Laboratorio de ingeniería: del problema al sistema' },
+    { t: 'p', texto: 'Integrantes: Ana Pérez, Luis Gómez (acentos y ñ: niño, año). ' + 'Texto largo para forzar el ajuste de línea. '.repeat(12) },
+    { t: 'fila', celdas: ['Ruta', '30', '30'], xs: [0, 215, 285] },
+  ])
+  const txt = Array.from(bytes, (b) => String.fromCharCode(b)).join('')
+  if (!txt.startsWith('%PDF-1.4') || !txt.trimEnd().endsWith('%%EOF')) return 'cabecera o final incorrectos'
+  const inicio = Number(txt.match(/startxref\n(\d+)\n/)[1])
+  if (txt.slice(inicio, inicio + 4) !== 'xref') return 'startxref no apunta a xref'
+  const tamano = Number(txt.match(/\/Size (\d+)/)[1])
+  const entradas = [...txt.slice(inicio).matchAll(/(\d{10}) 00000 n /g)].map((m) => Number(m[1]))
+  if (entradas.length !== tamano - 1) return `esperaba ${tamano - 1} objetos y hay ${entradas.length}`
+  for (let n = 1; n <= entradas.length; n++) {
+    if (!txt.slice(entradas[n - 1]).startsWith(`${n} 0 obj`)) return `el objeto ${n} no está en su desplazamiento`
+  }
+  return true
 })
 
 /* ================================ informe =============================== */

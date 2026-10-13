@@ -1,4 +1,5 @@
 import Termino from './Termino.jsx'
+import LineaFases from './LineaFases.jsx'
 
 /** Un bloque de contenido de la teoría. */
 export default function Bloque({ bloque, glosario = [] }) {
@@ -70,6 +71,9 @@ export default function Bloque({ bloque, glosario = [] }) {
           <pre>{bloque.texto}</pre>
         </figure>
       )
+
+    case 'fases':
+      return <LineaFases />
 
     default:
       return null

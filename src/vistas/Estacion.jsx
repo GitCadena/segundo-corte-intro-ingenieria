@@ -50,7 +50,9 @@ export default function Estacion() {
         <h1 className="estacion-vista__titulo">{estacion.titulo}</h1>
         <p className="estacion-vista__gancho">{estacion.gancho}</p>
         <p className="estacion-vista__marcador" role="status">
-          {p.completadas} de {p.total} actividades · {p.puntos} de {p.puntosMax} puntos
+          {p.total === 0
+            ? 'Una actividad de clase, con su propia puntuación. No suma a la nota orientativa.'
+            : `${p.completadas} de ${p.total} actividades · ${p.puntos} de ${p.puntosMax} puntos`}
         </p>
       </header>
 
@@ -161,7 +163,7 @@ export default function Estacion() {
       {estacion.sintesis && (
         <section className="seccion" id="sintesis" tabIndex={-1}>
           <h2 className="seccion__titulo">
-            <span className="seccion__numero">6</span> Qué te llevas
+            <span className="seccion__numero">{estacion.numeracionContinua && !estacion.reto ? 5 : 6}</span> Qué te llevas
           </h2>
           <ul className="sintesis">
             {estacion.sintesis.puntos.map((t, i) => (

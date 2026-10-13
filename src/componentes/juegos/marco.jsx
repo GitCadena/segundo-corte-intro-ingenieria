@@ -116,6 +116,7 @@ const ETIQUETA_TIPO = {
   pseudo: 'Escribir pseudocódigo',
   'clase-objeto': 'Clases y objetos',
   taller: 'Taller en clase',
+  'laboratorio-cdvs': 'Laboratorio de clase',
   secuencia: 'Reto integrador',
 }
 
@@ -208,6 +209,7 @@ export function Pistas({ ctrl }) {
 
 export function Resultado({ ctrl, actividad }) {
   if (!ctrl.resultado) {
+    if (actividad.ocultarValor) return null
     return (
       <p className="valor-siguiente">
         Si lo resuelves ahora vale <strong>{ctrl.valorSiguiente}</strong> de {actividad.puntos} puntos.

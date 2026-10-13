@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { estaciones, curso, ejemploConsola, catalogoActividades } from '../data/catalogo.js'
 import Consola from '../componentes/Consola.jsx'
+import { enLetras } from '../lib/numeros.js'
 
 /** Portada pública: qué es esto, cómo funciona y cómo se guarda el progreso. */
 export default function Inicio() {
@@ -14,7 +15,7 @@ export default function Inicio() {
           Las cinco sesiones del segundo corte, convertidas en algo que puedes ejecutar.
         </h1>
         <p className="portada__bajada">
-          Del proceso de desarrollo de software a los paradigmas de programación. Seis estaciones con
+          Del proceso de desarrollo de software a los paradigmas de programación. {enLetras(estaciones.length, { capital: true })} estaciones con
           teoría, un ejemplo desarrollado paso a paso, {totalActividades} actividades que se corrigen
           solas y un laboratorio donde tu pseudocódigo se ejecuta de verdad.
         </p>
@@ -70,7 +71,7 @@ export default function Inicio() {
       </section>
 
       <section className="estaciones">
-        <h2 className="titulo-seccion">Las seis estaciones</h2>
+        <h2 className="titulo-seccion">Las {enLetras(estaciones.length)} estaciones</h2>
         <ul className="estaciones__lista">
           {estaciones.map((e) => {
             const act = catalogoActividades.filter((a) => a.estacionId === e.id && a.puntos > 0)

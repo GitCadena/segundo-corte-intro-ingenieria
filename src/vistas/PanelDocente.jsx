@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { supabase, hayConfiguracion } from '../lib/supabase.js'
 import { estaciones, catalogoActividades, puntosNota } from '../data/catalogo.js'
 import glosario from '../data/glosario.js'
+import { LAB_ID, MODALIDADES } from '../data/lab-cdvs.js'
+import { normalizarSesion, resumenSesion, compararCompetitivo, formatearDuracion } from '../lib/labCdvs.js'
+import { COLUMNAS_CSV, filaCsv } from '../componentes/juegos/lab/evidencia.js'
 
 /**
  * Panel docente.
@@ -99,6 +102,27 @@ export default function PanelDocente() {
     }
     return mapa
   }, [borradores, talleresPorId])
+
+  // Sesiones del laboratorio del ciclo de vida. El puntaje se recalcula aquí con
+  // las mismas reglas deterministas de la actividad, no se lee de lo que guardó el navegador.
+  const laboratorios = useMemo(() => {
+    const cuentas = new Map(filas.map((f) => [f.perfil_id, f]))
+    const lista = []
+    for (const b of borradores) {
+      if (b.actividad_id !== LAB_ID) continue
+      const sesion = normalizarSesion(b.contenido)
+      if (!sesion) continue
+      const c = cuentas.get(b.perfil_id)
+      lista.push({
+        id: sesion.id,
+        resumen: resumenSesion(sesion),
+        cuenta: { nombre: c ? `${c.apellidos}, ${c.nombres}` : 'Cuenta sin datos', grupo: c?.grupo ?? null },
+      })
+    }
+    return lista
+      .filter((l) => grupo === 'todos' || l.cuenta.grupo === grupo)
+      .sort((a, b) => compararCompetitivo(a.resumen, b.resumen))
+  }, [borradores, filas, grupo])
 
   const estudiantes = useMemo(() => agruparPorEstudiante(filtradas), [filtradas])
   const dificultades = useMemo(() => calcularDificultades(filtradas), [filtradas])
@@ -267,6 +291,62 @@ export default function PanelDocente() {
           cerrar={() => setDetalle(null)}
         />
       )}
+
+      <section className="docente__seccion">
+        <h2 className="titulo-seccion">Laboratorio del ciclo de vida ({laboratorios.length})</h2>
+        {laboratorios.length === 0 ? (
+          <p className="panel__nota">
+            Todavía no hay sesiones visibles. Si los equipos ya trabajaron y aquí no aparecen, falta aplicar en Supabase la
+            migración de permisos del laboratorio (20261013000000_laboratorio_cdvs.sql).
+          </p>
+        ) : (
+          <div className="docente__lab-cuerpo">
+            <p className="panel__nota">
+              Ordenados por puntuación competitiva (precisión en el primer intento y componentes completados). El tiempo solo desempata.
+              La puntuación académica es la que corresponde a la calificación: corregir no resta.
+            </p>
+            <button type="button" className="boton boton--secundario" onClick={() => exportarLaboratorioCSV(laboratorios)}>
+              Exportar laboratorio a CSV
+            </button>
+            <div className="tabla-envoltura">
+              <table className="tabla">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Equipo</th>
+                    <th scope="col">Integrantes</th>
+                    <th scope="col">Cuenta (grupo)</th>
+                    <th scope="col">Modalidad</th>
+                    <th scope="col">Componentes</th>
+                    <th scope="col">Académica</th>
+                    <th scope="col">Competitiva</th>
+                    <th scope="col">Intentos</th>
+                    <th scope="col">Tiempo</th>
+                    <th scope="col">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {laboratorios.map((l, i) => (
+                    <tr key={l.id}>
+                      <td>{i + 1}</td>
+                      <th scope="row">{l.resumen.alias}</th>
+                      <td>{l.resumen.integrantes.join('; ')}</td>
+                      <td>{l.cuenta.nombre}{l.cuenta.grupo ? ` (${l.cuenta.grupo})` : ''}</td>
+                      <td>{MODALIDADES.find((m) => m.id === l.resumen.modo)?.etiqueta ?? l.resumen.modo}</td>
+                      <td>{l.resumen.completos} de {l.resumen.totalComponentes}</td>
+                      <td>{String(l.resumen.academico).replace('.', ',')}</td>
+                      <td>{String(l.resumen.competitivo).replace('.', ',')}</td>
+                      <td>{l.resumen.intentos}</td>
+                      <td>{formatearDuracion(l.resumen.segundos)}</td>
+                      <td>{l.resumen.terminada ? 'Terminada' : 'En curso'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </section>
 
       <section className="docente__seccion explicacion">
         <p className="explicacion__titulo">Cómo se calculan estas métricas</p>
@@ -483,6 +563,30 @@ function DetalleEstudiante({ estudiante, talleres, talleresPorId, cerrar }) {
 }
 
 /* ----------------------------------- CSV ---------------------------------- */
+
+function exportarLaboratorioCSV(lista) {
+  const escapar = (v) => {
+    const t = v === null || v === undefined ? '' : String(v)
+    return /[";\n]/.test(t) ? `"${t.replaceAll('"', '""')}"` : t
+  }
+  const cuerpo = [
+    COLUMNAS_CSV.join(';'),
+    ...lista.map((l) => {
+      const fila = filaCsv(l.resumen, l.cuenta)
+      return COLUMNAS_CSV.map((c) => escapar(fila[c])).join(';')
+    }),
+  ].join('\r\n')
+  const blob = new Blob(['\uFEFF' + cuerpo], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `laboratorio-cdvs-${new Date().toISOString().slice(0, 10)}.csv`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
+
 
 function exportarCSV(filas) {
   const columnas = [

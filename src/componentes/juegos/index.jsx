@@ -14,6 +14,7 @@ import {
 import { Traza, ArmarAlgoritmo, Completar, Pseudo } from './codigo.jsx'
 import Taller from './Taller.jsx'
 import DisecaSistema from './disecaSistema.jsx'
+import LaboratorioCdvs from './LaboratorioCdvs.jsx'
 import { useActividad, MarcoActividad } from './marco.jsx'
 
 const JUEGOS = {
@@ -40,6 +41,7 @@ const JUEGOS = {
   pseudo: Pseudo,
   taller: Taller,
   'diseca-sistema': DisecaSistema,
+  'laboratorio-cdvs': LaboratorioCdvs,
 }
 
 /** Solo el juego, sin el marco. Lo usa la secuencia, que pone su propio marco. */

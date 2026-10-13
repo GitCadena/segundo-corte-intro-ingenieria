@@ -194,6 +194,31 @@ const glosario = {
     ejemplo: 'Un computador (hardware) con un programa de ventas (software) no sirve sin alguien (personas) que lo use.',
   },
 
+  /* ---- Estación 5: ciclo de vida del desarrollo de sistemas ---- */
+  cdvs: {
+    termino: 'Ciclo de vida del desarrollo de sistemas (CDVS)',
+    definicion:
+      'Secuencia ordenada de fases por las que pasa un sistema de información, desde que se identifica un problema hasta que se usa, se evalúa y se mantiene. Cada fase deja un resultado que la siguiente necesita.',
+    ejemplo: 'Identificar el problema, averiguar qué necesitan los usuarios, analizar, diseñar, desarrollar, probar y mantener, implementar y evaluar.',
+  },
+  'requerimientos-informacion': {
+    termino: 'Requerimientos de información',
+    definicion:
+      'Lo que cada usuario necesita saber y hacer para trabajar. Se averigua preguntando y observando, antes de decidir qué hará el sistema.',
+    ejemplo: 'La dueña de la peluquería necesita ver su agenda del día sin turnos cruzados.',
+  },
+  'funciones-si': {
+    termino: 'Funciones de un sistema de información',
+    definicion: 'Las cuatro cosas que hace un sistema de información con los datos: capturarlos, procesarlos, almacenarlos y distribuir el resultado.',
+    ejemplo: 'Captura la hora que elige el cliente, verifica que esté libre, guarda el turno y le muestra la agenda a la dueña.',
+  },
+  'caracteristicas-informacion': {
+    termino: 'Características de la información',
+    definicion:
+      'Cualidades que debe tener la información que entrega el sistema: oportuna (llega a tiempo), relevante (responde lo que se necesita), completa (no le falta una parte que cambiaría la decisión) y confiable (se puede rastrear de dónde salió).',
+    ejemplo: 'Un turno que aparece ocupado en cuanto alguien lo toma es información oportuna.',
+  },
+
   /* ---- Estación 4: informática y sociedad ---- */
   'ley-de-moore': {
     termino: 'Ley de Moore',

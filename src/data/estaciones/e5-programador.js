@@ -1,7 +1,7 @@
 import base from '../m5-paradigmas.js'
 
 /**
- * Estación 5 · Pensar como programador (sesión 10).
+ * Estación 6 · Pensar como programador (sesión 10).
  *
  * Todas las actividades de código EJECUTAN el algoritmo del estudiante contra
  * casos de prueba. Ninguna se da por buena porque el orden de los bloques
@@ -11,7 +11,7 @@ import base from '../m5-paradigmas.js'
 
 export default {
   id: 'paradigmas',
-  orden: 5,
+  orden: 6,
   sesion: 'Sesión 10',
   titulo: 'Pensar como programador',
   gancho: 'Un paradigma no es una sintaxis. Es una forma de repartir la responsabilidad dentro de un programa.',
@@ -625,7 +625,7 @@ FinAlgoritmo`,
       'Un paradigma reparte la responsabilidad de otra manera; la lógica del algoritmo sigue siendo la misma.',
     ],
     conexion:
-      'Lo que hiciste aquí es lo que hace un ingeniero informático la mayor parte del tiempo, aunque con otro lenguaje: decidir qué datos entran, qué transformación ocurre y qué sale, y comprobarlo con casos que incluyan los bordes. En el reto final de la estación 6 vas a resolver un algoritmo pequeño junto con decisiones de requisitos, calidad y datos personales, porque en un proyecto real esas cosas no vienen separadas.',
+      'Lo que hiciste aquí es lo que hace un ingeniero informático la mayor parte del tiempo, aunque con otro lenguaje: decidir qué datos entran, qué transformación ocurre y qué sale, y comprobarlo con casos que incluyan los bordes. En el reto final de la estación 7 vas a resolver un algoritmo pequeño junto con decisiones de requisitos, calidad y datos personales, porque en un proyecto real esas cosas no vienen separadas.',
   },
 
   glosario: ['algoritmo', 'variable', 'asignacion', 'contador', 'acumulador', 'bandera', 'centinela', 'programacion-estructurada', 'clase', 'objeto', 'atributo', 'metodo'],

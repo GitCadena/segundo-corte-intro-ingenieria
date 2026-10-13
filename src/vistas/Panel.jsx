@@ -3,6 +3,7 @@ import { useSesion } from '../estado/SesionProvider.jsx'
 import { useProgreso } from '../estado/ProgresoProvider.jsx'
 import { estaciones, catalogoActividades } from '../data/catalogo.js'
 import glosario from '../data/glosario.js'
+import { enLetras } from '../lib/numeros.js'
 
 /** Panel del estudiante: dónde estoy, qué sigue y qué conviene repasar. */
 export default function Panel() {
@@ -99,7 +100,7 @@ export default function Panel() {
 
       {/* --------------------------- estaciones --------------------------- */}
       <section className="panel__seccion">
-        <h2 className="titulo-seccion">Las seis estaciones</h2>
+        <h2 className="titulo-seccion">Las {enLetras(estaciones.length)} estaciones</h2>
         <ul className="estaciones__lista">
           {estaciones.map((e) => {
             const p = resumen.porEstacion[e.id]
@@ -115,9 +116,11 @@ export default function Panel() {
                       <span className="medidor__relleno" style={{ width: `${p.avance}%` }} />
                     </span>
                     <span className="estacion__meta">
-                      {p.completadas === 0
-                        ? `Sin empezar · ${p.total} actividades`
-                        : `${p.completadas} de ${p.total} actividades · ${p.puntos} de ${p.puntosMax} pts`}
+                      {p.total === 0
+                        ? 'Actividad de clase · puntuación propia'
+                        : p.completadas === 0
+                          ? `Sin empezar · ${p.total} actividades`
+                          : `${p.completadas} de ${p.total} actividades · ${p.puntos} de ${p.puntosMax} pts`}
                     </span>
                   </span>
                 </Link>

@@ -2,10 +2,11 @@ import e1 from './estaciones/e1-proceso.js'
 import e2 from './estaciones/e2-calidad.js'
 import e3 from './estaciones/e3-sistemas.js'
 import e4 from './estaciones/e4-sociedad.js'
+import eCdvs from './estaciones/e5-cdvs.js'
 import e5 from './estaciones/e5-programador.js'
 import e6 from './estaciones/e6-reto-final.js'
 
-export const estaciones = [e1, e2, e3, e4, e5, e6]
+export const estaciones = [e1, e2, e3, e4, eCdvs, e5, e6]
 
 export const curso = {
   nombre: 'Introducción a la Ingeniería Informática',
@@ -44,7 +45,7 @@ function entradasDe(estacion) {
       tipo: a.tipo,
       nivel: a.nivel ?? 'base',
       puntos: a.puntos ?? 0,
-      cuentaNota: (a.nivel ?? 'base') === 'base',
+      cuentaNota: (a.nivel ?? 'base') === 'base' && (a.puntos ?? 0) > 0,
       conceptos: a.conceptos ?? [],
       orden: orden++,
       seccion: 'practica',
