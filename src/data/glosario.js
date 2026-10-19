@@ -327,6 +327,38 @@ const glosario = {
     definicion: 'Comportamiento que un objeto sabe ejecutar, normalmente sobre sus propios atributos.',
     ejemplo: 'reservar(hora) cambia el estado de la sala a ocupada.',
   },
+
+  /* ---- Estación 6: ingeniería del software y metodologías ---- */
+  'ingenieria-software': {
+    termino: 'Ingeniería del software',
+    definicion: 'Disciplina que construye software de forma ordenada para que cumpla lo que se necesita, se pueda probar y se pueda mantener.',
+    ejemplo: 'Escribir el código es una parte; entender el problema, probar y mantener también lo son.',
+  },
+  metodologia: {
+    termino: 'Metodología',
+    definicion: 'Forma de organizar el trabajo para recorrer las fases del ciclo de vida: cambia el orden, el tamaño de los pasos y cuánto se habla con el cliente.',
+    ejemplo: 'Dos equipos hacen la misma app; uno la planea toda antes de empezar y el otro la entrega por partes.',
+  },
+  cascada: {
+    termino: 'Cascada',
+    definicion: 'Metodología que recorre las fases en orden, una tras otra, sin pasar a la siguiente hasta terminar la anterior.',
+    ejemplo: 'Se escribe todo lo que debe hacer el sistema y solo después se empieza a construir.',
+  },
+  prototipado: {
+    termino: 'Prototipado',
+    definicion: 'Metodología que construye pronto un borrador, lo muestra al usuario y lo mejora con lo que diga.',
+    ejemplo: 'Una pantalla rápida de reservas que la dueña revisa antes de seguir.',
+  },
+  espiral: {
+    termino: 'Espiral',
+    definicion: 'Metodología que avanza en vueltas y en cada una empieza por la parte más riesgosa del proyecto.',
+    ejemplo: 'Comprobar primero que no se cruzan las citas, antes de hacer el resto.',
+  },
+  agil: {
+    termino: 'Ágil',
+    definicion: 'Metodología que entrega funciones pequeñas con frecuencia y se ajusta según lo que va aprendiendo.',
+    ejemplo: 'Primero solo reservar una hora; luego ver la agenda; luego cancelar.',
+  },
 }
 
 export default glosario

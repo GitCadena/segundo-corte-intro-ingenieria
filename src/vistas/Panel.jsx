@@ -66,11 +66,11 @@ export default function Panel() {
           <p className="continuar__etiqueta">Ruta principal terminada</p>
           <h2 className="continuar__titulo">Completaste todas las actividades base</h2>
           <p className="continuar__donde">
-            Quedan los desafíos opcionales y el reto final de práctica, que puedes repetir cuantas
-            veces quieras.
+            Quedan los desafíos opcionales y los trabajos de clase: el laboratorio del ciclo de vida
+            y el proyecto individual de la Estación 6.
           </p>
-          <Link className="boton boton--principal boton--grande" to="/estacion/reto-final">
-            Ir al reto final de práctica
+          <Link className="boton boton--principal boton--grande" to="/estacion/metodologias">
+            Ir al proyecto de la Estación 6
           </Link>
         </section>
       )}

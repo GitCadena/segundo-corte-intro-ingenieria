@@ -14,7 +14,7 @@
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { catalogoActividades, catalogoEstaciones } from '../src/data/catalogo.js'
+import { sembrarActividades as catalogoActividades, sembrarEstaciones as catalogoEstaciones } from '../src/data/catalogo.js'
 
 const aqui = dirname(fileURLToPath(import.meta.url))
 const destino = resolve(aqui, '../supabase/migrations/20260915130000_catalogo.sql')

@@ -8,7 +8,7 @@
 
 export default {
   id: 'reto-final',
-  orden: 7,
+  orden: 9, // oculta: el proyecto de la Estación 6 integra el corte
   sesion: 'Preparación sesión 11',
   titulo: 'Reto final de práctica',
   gancho: 'Un caso completo, del problema al algoritmo. Mismo alcance del parcial, sin nota.',

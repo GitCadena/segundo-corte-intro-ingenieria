@@ -46,27 +46,6 @@ const logros = [
     condicion: (r) => r.estacionBaseCompleta('tic'),
   },
   {
-    id: 'estacion-5-completa',
-    titulo: 'Pensamiento algorítmico',
-    descripcion: 'Completaste todas las actividades base de la estación 6.',
-    evidencia: 'Todas las actividades de nivel base de la estación 6, completadas.',
-    condicion: (r) => r.estacionBaseCompleta('paradigmas'),
-  },
-  {
-    id: 'algoritmo-ejecutado',
-    titulo: 'Tu algoritmo corre',
-    descripcion: 'Escribiste un algoritmo que pasó todos sus casos de prueba, incluidos los límites.',
-    evidencia: 'Una actividad de pseudocódigo completada.',
-    condicion: (r) => r.completadasPorTipo('pseudo') >= 1 || r.completadasPorTipo('algoritmo') >= 1,
-  },
-  {
-    id: 'tres-algoritmos',
-    titulo: 'Ya no es suerte',
-    descripcion: 'Tres algoritmos distintos pasando sus casos de prueba.',
-    evidencia: 'Tres actividades de pseudocódigo o de armado de algoritmos, completadas.',
-    condicion: (r) => r.completadasPorTipo('pseudo') + r.completadasPorTipo('algoritmo') + r.completadasPorTipo('completar') >= 3,
-  },
-  {
     id: 'sin-ayuda',
     titulo: 'Racha limpia',
     descripcion: 'Cinco actividades con dominio demostrado.',
@@ -76,10 +55,10 @@ const logros = [
   {
     id: 'ruta-completa',
     titulo: 'Ruta principal terminada',
-    descripcion: 'Completaste las actividades base de las cinco estaciones con puntaje (el laboratorio del ciclo de vida se evalúa aparte).',
-    evidencia: 'Estaciones 1, 2, 3, 4 y 6 con su nivel base completo.',
+    descripcion: 'Completaste las actividades base de las cuatro estaciones con puntaje (el laboratorio del ciclo de vida y el proyecto con IA se evalúan aparte).',
+    evidencia: 'Estaciones 1, 2, 3 y 4 con su nivel base completo.',
     condicion: (r) =>
-      ['proceso', 'calidad', 'sistemas', 'tic', 'paradigmas'].every((e) => r.estacionBaseCompleta(e)),
+      ['proceso', 'calidad', 'sistemas', 'tic'].every((e) => r.estacionBaseCompleta(e)),
   },
   {
     id: 'desafios-opcionales',
@@ -87,13 +66,6 @@ const logros = [
     descripcion: 'Resolviste cinco desafíos opcionales.',
     evidencia: 'Cinco actividades de nivel opcional, completadas.',
     condicion: (r) => r.completadasOpcionales >= 5,
-  },
-  {
-    id: 'reto-final',
-    titulo: 'Listo para el parcial',
-    descripcion: 'Terminaste el reto final de práctica con al menos el 70 % del puntaje.',
-    evidencia: 'Puntaje del reto final ≥ 70 % de su máximo.',
-    condicion: (r) => r.porcentajeEstacion('reto-final') >= 70,
   },
 ]
 

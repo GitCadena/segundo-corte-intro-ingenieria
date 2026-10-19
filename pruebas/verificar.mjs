@@ -541,11 +541,11 @@ for (const e of estaciones) {
     if (!e.aprenderas?.objetivo) faltan.push('aprenderas')
     if (!e.comprende?.length) faltan.push('comprende')
     if (!e.ejemplo?.pasos?.length) faltan.push('ejemplo')
-    if (!(e.actividades?.length || e.reto)) faltan.push('practica')
+    if (!(e.actividades?.length || e.reto || (e.id === 'metodologias' && e.taller))) faltan.push('practica')
     // La Estación 2 retiró su reto: la práctica final la hace el taller
     // individual "Tu propio caso" (con el código propio del estudiante).
     // La Estación 5 (ciclo de vida) tiene una sola actividad principal de clase: el laboratorio.
-    if (!e.reto && e.id !== 'calidad' && e.id !== 'cdvs') faltan.push('reto')
+    if (!e.reto && !['calidad', 'cdvs', 'metodologias'].includes(e.id)) faltan.push('reto')
     if (!e.sintesis?.puntos?.length) faltan.push('sintesis')
     return faltan.length === 0 ? true : `faltan: ${faltan.join(', ')}`
   })
@@ -564,7 +564,7 @@ for (const e of estaciones) {
   }
 }
 
-prueba('mecánicas · están los diez formatos exigidos', () => {
+prueba('mecánicas · están los formatos exigidos del corte (pseudocódigo es del tercer corte)', () => {
   const tipos = new Set(catalogoActividades.map((a) => a.tipo))
   const exigidos = {
     Ordenar: ['orden'],
@@ -573,8 +573,6 @@ prueba('mecánicas · están los diez formatos exigidos', () => {
     'Verdadero/falso': ['vf'],
     Calcular: ['calcular'],
     'Decidir sobre un caso': ['caso', 'entrega', 'datos-necesarios'],
-    'Armar algoritmos': ['algoritmo'],
-    'Completar pseudocódigo': ['completar', 'pseudo'],
     Simuladores: ['explora-moore', 'romper-formulario', 'formulario-friccion', 'mejora-interfaz', 'predice'],
     Talleres: ['taller'],
   }
@@ -672,11 +670,11 @@ prueba('ciclo de vida · cada fase trae pregunta, explicación, actividades, res
   return malas.length === 0 ? true : malas.map((f) => f.id).join(', ')
 })
 
-prueba('estaciones · el orden es 1..N sin repetir y la nueva va quinta', () => {
+prueba('estaciones · el orden es 1..N sin repetir, el ciclo de vida es 5 y las metodologías 6', () => {
   const ordenes = estaciones.map((e) => e.orden)
   const ok1 = ordenes.every((o, i) => o === i + 1)
   const cdvs = estaciones.find((e) => e.id === 'cdvs')
-  return ok1 && cdvs?.orden === 5 && estaciones.find((e) => e.id === 'paradigmas')?.orden === 6 ? true : ordenes.join(',')
+  return ok1 && cdvs?.orden === 5 && estaciones.find((e) => e.id === 'metodologias')?.orden === 6 && !estaciones.some((e) => ['paradigmas', 'reto-final'].includes(e.id)) ? true : ordenes.join(',')
 })
 
 prueba('laboratorio · está en el catálogo con su tipo y no suma a la nota', () => {

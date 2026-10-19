@@ -5,8 +5,15 @@ import e4 from './estaciones/e4-sociedad.js'
 import eCdvs from './estaciones/e5-cdvs.js'
 import e5 from './estaciones/e5-programador.js'
 import e6 from './estaciones/e6-reto-final.js'
+import eMetodologias from './estaciones/e6-metodologias.js'
 
-export const estaciones = [e1, e2, e3, e4, eCdvs, e5, e6]
+/**
+ * Estaciones que ve el estudiante. La de pseudocódigo (`e5`) y el reto final
+ * (`e6`) pertenecen al tercer corte: se conservan intactas y con su historial,
+ * pero no se muestran ni cuentan para el avance ni para la nota orientativa.
+ */
+export const estaciones = [e1, e2, e3, e4, eCdvs, eMetodologias]
+export const estacionesOcultas = [e5, e6]
 
 export const curso = {
   nombre: 'Introducción a la Ingeniería Informática',
@@ -124,12 +131,12 @@ export const ACTIVIDAD_LABORATORIO = {
 
 export const catalogoActividades = [...estaciones.flatMap(entradasDe), ACTIVIDAD_LABORATORIO]
 
-export const catalogoEstaciones = estaciones.map((e) => ({
-  id: e.id,
-  orden: e.orden,
-  titulo: e.titulo,
-  sesion: e.sesion,
-}))
+const fichaDe = (e) => ({ id: e.id, orden: e.orden, titulo: e.titulo, sesion: e.sesion })
+export const catalogoEstaciones = estaciones.map(fichaDe)
+
+/** Lo que se siembra en la base de datos: incluye lo oculto, para no dejar huérfano su historial. */
+export const sembrarEstaciones = [...estaciones, ...estacionesOcultas].map(fichaDe)
+export const sembrarActividades = [...estaciones, ...estacionesOcultas].flatMap(entradasDe).concat(ACTIVIDAD_LABORATORIO)
 
 /* ------------------------------ consultas ------------------------------- */
 
@@ -161,7 +168,7 @@ export function puntosDeEstacion(estacionId, { soloBase = false } = {}) {
 
 /** Devuelve el objeto de datos completo de una actividad (no solo su ficha). */
 export function datosActividad(id) {
-  for (const e of estaciones) {
+  for (const e of [...estaciones, ...estacionesOcultas]) {
     const suelta = (e.actividades ?? []).find((a) => a.id === id)
     if (suelta) return { actividad: suelta, estacion: e }
     if (e.taller?.id === id) return { actividad: e.taller, estacion: e }

@@ -11,7 +11,7 @@ import base from '../m5-paradigmas.js'
 
 export default {
   id: 'paradigmas',
-  orden: 6,
+  orden: 8, // oculta: pertenece al tercer corte
   sesion: 'Sesión 10',
   titulo: 'Pensar como programador',
   gancho: 'Un paradigma no es una sintaxis. Es una forma de repartir la responsabilidad dentro de un programa.',

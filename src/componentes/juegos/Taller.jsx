@@ -73,7 +73,7 @@ export default function Taller({ actividad, ctrl }) {
 
       {caso && (
         <div className="taller__caso-asignado">
-          <p className="etiqueta-campo">Tu caso asignado (no lo cambies: cada estudiante tiene uno distinto)</p>
+          <p className="etiqueta-campo">{actividad.etiquetaCaso ?? 'Tu caso asignado (no lo cambies: cada estudiante tiene uno distinto)'}</p>
           <h4>{caso.titulo}</h4>
           <p>{caso.falla}</p>
         </div>
@@ -114,7 +114,7 @@ export default function Taller({ actividad, ctrl }) {
                   value={valores[c.id] ?? ''}
                   onChange={(e) => setValores((p) => ({ ...p, [c.id]: e.target.value }))}
                 >
-                  <option value="">Elige una característica…</option>
+                  <option value="">{c.marcador ?? 'Elige una característica…'}</option>
                   {c.opciones.map((o) => (
                     <option key={o} value={o}>
                       {o}
@@ -124,7 +124,7 @@ export default function Taller({ actividad, ctrl }) {
               </label>
               {valores[c.id] && c.ejemplosPorOpcion?.[valores[c.id]] && (
                 <div className="ejemplos-caracteristica">
-                  <p className="etiqueta-campo">Ejemplos que podrías construir con esa característica</p>
+                  <p className="etiqueta-campo">{c.tituloEjemplos ?? 'Ejemplos que podrías construir con esa característica'}</p>
                   <ul>
                     {c.ejemplosPorOpcion[valores[c.id]].map((ej, i) => (
                       <li key={i}>{ej}</li>
@@ -185,8 +185,8 @@ export default function Taller({ actividad, ctrl }) {
       )}
 
       <p className="aviso aviso--nota">
-        Este taller no lo califica la aplicación: el puntaje que ves en las demás actividades no lo
-        incluye. Marca «entregado» para llevar tu propio control.
+        {actividad.avisoEntrega ??
+          'Este taller no lo califica la aplicación: el puntaje que ves en las demás actividades no lo incluye. Marca «entregado» para llevar tu propio control.'}
       </p>
 
       {!entregado ? (
@@ -204,8 +204,7 @@ export default function Taller({ actividad, ctrl }) {
         </button>
       ) : (
         <p className="aviso aviso--ok">
-          Marcado como entregado. Recuerda subirlo a la plataforma del curso: esta aplicación no lo
-          envía.
+          Marcado como entregado. Recuerda que esta aplicación no envía el trabajo: se entrega por la plataforma del curso.
         </p>
       )}
     </div>

@@ -1,5 +1,5 @@
 -- ARCHIVO GENERADO por scripts/generar-catalogo.mjs. No editar a mano.
--- Generado a partir del contenido de src/data/. 54 actividades.
+-- Generado a partir del contenido de src/data/. 55 actividades.
 
 begin;
 
@@ -9,8 +9,9 @@ insert into public.estaciones (id, orden, titulo, sesion) values
   ('sistemas', 3, 'Los sistemas de información', 'Sesión 9'),
   ('tic', 4, 'Informática y sociedad', 'Sesiones 8 y 9'),
   ('cdvs', 5, 'El ciclo de vida del desarrollo de sistemas', 'Unidad 2 · puntos 2.3 a 2.7'),
-  ('paradigmas', 6, 'Pensar como programador', 'Sesión 10'),
-  ('reto-final', 7, 'Reto final de práctica', 'Preparación sesión 11')
+  ('metodologias', 6, 'Ingeniería del software y metodologías', 'Unidad 2 · puntos 2.8 y 2.9'),
+  ('paradigmas', 8, 'Pensar como programador', 'Sesión 10'),
+  ('reto-final', 9, 'Reto final de práctica', 'Preparación sesión 11')
 on conflict (id) do update set orden = excluded.orden, titulo = excluded.titulo, sesion = excluded.sesion;
 
 insert into public.actividades (id, estacion_id, titulo, tipo, nivel, puntos_max, cuenta_nota, conceptos, orden) values
@@ -52,6 +53,7 @@ insert into public.actividades (id, estacion_id, titulo, tipo, nivel, puntos_max
   ('e4-reto:p4', 'tic', 'Un servicio digital para todo el campus · paso 4', 'quiz', 'base', 37, true, ARRAY['datos-personales', 'finalidad']::text[], 9),
   ('e4-taller', 'tic', 'Taller en grupo · Cuatro experimentos con el simulador', 'taller', 'base', 0, false, '{}'::text[], 10),
   ('e5-laboratorio-cdvs', 'cdvs', 'Laboratorio de ingeniería: del problema al sistema', 'laboratorio-cdvs', 'base', 0, false, ARRAY['cdvs', 'funciones-si', 'caracteristicas-informacion']::text[], 0),
+  ('e6-proyecto-ia', 'metodologias', 'Proyecto individual · Elige tu metodología y constrúyelo con IA', 'taller', 'base', 0, false, '{}'::text[], 0),
   ('e5-a1-traza', 'paradigmas', 'Sigue las variables', 'traza', 'base', 110, true, ARRAY['variable', 'asignacion', 'contador', 'acumulador']::text[], 0),
   ('e5-a2-armar', 'paradigmas', 'Arma el algoritmo', 'algoritmo', 'base', 130, true, ARRAY['algoritmo', 'contador', 'variable']::text[], 1),
   ('e5-a3-decision', 'paradigmas', 'Completa la decisión', 'completar', 'base', 120, true, ARRAY['algoritmo', 'frontera']::text[], 2),
@@ -84,13 +86,9 @@ insert into public.logros (id, titulo, descripcion, evidencia) values
   ('estacion-2-completa', 'Criterio de calidad', 'Completaste todas las actividades base de la estación 2.', 'Todas las actividades de nivel base de la estación 2, completadas.'),
   ('estacion-3-completa', 'Desarmador de sistemas', 'Completaste todas las actividades base de la estación 3.', 'Todas las actividades de nivel base de la estación 3, completadas.'),
   ('estacion-4-completa', 'Con los pies en la tierra', 'Completaste todas las actividades base de la estación 4.', 'Todas las actividades de nivel base de la estación 4, completadas.'),
-  ('estacion-5-completa', 'Pensamiento algorítmico', 'Completaste todas las actividades base de la estación 6.', 'Todas las actividades de nivel base de la estación 6, completadas.'),
-  ('algoritmo-ejecutado', 'Tu algoritmo corre', 'Escribiste un algoritmo que pasó todos sus casos de prueba, incluidos los límites.', 'Una actividad de pseudocódigo completada.'),
-  ('tres-algoritmos', 'Ya no es suerte', 'Tres algoritmos distintos pasando sus casos de prueba.', 'Tres actividades de pseudocódigo o de armado de algoritmos, completadas.'),
   ('sin-ayuda', 'Racha limpia', 'Cinco actividades con dominio demostrado.', 'Cinco actividades en estado "dominio demostrado".'),
-  ('ruta-completa', 'Ruta principal terminada', 'Completaste las actividades base de las cinco estaciones con puntaje (el laboratorio del ciclo de vida se evalúa aparte).', 'Estaciones 1, 2, 3, 4 y 6 con su nivel base completo.'),
-  ('desafios-opcionales', 'Fuiste más allá', 'Resolviste cinco desafíos opcionales.', 'Cinco actividades de nivel opcional, completadas.'),
-  ('reto-final', 'Listo para el parcial', 'Terminaste el reto final de práctica con al menos el 70 % del puntaje.', 'Puntaje del reto final ≥ 70 % de su máximo.')
+  ('ruta-completa', 'Ruta principal terminada', 'Completaste las actividades base de las cuatro estaciones con puntaje (el laboratorio del ciclo de vida y el proyecto con IA se evalúan aparte).', 'Estaciones 1, 2, 3 y 4 con su nivel base completo.'),
+  ('desafios-opcionales', 'Fuiste más allá', 'Resolviste cinco desafíos opcionales.', 'Cinco actividades de nivel opcional, completadas.')
 on conflict (id) do update set titulo = excluded.titulo, descripcion = excluded.descripcion, evidencia = excluded.evidencia;
 
 commit;
