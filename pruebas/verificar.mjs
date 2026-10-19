@@ -25,6 +25,7 @@ import {
 } from '../src/data/lab-cdvs.js'
 import * as Lab from '../src/lib/labCdvs.js'
 import { crearPdf } from '../src/lib/pdfSimple.js'
+import { idsOcultos } from '../src/lib/visibilidad.js'
 
 let ok = 0
 let fallos = []
@@ -889,6 +890,16 @@ prueba('pdf · el comprobante es un PDF válido: cabecera, tabla de referencias 
     if (!txt.slice(entradas[n - 1]).startsWith(`${n} 0 obj`)) return `el objeto ${n} no está en su desplazamiento`
   }
   return true
+})
+
+prueba('grupos · solo el Grupo 1 oculta las dos actividades de datos y leyes, y existen en el catálogo', () => {
+  const g1 = idsOcultos('Grupo 1')
+  if (!g1.has('e4-a5-datos') || !g1.has('e4-a6-leyes') || g1.size !== 2) return 'el Grupo 1 no oculta lo pedido'
+  for (const otro of ['Grupo 2', 'Grupo 3', 'Grupo 10', '', null, undefined, 'Grupo de demostración']) {
+    if (idsOcultos(otro).size !== 0) return `«${otro}» oculta actividades`
+  }
+  const existen = [...g1].every((id) => catalogoActividades.some((a) => a.id === id))
+  return existen ? true : 'una actividad oculta no existe en el catálogo'
 })
 
 /* ================================ informe =============================== */

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link, Navigate, useLocation } from 'react-router-dom'
 import { estacionPorId, estaciones, actividadesDe } from '../data/catalogo.js'
 import { useProgreso } from '../estado/ProgresoProvider.jsx'
+import { idsOcultos } from '../lib/visibilidad.js'
 import Actividad from '../componentes/juegos/index.jsx'
 import Secuencia from '../componentes/juegos/Secuencia.jsx'
 import Bloque from '../componentes/Bloque.jsx'
@@ -17,7 +18,8 @@ export default function Estacion() {
   const { id } = useParams()
   const ubicacion = useLocation()
   const estacion = estacionPorId(id)
-  const { resumen } = useProgreso()
+  const { resumen, perfil } = useProgreso()
+  const ocultos = idsOcultos(perfil?.grupo)
 
   useEffect(() => {
     if (!ubicacion.hash) return
@@ -34,6 +36,7 @@ export default function Estacion() {
   const siguiente = estaciones.find((e) => e.orden === estacion.orden + 1)
   const glosarioClaves = estacion.glosario ?? []
   const taller = estacion.taller
+  const actividadesVisibles = (estacion.actividades ?? []).filter((a) => !ocultos.has(a.id))
 
   return (
     <article className="estacion-vista">
@@ -130,7 +133,7 @@ export default function Estacion() {
       )}
 
       {/* ----------------------- 4. Practica jugando ---------------------- */}
-      {estacion.actividades?.length > 0 && (
+      {actividadesVisibles.length > 0 && (
         <section className="seccion" id="practica" tabIndex={-1}>
           <h2 className="seccion__titulo">
             <span className="seccion__numero">4</span> Practica jugando
@@ -140,7 +143,7 @@ export default function Estacion() {
             reintentar cuantas veces quieras; se conserva tu mejor resultado.
           </p>
           <div className="actividades">
-            {estacion.actividades.map((a, i) => (
+            {actividadesVisibles.map((a, i) => (
               <Actividad key={a.id} actividad={a} glosario={glosarioClaves} numero={i + 1} />
             ))}
           </div>

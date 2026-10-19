@@ -4,6 +4,7 @@ import { useProgreso } from '../estado/ProgresoProvider.jsx'
 import { estaciones, catalogoActividades } from '../data/catalogo.js'
 import glosario from '../data/glosario.js'
 import { enLetras } from '../lib/numeros.js'
+import { idsOcultos } from '../lib/visibilidad.js'
 
 /** Panel del estudiante: dónde estoy, qué sigue y qué conviene repasar. */
 export default function Panel() {
@@ -18,6 +19,7 @@ export default function Panel() {
     )
   }
 
+  const ocultos = idsOcultos(perfil?.grupo)
   const empezando = resumen.completadas === 0 && resumen.intentadas === 0
   const siguiente = resumen.siguiente
   const estacionSiguiente = siguiente && estaciones.find((e) => e.id === siguiente.estacionId)
@@ -138,7 +140,7 @@ export default function Panel() {
             <p className="vacio-util">No queda ninguna pendiente. Puedes repetir las que quieras para mejorar tu puntaje.</p>
           ) : (
             <ul className="lista-tareas">
-              {catalogoActividades
+              {catalogoActividades.filter((a) => !ocultos.has(a.id))
                 .filter((a) => a.puntos > 0 && !['completada', 'dominada'].includes(resumen.estadoDe(a.id)))
                 .slice(0, 8)
                 .map((a) => (
@@ -246,7 +248,7 @@ export default function Panel() {
           para quien quiera ir más lejos.
         </p>
         <ul className="lista-tareas">
-          {catalogoActividades
+          {catalogoActividades.filter((a) => !ocultos.has(a.id))
             .filter((a) => a.nivel === 'opcional')
             .map((a) => (
               <li key={a.id}>

@@ -4,6 +4,7 @@ import { useSesion } from '../estado/SesionProvider.jsx'
 import { estaciones, catalogoActividades, puntosNota } from '../data/catalogo.js'
 import glosario from '../data/glosario.js'
 import { ETIQUETA_ESTADO } from '../lib/puntaje.js'
+import { idsOcultos } from '../lib/visibilidad.js'
 
 /** Mi progreso: qué hice, con cuántos intentos y pistas, y qué conviene repasar. */
 export default function MiProgreso() {
@@ -12,8 +13,10 @@ export default function MiProgreso() {
 
   if (cargando) return <p className="cargando" role="status">Cargando…</p>
 
-  const conIntento = catalogoActividades.filter((a) => mejores[a.id])
-  const nota = puntosNota === 0 ? 0 : (resumen.puntosNotaObtenidos / puntosNota) * 5
+  const ocultos = idsOcultos(perfil?.grupo)
+  const conIntento = catalogoActividades.filter((a) => mejores[a.id] && !ocultos.has(a.id))
+  const puntosNotaVisibles = catalogoActividades.filter((a) => a.cuentaNota && !ocultos.has(a.id)).reduce((s, a) => s + a.puntos, 0)
+  const nota = puntosNotaVisibles === 0 ? 0 : (resumen.puntosNotaObtenidos / puntosNotaVisibles) * 5
 
   return (
     <div className="progreso">
@@ -51,7 +54,7 @@ export default function MiProgreso() {
         <p className="explicacion__titulo">Cómo se calcula la nota orientativa</p>
         <p>
           Puntos obtenidos ÷ puntos posibles × 5,0, contando <strong>solo</strong> las actividades de
-          nivel base ({puntosNota} puntos posibles). Se excluyen los desafíos opcionales, los
+          nivel base ({puntosNotaVisibles} puntos posibles). Se excluyen los desafíos opcionales, los
           talleres y el laboratorio. Es una referencia para que sepas cómo vas: la nota académica del
           corte la define el docente con el parcial y los entregables, no esta aplicación.
         </p>

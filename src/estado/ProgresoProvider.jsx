@@ -11,11 +11,11 @@ import {
   catalogoActividades,
   actividadesDe,
   actividadPorId,
-  puntosDeEstacion,
   estaciones,
 } from '../data/catalogo.js'
 import logrosCatalogo from '../data/logros.js'
 import { ETIQUETA_ESTADO } from '../lib/puntaje.js'
+import { idsOcultos } from '../lib/visibilidad.js'
 
 const Contexto = createContext(null)
 
@@ -182,7 +182,7 @@ export function ProgresoProvider({ children }) {
 
   /* -------------------------------- resumen ------------------------------- */
 
-  const resumen = useMemo(() => construirResumen(mejores), [mejores])
+  const resumen = useMemo(() => construirResumen(mejores, idsOcultos(perfil?.grupo)), [mejores, perfil?.grupo])
 
   /* --------------------------------- logros ------------------------------- */
 
@@ -257,24 +257,25 @@ export function useProgreso() {
  * Se calcula una sola vez y se comparte, para que ninguna vista invente
  * su propio criterio.
  */
-function construirResumen(mejores) {
+function construirResumen(mejores, ocultos) {
+  const catalogo = catalogoActividades.filter((a) => !ocultos.has(a.id))
   const estadoDe = (id) => mejores[id]?.estado ?? null
   const puntajeDe = (id) => mejores[id]?.mejor_puntaje ?? 0
 
-  const completadas = catalogoActividades.filter(
+  const completadas = catalogo.filter(
     (a) => a.puntos > 0 && ['completada', 'dominada'].includes(estadoDe(a.id)),
   )
-  const dominadas = catalogoActividades.filter((a) => estadoDe(a.id) === 'dominada')
-  const intentadas = catalogoActividades.filter((a) => estadoDe(a.id) === 'intentada')
+  const dominadas = catalogo.filter((a) => estadoDe(a.id) === 'dominada')
+  const intentadas = catalogo.filter((a) => estadoDe(a.id) === 'intentada')
 
-  const puntosObtenidos = catalogoActividades.reduce((s, a) => s + puntajeDe(a.id), 0)
-  const puntosNotaObtenidos = catalogoActividades
+  const puntosObtenidos = catalogo.reduce((s, a) => s + puntajeDe(a.id), 0)
+  const puntosNotaObtenidos = catalogo
     .filter((a) => a.cuentaNota)
     .reduce((s, a) => s + puntajeDe(a.id), 0)
 
   const porEstacion = {}
   for (const e of estaciones) {
-    const act = actividadesDe(e.id).filter((a) => a.puntos > 0)
+    const act = actividadesDe(e.id).filter((a) => a.puntos > 0 && !ocultos.has(a.id))
     const base = act.filter((a) => a.nivel === 'base')
     const hechas = act.filter((a) => ['completada', 'dominada'].includes(estadoDe(a.id)))
     const maximo = act.reduce((s, a) => s + a.puntos, 0)
@@ -299,7 +300,7 @@ function construirResumen(mejores) {
   // Conceptos que conviene repasar: los que aparecen en actividades no
   // completadas o completadas con pistas. Se ordena por cuántas veces aparece.
   const conteo = {}
-  for (const a of catalogoActividades) {
+  for (const a of catalogo) {
     if (a.puntos === 0) continue
     const estado = estadoDe(a.id)
     const flojo =
@@ -316,7 +317,7 @@ function construirResumen(mejores) {
   const aRepasar = Object.values(conteo).sort((a, b) => b.veces - a.veces)
 
   // Siguiente actividad pendiente, en orden de estación y de aparición.
-  const ordenadas = [...catalogoActividades].sort((a, b) => {
+  const ordenadas = [...catalogo].sort((a, b) => {
     const ea = estaciones.find((e) => e.id === a.estacionId)?.orden ?? 99
     const eb = estaciones.find((e) => e.id === b.estacionId)?.orden ?? 99
     return ea - eb || a.orden - b.orden
@@ -329,7 +330,7 @@ function construirResumen(mejores) {
     completadas: completadas.length,
     dominadas: dominadas.length,
     intentadas: intentadas.length,
-    totalActividades: catalogoActividades.filter((a) => a.puntos > 0).length,
+    totalActividades: catalogo.filter((a) => a.puntos > 0).length,
     puntosObtenidos,
     puntosNotaObtenidos,
     porEstacion,
@@ -339,10 +340,10 @@ function construirResumen(mejores) {
     puntajeDe,
     etiquetaEstado: (id) => (estadoDe(id) ? ETIQUETA_ESTADO[estadoDe(id)] : 'Sin empezar'),
     completadasPorTipo: (tipo) =>
-      catalogoActividades.filter(
+      catalogo.filter(
         (a) => a.tipo === tipo && ['completada', 'dominada'].includes(estadoDe(a.id)),
       ).length,
-    completadasOpcionales: catalogoActividades.filter(
+    completadasOpcionales: catalogo.filter(
       (a) => a.nivel === 'opcional' && ['completada', 'dominada'].includes(estadoDe(a.id)),
     ).length,
     estacionBaseCompleta: (id) => {
@@ -350,6 +351,6 @@ function construirResumen(mejores) {
       return !!p && p.baseTotal > 0 && p.baseCompletas === p.baseTotal
     },
     porcentajeEstacion: (id) => porEstacion[id]?.porcentaje ?? 0,
-    puntosMaxEstacion: (id) => puntosDeEstacion(id),
+    puntosMaxEstacion: (id) => catalogo.filter((a) => a.estacionId === id).reduce((s, a) => s + a.puntos, 0),
   }
 }
