@@ -1,5 +1,24 @@
 import { useMemo, useState } from 'react'
+import { useProgreso } from '../../estado/ProgresoProvider.jsx'
 import { mezclar } from './marco.jsx'
+
+/**
+ * Modo «criterio propio»: solo se activa para el Grupo 1, que va con poco
+ * tiempo. Cualquier ubicación es válida mientras tenga algo de coherencia
+ * (al menos la mitad de las fichas en su pieza habitual o en una cercana). No
+ * marca errores: da un comentario por ficha y deja avanzar. Los demás grupos
+ * siguen con la verificación de siempre.
+ */
+const GRUPOS_CRITERIO = /^grupo\s*1$/i
+
+// Piezas que se parecen y que se pueden defender en lugar de la habitual.
+const CERCANAS = {
+  entrada: ['proceso'],
+  proceso: ['entrada', 'control'],
+  salida: ['retro'],
+  control: ['proceso', 'retro'],
+  retro: ['control', 'salida'],
+}
 
 /**
  * Diseca un sistema real.
@@ -17,6 +36,9 @@ export default function DisecaSistema({ actividad, ctrl }) {
   const [casoIndex, setCasoIndex] = useState(0)
   const [ubicaciones, setUbicaciones] = useState({})
   const [seleccion, setSeleccion] = useState(null)
+  const [avisoCriterio, setAvisoCriterio] = useState(null)
+  const { perfil } = useProgreso()
+  const criterio = GRUPOS_CRITERIO.test((perfil?.grupo ?? '').trim())
 
   const caso = actividad.casos[casoIndex]
   const orden = useMemo(
@@ -44,6 +66,7 @@ export default function DisecaSistema({ actividad, ctrl }) {
     if (bloqueado) return
     setUbicaciones((p) => ({ ...p, [i]: pieza }))
     setSeleccion(null)
+    setAvisoCriterio(null)
     reiniciarSeleccionSiRevisado()
   }
 
@@ -57,7 +80,30 @@ export default function DisecaSistema({ actividad, ctrl }) {
     reiniciarSeleccionSiRevisado()
   }
 
+  const nivelDe = (i) => {
+    const habitual = caso.fichas[i][0]
+    if (ubicaciones[i] === habitual) return 'ok'
+    return (CERCANAS[habitual] ?? []).includes(ubicaciones[i]) ? 'alt' : 'otra'
+  }
+  const nombrePieza = (id) => actividad.piezas.find((p) => p.id === id)?.nombre ?? id
+
   async function verificar() {
+    if (criterio) {
+      const niveles = caso.fichas.map((_, i) => nivelDe(i))
+      const exactas = niveles.filter((n) => n === 'ok').length
+      const defendibles = niveles.filter((n) => n === 'alt').length
+      if ((exactas + defendibles) * 2 < caso.fichas.length) {
+        setAvisoCriterio(
+          'Varias fichas quedaron lejos de lo que hace esa pieza. Relee la ayuda de cada pieza y mueve las que dudes; cuando te convenza, vuelve a terminar.',
+        )
+        return
+      }
+      setAvisoCriterio(null)
+      await ctrl.enviar(true, {
+        datos: { caso: caso.titulo, ubicaciones, criterio: true, exactas, defendibles, otras: caso.fichas.length - exactas - defendibles },
+      })
+      return
+    }
     const fallos = caso.fichas.filter((f, i) => ubicaciones[i] !== f[0])
     if (fallos.length > 0) {
       await ctrl.enviar(false, {
@@ -93,6 +139,12 @@ export default function DisecaSistema({ actividad, ctrl }) {
 
   return (
     <div className="diseca">
+      {criterio && (
+        <p className="lab-ayuda">
+          Aquí decides tú: ubica cada ficha en la pieza donde creas que va. Hay fichas que se pueden defender en más de una pieza.
+          Al terminar verás comentarios, no errores, y podrás seguir.
+        </p>
+      )}
       <label className="diseca__selector">
         <span className="etiqueta-campo">Sistema a analizar</span>
         <select
@@ -146,15 +198,23 @@ export default function DisecaSistema({ actividad, ctrl }) {
               <p className="diseca__zona-ayuda">{pieza.ayuda}</p>
               <div className="diseca__zona-lista" onDragOver={permitirSoltar} onDrop={(e) => soltarEnZona(e, pieza.id)}>
                 {ids.map((i) => {
-                  const bien = revisado && ubicaciones[i] === caso.fichas[i][0]
-                  const mal = revisado && !bien
+                  const bien = !criterio && revisado && ubicaciones[i] === caso.fichas[i][0]
+                  const mal = !criterio && revisado && !bien
+                  const nivel = criterio && bloqueado ? nivelDe(i) : null
                   return (
                     <div key={i} className={'diseca__colocada' + (bien ? ' diseca__colocada--ok' : '') + (mal ? ' diseca__colocada--mal' : '')}>
                       <p>
-                        {revisado && <span aria-hidden="true">{bien ? '✓ ' : '✗ '}</span>}
+                        {!criterio && revisado && <span aria-hidden="true">{bien ? '✓ ' : '✗ '}</span>}
                         {caso.fichas[i][1]}
                       </p>
                       {mal && <p className="diseca__porque">{caso.fichas[i][2]}</p>}
+                      {nivel && (
+                        <p className="diseca__porque">
+                          {nivel === 'ok' && `Coincide con lo más habitual. ${caso.fichas[i][2]}`}
+                          {nivel === 'alt' && `También se puede defender aquí. Lo más habitual es «${nombrePieza(caso.fichas[i][0])}». ${caso.fichas[i][2]}`}
+                          {nivel === 'otra' && `Es otra lectura posible. Lo más habitual es «${nombrePieza(caso.fichas[i][0])}». ${caso.fichas[i][2]}`}
+                        </p>
+                      )}
                       {!bloqueado && (
                         <button type="button" className="boton boton--texto" onClick={() => devolver(i)}>
                           Quitar
@@ -181,8 +241,18 @@ export default function DisecaSistema({ actividad, ctrl }) {
 
       {!bloqueado && (
         <button type="button" className="boton boton--principal" onClick={verificar} disabled={!completo || ctrl.enviando}>
-          {completo ? 'Revisar mi análisis' : 'Completa el diagrama para revisar'}
+          {completo ? (criterio ? 'Terminar mi análisis' : 'Revisar mi análisis') : 'Completa el diagrama para continuar'}
         </button>
+      )}
+      {criterio && avisoCriterio && (
+        <p className="lab-mensaje lab-mensaje--mal" role="status">
+          {avisoCriterio}
+        </p>
+      )}
+      {criterio && bloqueado && (
+        <p className="lab-mensaje lab-mensaje--ok" role="status">
+          Tu análisis quedó registrado. Los comentarios no son errores: muestran otras formas de ver el sistema y lo más habitual.
+        </p>
       )}
     </div>
   )
