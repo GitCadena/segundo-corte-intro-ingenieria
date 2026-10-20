@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase, hayConfiguracion } from '../lib/supabase.js'
 import { estaciones, catalogoActividades, puntosNota } from '../data/catalogo.js'
+import { idsOcultos } from '../lib/visibilidad.js'
 import glosario from '../data/glosario.js'
 import { LAB_ID, MODALIDADES } from '../data/lab-cdvs.js'
 import { normalizarSesion, resumenSesion, compararCompetitivo, formatearDuracion } from '../lib/labCdvs.js'
@@ -23,6 +24,8 @@ const TAMANO_PAGINA = 1000
  * con las primeras 1000 (las más antiguas) y los estudiantes recién
  * registrados —los últimos en insertarse— simplemente no llegan a aparecer.
  */
+const IDS_VIGENTES = new Set(catalogoActividades.map((a) => a.id))
+
 async function cargarTodasLasFilas() {
   const todas = []
   let desde = 0
@@ -63,7 +66,16 @@ export default function PanelDocente() {
       supabase.from('borradores').select('perfil_id, actividad_id, contenido, actualizado_en'),
     ])
       .then(([data, resBorradores]) => {
-        setFilas(data)
+        // La base de datos conserva todo (también lo oculto o retirado). Aquí solo
+        // se evalúa lo que hoy hace parte del curso, y a cada estudiante se le
+        // descuenta lo que su grupo no ve, salvo que ya lo haya intentado.
+        setFilas(
+          data.filter(
+            (f) =>
+              IDS_VIGENTES.has(f.actividad_id) &&
+              !(idsOcultos(f.grupo).has(f.actividad_id) && (f.estado === null || f.estado === undefined)),
+          ),
+        )
         setBorradores(resBorradores.data ?? [])
       })
       .catch((e) => setError(e.message))
