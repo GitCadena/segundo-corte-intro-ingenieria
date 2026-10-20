@@ -400,7 +400,8 @@ function agruparPorEstudiante(filas) {
     }
     const e = mapa.get(f.perfil_id)
     e.filas.push(f)
-    if (f.puntos_max > 0) {
+    // Completadas y pendientes cuentan solo el nivel base: los opcionales no son obligatorios.
+    if (f.puntos_max > 0 && f.nivel === 'base') {
       e.totalPuntuables += 1
       if (['completada', 'dominada'].includes(f.estado)) e.completadas += 1
       else e.pendientes += 1
