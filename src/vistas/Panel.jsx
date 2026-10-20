@@ -123,6 +123,7 @@ export default function Panel() {
                         : p.completadas === 0
                           ? `Sin empezar · ${p.total} actividades`
                           : `${p.completadas} de ${p.total} actividades · ${p.puntos} de ${p.puntosMax} pts`}
+                      {p.opcionalesTotal > 0 && ` · opcionales ${p.opcionalesHechas}/${p.opcionalesTotal}`}
                     </span>
                   </span>
                 </Link>
@@ -141,7 +142,7 @@ export default function Panel() {
           ) : (
             <ul className="lista-tareas">
               {catalogoActividades.filter((a) => !ocultos.has(a.id))
-                .filter((a) => a.puntos > 0 && !['completada', 'dominada'].includes(resumen.estadoDe(a.id)))
+                .filter((a) => a.puntos > 0 && a.nivel === 'base' && !['completada', 'dominada'].includes(resumen.estadoDe(a.id)))
                 .slice(0, 8)
                 .map((a) => (
                   <li key={a.id}>

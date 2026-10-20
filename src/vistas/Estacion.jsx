@@ -57,7 +57,10 @@ export default function Estacion() {
             ? taller
               ? 'Un proyecto individual de clase que se entrega por Classroom. No suma a la nota orientativa.'
               : 'Una actividad de clase, con su propia puntuación. No suma a la nota orientativa.'
-            : `${p.completadas} de ${p.total} actividades · ${p.puntos} de ${p.puntosMax} puntos`}
+            : `${p.completadas} de ${p.total} actividades · ${p.puntos} de ${p.puntosMax} puntos` +
+              (p.opcionalesTotal > 0
+                ? ` · Opcionales: ${p.opcionalesHechas} de ${p.opcionalesTotal} (no cuentan para completar la estación)`
+                : '')}
         </p>
       </header>
 

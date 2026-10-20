@@ -262,8 +262,10 @@ function construirResumen(mejores, ocultos) {
   const estadoDe = (id) => mejores[id]?.estado ?? null
   const puntajeDe = (id) => mejores[id]?.mejor_puntaje ?? 0
 
+  // Las cifras de avance cuentan solo el nivel base: los desafíos opcionales se
+  // muestran aparte, para que quien terminó lo obligatorio no vea «le falta uno».
   const completadas = catalogo.filter(
-    (a) => a.puntos > 0 && ['completada', 'dominada'].includes(estadoDe(a.id)),
+    (a) => a.puntos > 0 && a.nivel === 'base' && ['completada', 'dominada'].includes(estadoDe(a.id)),
   )
   const dominadas = catalogo.filter((a) => estadoDe(a.id) === 'dominada')
   const intentadas = catalogo.filter((a) => estadoDe(a.id) === 'intentada')
@@ -277,23 +279,28 @@ function construirResumen(mejores, ocultos) {
   for (const e of estaciones) {
     const act = actividadesDe(e.id).filter((a) => a.puntos > 0 && !ocultos.has(a.id))
     const base = act.filter((a) => a.nivel === 'base')
-    const hechas = act.filter((a) => ['completada', 'dominada'].includes(estadoDe(a.id)))
-    const maximo = act.reduce((s, a) => s + a.puntos, 0)
-    const obtenido = act.reduce((s, a) => s + puntajeDe(a.id), 0)
+    const opcionales = act.filter((a) => a.nivel !== 'base')
+    const esHecha = (a) => ['completada', 'dominada'].includes(estadoDe(a.id))
+    const hechas = base.filter(esHecha)
+    const maximo = base.reduce((s, a) => s + a.puntos, 0)
+    const obtenido = base.reduce((s, a) => s + puntajeDe(a.id), 0)
     porEstacion[e.id] = {
       id: e.id,
       titulo: e.titulo,
       orden: e.orden,
-      total: act.length,
+      total: base.length,
       completadas: hechas.length,
-      dominadas: act.filter((a) => estadoDe(a.id) === 'dominada').length,
-      pendientes: act.filter((a) => !['completada', 'dominada'].includes(estadoDe(a.id))),
+      dominadas: base.filter((a) => estadoDe(a.id) === 'dominada').length,
+      pendientes: base.filter((a) => !esHecha(a)),
       baseTotal: base.length,
-      baseCompletas: base.filter((a) => ['completada', 'dominada'].includes(estadoDe(a.id))).length,
+      baseCompletas: hechas.length,
       puntosMax: maximo,
       puntos: obtenido,
+      opcionalesTotal: opcionales.length,
+      opcionalesHechas: opcionales.filter(esHecha).length,
+      opcionalesPuntos: opcionales.reduce((s, a) => s + puntajeDe(a.id), 0),
       porcentaje: maximo === 0 ? 0 : Math.round((obtenido / maximo) * 100),
-      avance: act.length === 0 ? 0 : Math.round((hechas.length / act.length) * 100),
+      avance: base.length === 0 ? 0 : Math.round((hechas.length / base.length) * 100),
     }
   }
 
@@ -330,7 +337,7 @@ function construirResumen(mejores, ocultos) {
     completadas: completadas.length,
     dominadas: dominadas.length,
     intentadas: intentadas.length,
-    totalActividades: catalogo.filter((a) => a.puntos > 0).length,
+    totalActividades: catalogo.filter((a) => a.puntos > 0 && a.nivel === 'base').length,
     puntosObtenidos,
     puntosNotaObtenidos,
     porEstacion,
