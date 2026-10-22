@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link, Navigate, useLocation } from 'react-router-dom'
 import { estacionPorId, estaciones, actividadesDe } from '../data/catalogo.js'
 import { useProgreso } from '../estado/ProgresoProvider.jsx'
-import { idsOcultos } from '../lib/visibilidad.js'
+import { idsOcultos, ordenDe, estacionesPara } from '../lib/visibilidad.js'
 import Actividad from '../componentes/juegos/index.jsx'
 import Secuencia from '../componentes/juegos/Secuencia.jsx'
 import Bloque from '../componentes/Bloque.jsx'
@@ -33,7 +33,8 @@ export default function Estacion() {
   if (!estacion) return <Navigate to="/panel" replace />
 
   const p = resumen.porEstacion[estacion.id]
-  const siguiente = estaciones.find((e) => e.orden === estacion.orden + 1)
+  const ordenVista = ordenDe(perfil?.grupo, estacion)
+  const siguiente = estacionesPara(perfil?.grupo, estaciones).find((e) => e.orden === ordenVista + 1)
   const glosarioClaves = estacion.glosario ?? []
   const taller = estacion.taller
   const actividadesVisibles = (estacion.actividades ?? []).filter((a) => !ocultos.has(a.id))
@@ -43,12 +44,12 @@ export default function Estacion() {
       <nav className="migas" aria-label="Dónde estás">
         <Link to="/panel">Panel</Link>
         <span aria-hidden="true">›</span>
-        <span>Estación {estacion.orden}</span>
+        <span>Estación {ordenVista}</span>
       </nav>
 
       <header className="estacion-vista__cabecera">
         <p className="estacion-vista__sesion">
-          Estación {estacion.orden} · {estacion.sesion}
+          Estación {ordenVista} · {estacion.sesion}
         </p>
         <h1 className="estacion-vista__titulo">{estacion.titulo}</h1>
         <p className="estacion-vista__gancho">{estacion.gancho}</p>

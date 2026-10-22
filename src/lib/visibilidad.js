@@ -22,3 +22,28 @@ export function idsOcultos(grupo) {
   const nombre = String(grupo ?? '').trim()
   return new Set(REGLAS.filter((r) => r.grupo.test(nombre)).flatMap((r) => r.ocultas))
 }
+
+/**
+ * Orden en que cada grupo ve las estaciones. Es solo de presentación: los
+ * identificadores, los intentos y las notas no cambian, así que calificaciones
+ * y avance son los mismos. El Grupo 3 trabajó el ciclo de vida antes que la ley
+ * de Moore, y por eso ve primero el ciclo de vida (4) y después Moore (5).
+ */
+const ORDEN_POR_GRUPO = [
+  {
+    grupo: /^grupo\s*3$/i,
+    orden: { cdvs: 4, tic: 5 },
+  },
+]
+
+/** Número con el que ese grupo ve la estación. */
+export function ordenDe(grupo, estacion) {
+  const nombre = String(grupo ?? '').trim()
+  const regla = ORDEN_POR_GRUPO.find((r) => r.grupo.test(nombre))
+  return regla?.orden[estacion.id] ?? estacion.orden
+}
+
+/** Estaciones con el número y el orden que ve ese grupo. */
+export function estacionesPara(grupo, lista) {
+  return lista.map((e) => ({ ...e, orden: ordenDe(grupo, e) })).sort((a, b) => a.orden - b.orden)
+}

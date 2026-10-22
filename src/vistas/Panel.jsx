@@ -4,7 +4,7 @@ import { useProgreso } from '../estado/ProgresoProvider.jsx'
 import { estaciones, catalogoActividades } from '../data/catalogo.js'
 import glosario from '../data/glosario.js'
 import { enLetras } from '../lib/numeros.js'
-import { idsOcultos } from '../lib/visibilidad.js'
+import { idsOcultos, estacionesPara } from '../lib/visibilidad.js'
 
 /** Panel del estudiante: dónde estoy, qué sigue y qué conviene repasar. */
 export default function Panel() {
@@ -20,9 +20,10 @@ export default function Panel() {
   }
 
   const ocultos = idsOcultos(perfil?.grupo)
+  const estacionesVistas = estacionesPara(perfil?.grupo, estaciones)
   const empezando = resumen.completadas === 0 && resumen.intentadas === 0
   const siguiente = resumen.siguiente
-  const estacionSiguiente = siguiente && estaciones.find((e) => e.id === siguiente.estacionId)
+  const estacionSiguiente = siguiente && estacionesVistas.find((e) => e.id === siguiente.estacionId)
 
   return (
     <div className="panel">
@@ -104,7 +105,7 @@ export default function Panel() {
       <section className="panel__seccion">
         <h2 className="titulo-seccion">Las {enLetras(estaciones.length)} estaciones</h2>
         <ul className="estaciones__lista">
-          {estaciones.map((e) => {
+          {estacionesVistas.map((e) => {
             const p = resumen.porEstacion[e.id]
             return (
               <li key={e.id}>

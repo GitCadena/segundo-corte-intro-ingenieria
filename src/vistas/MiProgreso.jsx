@@ -4,7 +4,7 @@ import { useSesion } from '../estado/SesionProvider.jsx'
 import { estaciones, catalogoActividades, puntosNota } from '../data/catalogo.js'
 import glosario from '../data/glosario.js'
 import { ETIQUETA_ESTADO } from '../lib/puntaje.js'
-import { idsOcultos } from '../lib/visibilidad.js'
+import { idsOcultos, estacionesPara } from '../lib/visibilidad.js'
 
 /** Mi progreso: qué hice, con cuántos intentos y pistas, y qué conviene repasar. */
 export default function MiProgreso() {
@@ -74,7 +74,7 @@ export default function MiProgreso() {
               </tr>
             </thead>
             <tbody>
-              {estaciones.map((e) => {
+              {estacionesPara(perfil?.grupo, estaciones).map((e) => {
                 const p = resumen.porEstacion[e.id]
                 return (
                   <tr key={e.id}>

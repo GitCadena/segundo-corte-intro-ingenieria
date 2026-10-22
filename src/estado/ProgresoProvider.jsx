@@ -15,7 +15,7 @@ import {
 } from '../data/catalogo.js'
 import logrosCatalogo from '../data/logros.js'
 import { ETIQUETA_ESTADO } from '../lib/puntaje.js'
-import { idsOcultos } from '../lib/visibilidad.js'
+import { idsOcultos, ordenDe } from '../lib/visibilidad.js'
 
 const Contexto = createContext(null)
 
@@ -182,7 +182,7 @@ export function ProgresoProvider({ children }) {
 
   /* -------------------------------- resumen ------------------------------- */
 
-  const resumen = useMemo(() => construirResumen(mejores, idsOcultos(perfil?.grupo)), [mejores, perfil?.grupo])
+  const resumen = useMemo(() => construirResumen(mejores, idsOcultos(perfil?.grupo), perfil?.grupo), [mejores, perfil?.grupo])
 
   /* --------------------------------- logros ------------------------------- */
 
@@ -257,7 +257,7 @@ export function useProgreso() {
  * Se calcula una sola vez y se comparte, para que ninguna vista invente
  * su propio criterio.
  */
-function construirResumen(mejores, ocultos) {
+function construirResumen(mejores, ocultos, grupo) {
   const catalogo = catalogoActividades.filter((a) => !ocultos.has(a.id))
   const estadoDe = (id) => mejores[id]?.estado ?? null
   const puntajeDe = (id) => mejores[id]?.mejor_puntaje ?? 0
@@ -287,7 +287,7 @@ function construirResumen(mejores, ocultos) {
     porEstacion[e.id] = {
       id: e.id,
       titulo: e.titulo,
-      orden: e.orden,
+      orden: ordenDe(grupo, e),
       total: base.length,
       completadas: hechas.length,
       dominadas: base.filter((a) => estadoDe(a.id) === 'dominada').length,
@@ -325,8 +325,8 @@ function construirResumen(mejores, ocultos) {
 
   // Siguiente actividad pendiente, en orden de estación y de aparición.
   const ordenadas = [...catalogo].sort((a, b) => {
-    const ea = estaciones.find((e) => e.id === a.estacionId)?.orden ?? 99
-    const eb = estaciones.find((e) => e.id === b.estacionId)?.orden ?? 99
+    const ea = ordenDe(grupo, estaciones.find((e) => e.id === a.estacionId) ?? { orden: 99 })
+    const eb = ordenDe(grupo, estaciones.find((e) => e.id === b.estacionId) ?? { orden: 99 })
     return ea - eb || a.orden - b.orden
   })
   const siguiente = ordenadas.find(

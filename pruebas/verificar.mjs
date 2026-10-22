@@ -25,7 +25,7 @@ import {
 } from '../src/data/lab-cdvs.js'
 import * as Lab from '../src/lib/labCdvs.js'
 import { crearPdf } from '../src/lib/pdfSimple.js'
-import { idsOcultos } from '../src/lib/visibilidad.js'
+import { idsOcultos, ordenDe, estacionesPara } from '../src/lib/visibilidad.js'
 
 let ok = 0
 let fallos = []
@@ -900,6 +900,18 @@ prueba('grupos · solo el Grupo 1 oculta las dos actividades de datos y leyes, y
   }
   const existen = [...g1].every((id) => catalogoActividades.some((a) => a.id === id))
   return existen ? true : 'una actividad oculta no existe en el catálogo'
+})
+
+prueba('grupos · solo el Grupo 3 ve el ciclo de vida como 4 y la ley de Moore como 5; los demás no cambian', () => {
+  const ids = (g) => estacionesPara(g, estaciones).map((e) => `${e.orden}:${e.id}`).join(',')
+  const normal = '1:proceso,2:calidad,3:sistemas,4:tic,5:cdvs,6:metodologias'
+  const g3 = '1:proceso,2:calidad,3:sistemas,4:cdvs,5:tic,6:metodologias'
+  for (const otro of ['Grupo 1', 'Grupo 2', '', null, undefined, 'Grupo de demostración']) {
+    if (ids(otro) !== normal) return `«${otro}» cambió: ${ids(otro)}`
+  }
+  if (ids('Grupo 3') !== g3) return `Grupo 3: ${ids('Grupo 3')}`
+  const tic = estaciones.find((e) => e.id === 'tic')
+  return ordenDe('Grupo 3', tic) === 5 && tic.orden === 4 ? true : 'se modificó el catálogo original'
 })
 
 /* ================================ informe =============================== */
