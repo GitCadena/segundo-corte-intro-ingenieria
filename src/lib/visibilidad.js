@@ -46,3 +46,25 @@ export function ordenDe(grupo, estacion) {
 export function estacionesPara(grupo, lista) {
   return lista.map((e) => ({ ...e, orden: ordenDe(grupo, e) })).sort((a, b) => a.orden - b.orden)
 }
+
+/**
+ * Actividades que, para un grupo, se pueden hacer pero no son obligatorias: se
+ * tratan como opcionales (no cuentan para completar la estación ni para la nota
+ * orientativa). Se usa cuando la nota de ese grupo se calculó sin ellas.
+ * El Grupo 1 se evalúa sobre 27 actividades base (2190 puntos): «¿Necesitas ese
+ * dato?» queda disponible para quien quiera, pero opcional.
+ */
+const OPCIONALES_POR_GRUPO = [
+  {
+    grupo: /^grupo\s*1$/i,
+    ids: ['e4-a5-datos'],
+  },
+]
+
+/** Devuelve la actividad tal como la cuenta ese grupo (nivel y nota). */
+export function ajustarActividad(grupo, actividad) {
+  const nombre = String(grupo ?? '').trim()
+  const regla = OPCIONALES_POR_GRUPO.find((r) => r.grupo.test(nombre))
+  if (!regla?.ids.includes(actividad.id)) return actividad
+  return { ...actividad, nivel: 'opcional', cuentaNota: false, cuenta_nota: false }
+}

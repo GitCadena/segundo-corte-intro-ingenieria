@@ -15,7 +15,7 @@ import {
 } from '../data/catalogo.js'
 import logrosCatalogo from '../data/logros.js'
 import { ETIQUETA_ESTADO } from '../lib/puntaje.js'
-import { idsOcultos, ordenDe } from '../lib/visibilidad.js'
+import { idsOcultos, ordenDe, ajustarActividad } from '../lib/visibilidad.js'
 
 const Contexto = createContext(null)
 
@@ -258,7 +258,7 @@ export function useProgreso() {
  * su propio criterio.
  */
 function construirResumen(mejores, ocultos, grupo) {
-  const catalogo = catalogoActividades.filter((a) => !ocultos.has(a.id))
+  const catalogo = catalogoActividades.filter((a) => !ocultos.has(a.id)).map((a) => ajustarActividad(grupo, a))
   const estadoDe = (id) => mejores[id]?.estado ?? null
   const puntajeDe = (id) => mejores[id]?.mejor_puntaje ?? 0
 
@@ -277,7 +277,7 @@ function construirResumen(mejores, ocultos, grupo) {
 
   const porEstacion = {}
   for (const e of estaciones) {
-    const act = actividadesDe(e.id).filter((a) => a.puntos > 0 && !ocultos.has(a.id))
+    const act = catalogo.filter((a) => a.estacionId === e.id && a.puntos > 0)
     const base = act.filter((a) => a.nivel === 'base')
     const opcionales = act.filter((a) => a.nivel !== 'base')
     const esHecha = (a) => ['completada', 'dominada'].includes(estadoDe(a.id))

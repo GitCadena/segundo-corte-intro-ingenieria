@@ -25,7 +25,7 @@ import {
 } from '../src/data/lab-cdvs.js'
 import * as Lab from '../src/lib/labCdvs.js'
 import { crearPdf } from '../src/lib/pdfSimple.js'
-import { idsOcultos, ordenDe, estacionesPara } from '../src/lib/visibilidad.js'
+import { idsOcultos, ordenDe, estacionesPara, ajustarActividad } from '../src/lib/visibilidad.js'
 
 let ok = 0
 let fallos = []
@@ -910,6 +910,20 @@ prueba('grupos · solo el Grupo 3 ve el ciclo de vida como 4 y la ley de Moore c
   if (ids('Grupo 3') !== g3) return `Grupo 3: ${ids('Grupo 3')}`
   const tic = estaciones.find((e) => e.id === 'tic')
   return ordenDe('Grupo 3', tic) === 5 && tic.orden === 4 ? true : 'se modificó el catálogo original'
+})
+
+prueba('grupos · el Grupo 1 cuenta 27 actividades base (2190 puntos) y los demás 28 (2320)', () => {
+  const base = (g) =>
+    catalogoActividades
+      .map((a) => ajustarActividad(g, a))
+      .filter((a) => a.cuentaNota)
+  const suma = (g) => base(g).reduce((s, a) => s + a.puntos, 0)
+  if (base('Grupo 1').length !== 27 || suma('Grupo 1') !== 2190) return `Grupo 1: ${base('Grupo 1').length} / ${suma('Grupo 1')}`
+  for (const g of ['Grupo 2', 'Grupo 3', null]) {
+    if (base(g).length !== 28 || suma(g) !== 2320) return `${g}: ${base(g).length} / ${suma(g)}`
+  }
+  const a5 = ajustarActividad('Grupo 1', catalogoActividades.find((a) => a.id === 'e4-a5-datos'))
+  return a5.nivel === 'opcional' && catalogoActividades.find((a) => a.id === 'e4-a5-datos').nivel === 'base' ? true : 'se alteró el catálogo original'
 })
 
 /* ================================ informe =============================== */

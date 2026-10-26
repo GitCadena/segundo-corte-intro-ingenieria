@@ -4,7 +4,7 @@ import { useSesion } from '../estado/SesionProvider.jsx'
 import { estaciones, catalogoActividades, puntosNota } from '../data/catalogo.js'
 import glosario from '../data/glosario.js'
 import { ETIQUETA_ESTADO } from '../lib/puntaje.js'
-import { idsOcultos, estacionesPara } from '../lib/visibilidad.js'
+import { idsOcultos, estacionesPara, ajustarActividad } from '../lib/visibilidad.js'
 
 /** Mi progreso: qué hice, con cuántos intentos y pistas, y qué conviene repasar. */
 export default function MiProgreso() {
@@ -15,7 +15,11 @@ export default function MiProgreso() {
 
   const ocultos = idsOcultos(perfil?.grupo)
   const conIntento = catalogoActividades.filter((a) => mejores[a.id] && !ocultos.has(a.id))
-  const puntosNotaVisibles = catalogoActividades.filter((a) => a.cuentaNota && !ocultos.has(a.id)).reduce((s, a) => s + a.puntos, 0)
+  const puntosNotaVisibles = catalogoActividades
+    .filter((a) => !ocultos.has(a.id))
+    .map((a) => ajustarActividad(perfil?.grupo, a))
+    .filter((a) => a.cuentaNota)
+    .reduce((s, a) => s + a.puntos, 0)
   const nota = puntosNotaVisibles === 0 ? 0 : (resumen.puntosNotaObtenidos / puntosNotaVisibles) * 5
 
   return (

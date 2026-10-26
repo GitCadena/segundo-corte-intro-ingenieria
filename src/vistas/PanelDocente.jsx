@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase, hayConfiguracion } from '../lib/supabase.js'
 import { estaciones, catalogoActividades, puntosNota } from '../data/catalogo.js'
-import { idsOcultos } from '../lib/visibilidad.js'
+import { idsOcultos, ajustarActividad } from '../lib/visibilidad.js'
 import glosario from '../data/glosario.js'
 import { LAB_ID, MODALIDADES } from '../data/lab-cdvs.js'
 import { normalizarSesion, resumenSesion, compararCompetitivo, formatearDuracion } from '../lib/labCdvs.js'
@@ -70,11 +70,17 @@ export default function PanelDocente() {
         // se evalúa lo que hoy hace parte del curso, y a cada estudiante se le
         // descuenta lo que su grupo no ve, salvo que ya lo haya intentado.
         setFilas(
-          data.filter(
-            (f) =>
-              IDS_VIGENTES.has(f.actividad_id) &&
-              !(idsOcultos(f.grupo).has(f.actividad_id) && (f.estado === null || f.estado === undefined)),
-          ),
+          data
+            .filter(
+              (f) =>
+                IDS_VIGENTES.has(f.actividad_id) &&
+                !(idsOcultos(f.grupo).has(f.actividad_id) && (f.estado === null || f.estado === undefined)),
+            )
+            // Lo que un grupo tiene como opcional (p. ej. e4-a5 en el Grupo 1) no cuenta para su nota.
+            .map((f) => {
+              const a = ajustarActividad(f.grupo, { id: f.actividad_id, nivel: f.nivel, cuenta_nota: f.cuenta_nota })
+              return a.nivel === f.nivel ? f : { ...f, nivel: a.nivel, cuenta_nota: a.cuenta_nota }
+            }),
         )
         setBorradores(resBorradores.data ?? [])
       })
