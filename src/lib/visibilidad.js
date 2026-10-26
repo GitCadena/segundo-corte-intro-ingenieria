@@ -10,12 +10,11 @@
  * El grupo se reconoce por el nombre que trae el perfil («Grupo 1»).
  */
 
-const REGLAS = [
-  {
-    grupo: /^grupo\s*1$/i,
-    ocultas: ['e4-a5-datos', 'e4-a6-leyes'],
-  },
-]
+// Sin reglas activas. El Grupo 1 tuvo ocultas «¿Necesitas ese dato?» y «Protección de
+// datos o delito informático» (e4-a5-datos y e4-a6-leyes) mientras iba corto de tiempo;
+// el 26 de octubre se habilitaron de nuevo para que pudieran completar toda la estación.
+// Para ocultar algo a un grupo otra vez: { grupo: /^grupo\s*1$/i, ocultas: ['id-de-actividad'] }
+const REGLAS = []
 
 /** Conjunto de identificadores de actividad que no debe ver ese grupo. */
 export function idsOcultos(grupo) {

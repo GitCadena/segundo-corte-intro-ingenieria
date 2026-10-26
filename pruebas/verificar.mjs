@@ -892,14 +892,12 @@ prueba('pdf · el comprobante es un PDF válido: cabecera, tabla de referencias 
   return true
 })
 
-prueba('grupos · solo el Grupo 1 oculta las dos actividades de datos y leyes, y existen en el catálogo', () => {
-  const g1 = idsOcultos('Grupo 1')
-  if (!g1.has('e4-a5-datos') || !g1.has('e4-a6-leyes') || g1.size !== 2) return 'el Grupo 1 no oculta lo pedido'
-  for (const otro of ['Grupo 2', 'Grupo 3', 'Grupo 10', '', null, undefined, 'Grupo de demostración']) {
-    if (idsOcultos(otro).size !== 0) return `«${otro}» oculta actividades`
+prueba('grupos · ningún grupo tiene actividades ocultas y las dos de la Estación 4 existen en el catálogo', () => {
+  for (const g of ['Grupo 1', 'Grupo 2', 'Grupo 3', '', null, undefined, 'Grupo de demostración']) {
+    if (idsOcultos(g).size !== 0) return `«${g}» oculta actividades`
   }
-  const existen = [...g1].every((id) => catalogoActividades.some((a) => a.id === id))
-  return existen ? true : 'una actividad oculta no existe en el catálogo'
+  const existen = ['e4-a5-datos', 'e4-a6-leyes'].every((id) => catalogoActividades.some((a) => a.id === id))
+  return existen ? true : 'falta una actividad de la Estación 4'
 })
 
 prueba('grupos · solo el Grupo 3 ve el ciclo de vida como 4 y la ley de Moore como 5; los demás no cambian', () => {
