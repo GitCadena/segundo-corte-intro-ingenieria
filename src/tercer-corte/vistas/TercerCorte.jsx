@@ -3,6 +3,7 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { useSesion } from '../../estado/SesionProvider.jsx'
 import { almacenTc, fijarUsuarioDemo, modoDemostracionTc } from '../lib/almacenTc.js'
 import Ficha3 from './Ficha3.jsx'
+import Ficha4 from './Ficha4.jsx'
 import './tercer-corte.css'
 
 const formatearHora = (iso) => {
@@ -197,9 +198,17 @@ function MiEquipo({ equipo }) {
         <div className="tc-ficha-fila">
           <div>
             <h3>Ficha 4 · Pseudocódigo del proceso principal</h3>
-            <p>{f4 ? 'En progreso' : 'Disponible el martes 10 de noviembre.'}</p>
+            <p>
+              {f4?.estado === 'entregada'
+                ? `Entregada${f4.actualizado_en ? ` · ${formatearHora(f4.actualizado_en)}` : ''}`
+                : f4
+                  ? `En progreso · último cambio ${formatearHora(f4.actualizado_en)}`
+                  : 'Todavía sin empezar'}
+            </p>
           </div>
-          <span className="chip">Próximamente</span>
+          <Link className="boton boton--principal" to="/tercer-corte/ficha/4">
+            {f4?.estado === 'entregada' ? 'Ver la ficha' : f4 ? 'Continuar' : 'Empezar'}
+          </Link>
         </div>
       </section>
     </>
@@ -215,11 +224,12 @@ export function FichaDelEquipo() {
   if (esDocente) return <Navigate to="/tercer-corte/docente" replace />
   if (equipo === undefined) return <p className="cargando" role="status">Cargando…</p>
   if (!equipo) return <Navigate to="/tercer-corte" replace />
-  if (n !== '3') return <Navigate to="/tercer-corte" replace />
+  if (n !== '3' && n !== '4') return <Navigate to="/tercer-corte" replace />
+  const Ficha = n === '4' ? Ficha4 : Ficha3
   return (
     <>
       {error && <p className="aviso aviso--error" role="alert">{error}</p>}
-      <Ficha3 equipo={{ id: equipo.id, nombre: equipo.nombre, miembros: equipo.miembros }} />
+      <Ficha equipo={{ id: equipo.id, nombre: equipo.nombre, miembros: equipo.miembros }} />
     </>
   )
 }

@@ -2,8 +2,9 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { almacenTc, fijarUsuarioDemo, modoDemostracionTc } from '../lib/almacenTc.js'
 import { useSesion } from '../../estado/SesionProvider.jsx'
-import { csvFicha3, descargarPdf, descargarTexto, pdfFicha3 } from '../lib/exportar.js'
+import { csvFicha3, csvFicha4, descargarPdf, descargarTexto, pdfFicha3, pdfFicha4 } from '../lib/exportar.js'
 import Ficha3 from './Ficha3.jsx'
+import Ficha4 from './Ficha4.jsx'
 import './tercer-corte.css'
 
 const INTERVALO = 10000
@@ -43,15 +44,15 @@ export default function DocenteTercerCorte() {
     return () => clearInterval(id)
   }, [cargar])
 
-  async function exportarCsv() {
+  async function exportarCsv(n) {
     setExportando(true)
     try {
       const filas = []
       for (const e of equipos) {
-        const f = await almacenTc.obtenerFicha(e.id, 3)
+        const f = await almacenTc.obtenerFicha(e.id, n)
         filas.push({ equipo: e.nombre, miembros: e.miembros, estado: f.estado, entregada_en: f.entregada_en, contenido: f.contenido })
       }
-      descargarTexto('tercer-corte-ficha-3.csv', csvFicha3(filas))
+      descargarTexto(`tercer-corte-ficha-${n}.csv`, n === 4 ? csvFicha4(filas) : csvFicha3(filas))
     } catch (e) {
       setError(e.message)
     } finally {
@@ -59,13 +60,11 @@ export default function DocenteTercerCorte() {
     }
   }
 
-  async function exportarPdf(e) {
+  async function exportarPdf(e, n) {
     try {
-      const f = await almacenTc.obtenerFicha(e.id, 3)
-      descargarPdf(
-        pdfFicha3({ equipo: e.nombre, miembros: e.miembros, estado: f.estado, contenido: f.contenido }),
-        `ficha-3-${nombreArchivo(e.nombre)}.pdf`,
-      )
+      const f = await almacenTc.obtenerFicha(e.id, n)
+      const datos = { equipo: e.nombre, miembros: e.miembros, estado: f.estado, contenido: f.contenido }
+      descargarPdf(n === 4 ? pdfFicha4(datos) : pdfFicha3(datos), `ficha-${n}-${nombreArchivo(e.nombre)}.pdf`)
     } catch (err) {
       setError(err.message)
     }
@@ -104,8 +103,11 @@ export default function DocenteTercerCorte() {
           </div>
 
           <div className="tc-acciones">
-            <button type="button" className="boton boton--secundario" onClick={exportarCsv} disabled={exportando || equipos.length === 0}>
+            <button type="button" className="boton boton--secundario" onClick={() => exportarCsv(3)} disabled={exportando || equipos.length === 0}>
               {exportando ? 'Preparando…' : 'Exportar ficha 3 a CSV'}
+            </button>
+            <button type="button" className="boton boton--secundario" onClick={() => exportarCsv(4)} disabled={exportando || equipos.length === 0}>
+              {exportando ? 'Preparando…' : 'Exportar ficha 4 a CSV'}
             </button>
           </div>
 
@@ -144,8 +146,10 @@ export default function DocenteTercerCorte() {
                         </td>
                         <td>
                           <div className="tc-acciones">
-                            <Link className="boton boton--pequeno boton--principal" to={`/tercer-corte/docente/${e.id}/ficha/3`}>Abrir ficha 3</Link>
-                            <button type="button" className="boton boton--pequeno boton--texto" onClick={() => exportarPdf(e)}>PDF</button>
+                            <Link className="boton boton--pequeno boton--principal" to={`/tercer-corte/docente/${e.id}/ficha/3`}>Ficha 3</Link>
+                            <Link className="boton boton--pequeno boton--principal" to={`/tercer-corte/docente/${e.id}/ficha/4`}>Ficha 4</Link>
+                            <button type="button" className="boton boton--pequeno boton--texto" onClick={() => exportarPdf(e, 3)}>PDF 3</button>
+                            <button type="button" className="boton boton--pequeno boton--texto" onClick={() => exportarPdf(e, 4)}>PDF 4</button>
                           </div>
                         </td>
                       </tr>
@@ -177,12 +181,13 @@ export function FichaParaDocente() {
   }, [equipoId])
 
   if (equipo === undefined) return <p className="cargando" role="status">Cargando…</p>
-  if (!equipo || n !== '3') {
+  if (!equipo || (n !== '3' && n !== '4')) {
     return (
       <p className="vacio-util">
         No se encontró esa ficha. <Link to="/tercer-corte/docente">Volver a la lista</Link>
       </p>
     )
   }
-  return <Ficha3 equipo={{ id: equipo.id, nombre: equipo.nombre, miembros: equipo.miembros }} modo="docente" />
+  const Ficha = n === '4' ? Ficha4 : Ficha3
+  return <Ficha equipo={{ id: equipo.id, nombre: equipo.nombre, miembros: equipo.miembros }} modo="docente" />
 }

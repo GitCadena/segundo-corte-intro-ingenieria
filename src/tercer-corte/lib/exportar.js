@@ -65,4 +65,63 @@ export function pdfFicha3({ equipo, miembros, estado, contenido }) {
   return crearPdf(bloques)
 }
 
+/* --------------------------------- Ficha 4 --------------------------------- */
+
+const COLUMNAS_FICHA4 = ['equipo', 'integrantes', 'estado', 'entregada_en', 'proceso', 'entradas', 'salida', 'pseudocodigo', 'casos_de_prueba', 'esperado', 'obtenido', 'confirmo_companero']
+
+const casosDe = (c) =>
+  Object.keys(c)
+    .filter((k) => k.startsWith('caso__'))
+    .sort()
+    .map((k) => `${k.replace('caso__', '')} = ${String(c[k]).replace(/\r?\n/g, ' | ')}`)
+    .join(' ; ')
+
+/** CSV de la ficha 4 de varios equipos. */
+export function csvFicha4(filas) {
+  const lineas = [COLUMNAS_FICHA4.join(',')]
+  for (const f of filas) {
+    const c = f.contenido ?? {}
+    const valores = [
+      f.equipo,
+      (f.miembros ?? []).map((m) => `${m.apellidos}, ${m.nombres}`).join(' / '),
+      f.estado === 'entregada' ? 'entregada' : 'en progreso',
+      f.entregada_en ?? '',
+      c.proceso ?? '',
+      c.entradas ?? '',
+      c.salida ?? '',
+      c.pseudo ?? '',
+      casosDe(c),
+      c.esperado ?? '',
+      c.resultado_obtenido || c.resultado_auto || '',
+      c.par_nombre ?? '',
+    ]
+    lineas.push(valores.map(celda).join(','))
+  }
+  return '﻿' + lineas.join('\r\n')
+}
+
+/** PDF de la ficha 4 de un equipo. */
+export function pdfFicha4({ equipo, miembros, estado, contenido }) {
+  const c = contenido ?? {}
+  const bloques = [
+    { t: 'titulo', texto: 'Ficha 4 · Pseudocódigo del proceso principal' },
+    { t: 'sub', texto: `Proyecto: ${equipo} · ${estado === 'entregada' ? 'Entregada' : 'En progreso'}` },
+    { t: 'p', texto: `Integrantes: ${(miembros ?? []).map((m) => `${m.nombres} ${m.apellidos}`).join(', ')}` },
+    { t: 'linea' },
+    { t: 'h', texto: 'Proceso' },
+    { t: 'p', texto: c.proceso || '-' },
+    { t: 'h', texto: 'Entradas y salida' },
+    { t: 'p', texto: `Entradas: ${String(c.entradas || '-').replace(/\r?\n/g, '; ')}` },
+    { t: 'p', texto: `Salida: ${c.salida || '-'}` },
+    { t: 'h', texto: 'Pseudocódigo' },
+  ]
+  for (const linea of String(c.pseudo || '-').split(/\r?\n/)) bloques.push({ t: 'p', texto: linea || ' ', sangria: 8 })
+  bloques.push({ t: 'h', texto: 'Prueba de escritorio' })
+  bloques.push({ t: 'p', texto: `Caso: ${casosDe(c) || '-'}` })
+  bloques.push({ t: 'p', texto: `Resultado esperado: ${c.esperado || '-'}` })
+  bloques.push({ t: 'p', texto: `Resultado obtenido: ${c.resultado_obtenido || c.resultado_auto || '-'}` })
+  bloques.push({ t: 'p', texto: `Confirmación del compañero: ${c.par_nombre || '-'}` })
+  return crearPdf(bloques)
+}
+
 export { descargarPdf }

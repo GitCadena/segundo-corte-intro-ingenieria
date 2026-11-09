@@ -1,0 +1,60 @@
+/* =========================================================================
+   Ficha 4 del tercer corte. Solo variables y componentes de styles.css;
+   clases con prefijo tc-.
+   ========================================================================= */
+
+.tc-subtitulo { font-size: 1.05rem; margin: 1.4rem 0 .6rem; color: var(--acento-oscuro); }
+.tc-bloque > .tc-subtitulo:first-of-type { margin-top: 0; }
+.tc-mono { font-family: var(--fuente-mono); font-size: .92rem; }
+
+.tc-paso { border-top: 1px solid var(--borde); padding-top: 1rem; margin-top: 1.2rem; }
+.tc-paso h3 { font-size: 1.05rem; margin: 0 0 .5rem; }
+.tc-paso--cerrado { opacity: .6; }
+.tc-linea-actual { display: flex; flex-direction: column; gap: .2rem; }
+.tc-linea-actual code { background: var(--papel-hundido); padding: .4rem .7rem; border-radius: var(--radio); }
+.tc-prediccion { display: flex; flex-wrap: wrap; gap: 1.2rem; margin: .8rem 0; }
+
+.tc-orden { list-style: none; margin: .8rem 0; padding: 0; display: flex; flex-direction: column; gap: .3rem; max-width: 640px; }
+.tc-orden__linea { display: flex; align-items: center; justify-content: space-between; gap: .6rem; background: var(--papel); border: 1px solid var(--borde); border-radius: var(--radio); padding: .35rem .6rem; cursor: grab; }
+.tc-orden__linea--arrastrando { opacity: .5; }
+.tc-orden code { font-family: var(--fuente-mono); font-size: .92rem; }
+.tc-orden__botones { display: inline-flex; flex: none; }
+.tc-orden__elegir { width: 100%; text-align: left; background: var(--papel); border: 1px solid var(--borde); border-radius: var(--radio); padding: .45rem .7rem; cursor: pointer; font: inherit; }
+.tc-orden__elegir:hover { border-color: var(--acento); }
+.tc-orden__elegir--ok { border-color: var(--ok); background: var(--ok-suave); }
+.tc-orden__elegir--mal { border-color: var(--mal); background: var(--mal-suave); }
+
+.tc-editor { border: 1px solid var(--borde-fuerte); border-radius: var(--radio); background: var(--papel); overflow: hidden; }
+.tc-editor__barra { display: flex; flex-wrap: wrap; gap: .4rem; padding: .6rem; background: var(--papel-suave); border-bottom: 1px solid var(--borde); }
+.tc-editor__marco { display: flex; font-family: var(--fuente-mono); font-size: .92rem; line-height: 1.55; }
+.tc-editor__gutter, .tc-editor__capa, .tc-editor__area { margin: 0; font: inherit; line-height: inherit; white-space: pre; tab-size: 2; }
+.tc-editor__gutter { padding: .7rem .6rem; text-align: right; color: var(--tinta-tenue); background: var(--papel-suave); border-right: 1px solid var(--borde); overflow: hidden; min-width: 2.8rem; user-select: none; }
+.tc-editor__num--error { color: var(--mal); font-weight: 700; }
+.tc-editor__cuerpo { position: relative; flex: 1; min-width: 0; }
+.tc-editor__capa { position: absolute; inset: 0; padding: .7rem .9rem; overflow: hidden; pointer-events: none; color: var(--tinta); }
+.tc-editor__area { position: relative; width: 100%; display: block; padding: .7rem .9rem; border: 0; background: transparent; color: transparent; caret-color: var(--tinta); resize: vertical; overflow: auto; min-height: 14rem; }
+.tc-editor__area::placeholder { color: var(--tinta-tenue); opacity: .7; }
+.tc-editor__area:focus-visible { outline: 3px solid var(--acento); outline-offset: -3px; }
+.tc-editor__area[readonly] { cursor: default; }
+.tc-ed__clave { color: var(--acento); font-weight: 700; }
+.tc-ed__flecha { color: var(--alerta); font-weight: 700; }
+.tc-ed__numero { color: #6b2fa0; }
+.tc-ed__texto { color: var(--ok); }
+.tc-ed__comentario { color: var(--tinta-tenue); font-style: italic; }
+.tc-ed__linea--error { background: var(--mal-suave); }
+
+.tc-errores { background: var(--mal-suave); border-left: 3px solid var(--mal); border-radius: 4px; margin: .8rem 0; padding: .7rem 1rem .7rem 1.6rem; color: var(--mal); font-size: .93rem; }
+.tc-errores li { margin-bottom: .3rem; }
+.tc-errores span { color: var(--tinta-suave); }
+.tc-revision-en-vivo { margin-top: 1rem; }
+
+.tc-prueba { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: .8rem; }
+@media (min-width: 980px) { .tc-prueba { grid-template-columns: minmax(260px, 340px) 1fr; align-items: start; } }
+.tc-prueba__tabla { margin: 0; }
+.tc-codigo-lineas { list-style: none; margin: 0; padding: .5rem 0; background: var(--papel-suave); border: 1px solid var(--borde); border-radius: var(--radio); font-family: var(--fuente-mono); font-size: .88rem; overflow-x: auto; }
+.tc-codigo-lineas li { display: flex; gap: .7rem; padding: .1rem .7rem; white-space: pre; }
+.tc-codigo-lineas__n { color: var(--tinta-tenue); min-width: 1.6rem; text-align: right; user-select: none; }
+.tc-codigo-lineas__actual { background: var(--acento-suave); box-shadow: inset 3px 0 0 var(--acento); }
+.tc-fila-actual { background: var(--acento-suave); }
+.tc-manual { display: flex; flex-direction: column; gap: .8rem; align-items: flex-start; }
+.tc-manual .tabla-envoltura { width: 100%; }
