@@ -374,7 +374,9 @@ function BloquePrueba({ c, f, bloqueada, equipo, esDocente, autorId, perfil, rev
 
   const ejec = ejecucion
   const pasos = ejec?.pasos ?? []
-  const huboError = ejec && !ejec.ok
+  // Mientras falte escribir el caso, no se muestra como error: solo se invita a escribirlo.
+  const faltaCaso = Boolean(ejec && !ejec.ok && /Falta el valor de la entrada/.test(ejec.error?.mensaje ?? ''))
+  const huboError = ejec && !ejec.ok && !faltaCaso
   const actual = !manual && paso > 0 ? pasos[Math.min(paso, pasos.length) - 1] : null
 
   function marcarTerminada() {
@@ -467,6 +469,11 @@ function BloquePrueba({ c, f, bloqueada, equipo, esDocente, autorId, perfil, rev
 
           {!manual && (
             <>
+              {faltaCaso && (
+                <p className="aviso aviso--nota" role="status">
+                  Escriban primero el caso de prueba (paso 1) o pulsen «Sugerir un caso para empezar». Con eso aparece aquí la tabla de su propio algoritmo.
+                </p>
+              )}
               {huboError && (
                 <div className="aviso aviso--error" role="alert">
                   <p>
