@@ -9,6 +9,8 @@ import { limpiarPseudocodigo, normalizarLineas } from '../lib/normalizar.js'
 import { IDEAS_DE_PROCESO, PLANTILLAS } from '../data/pseudocodigo.js'
 import { Campo, Comentarios as ComentariosFicha, EstadoFicha } from './componentes.jsx'
 import Aprende from './Aprende.jsx'
+import TablaGuiada from './TablaGuiada.jsx'
+import { sugerirCaso } from '../lib/pruebaGuiada.js'
 import './tercer-corte.css'
 import './ficha4.css'
 
@@ -373,7 +375,6 @@ function BloquePrueba({ c, f, bloqueada, equipo, esDocente, autorId, perfil, rev
   const ejec = ejecucion
   const pasos = ejec?.pasos ?? []
   const huboError = ejec && !ejec.ok
-  const termino = !manual && ejec?.ok && paso >= pasos.length && pasos.length > 0
   const actual = !manual && paso > 0 ? pasos[Math.min(paso, pasos.length) - 1] : null
 
   function marcarTerminada() {
@@ -383,15 +384,8 @@ function BloquePrueba({ c, f, bloqueada, equipo, esDocente, autorId, perfil, rev
     if (ejec?.ok) f.cambiar('resultado_auto', mostrarValor(ejec.resultado))
   }
 
-  function irAlFinal() {
-    setPaso(pasos.length)
-    marcarTerminada()
-  }
-  function siguiente() {
-    const n = Math.min(paso + 1, pasos.length)
-    setPaso(n)
-    if (n === pasos.length) marcarTerminada()
-  }
+  const irAlFinal = () => setPaso(pasos.length)
+  const siguiente = () => setPaso(Math.min(paso + 1, pasos.length))
 
   const salidaVar = (c.pseudo ?? '').match(/SALIDA\s*:\s*([A-Za-zÁÉÍÓÚÜÑáéíóúüñ_][\wÁÉÍÓÚÜÑáéíóúüñ_]*)\s*$/im)?.[1]
   const lineaSospechosa = (() => {
@@ -449,6 +443,18 @@ function BloquePrueba({ c, f, bloqueada, equipo, esDocente, autorId, perfil, rev
               </Campo>
             )
           })}
+          {!bloqueada && (
+            <div className="tc-acciones">
+              <button
+                type="button"
+                className="boton boton--secundario boton--pequeno"
+                onClick={() => Object.entries(sugerirCaso(analisis.programa, c.pseudo)).forEach(([k, v]) => f.cambiar(k, v))}
+              >
+                Sugerir un caso para empezar
+              </button>
+              <span className="tc-nota">Usa los nombres de su algoritmo con valores pequeños. Cámbienlos por los de su proyecto si quieren.</span>
+            </div>
+          )}
           {erroresCaso.map((m) => (
             <p key={m} className="tc-pista tc-pista--alerta" role="status">{m}</p>
           ))}
@@ -457,7 +463,7 @@ function BloquePrueba({ c, f, bloqueada, equipo, esDocente, autorId, perfil, rev
             <input id="tc4-esperado" className="campo" disabled={bloqueada} value={c.esperado ?? ''} onChange={(e) => f.cambiar('esperado', e.target.value)} />
           </Campo>
 
-          <h3 className="tc-subtitulo">2. Sigan el pseudocódigo</h3>
+          <h3 className="tc-subtitulo">2. Completen la tabla de su prueba de escritorio</h3>
 
           {!manual && (
             <>
@@ -475,57 +481,60 @@ function BloquePrueba({ c, f, bloqueada, equipo, esDocente, autorId, perfil, rev
               )}
               {ejec?.ok && (
                 <>
-                  <div className="tc-acciones" role="group" aria-label="Controles de la prueba">
-                    <button type="button" className="boton boton--secundario boton--pequeno" disabled={paso <= 0} onClick={() => setPaso(Math.max(0, paso - 1))}>← Paso anterior</button>
-                    <button type="button" className="boton boton--principal boton--pequeno" disabled={paso >= pasos.length} onClick={siguiente}>{paso === 0 ? 'Empezar' : 'Paso siguiente →'}</button>
-                    <button type="button" className="boton boton--secundario boton--pequeno" disabled={paso >= pasos.length} onClick={irAlFinal}>Ejecutar todo</button>
-                    <button type="button" className="boton boton--texto boton--pequeno" disabled={paso === 0} onClick={() => setPaso(0)}>Reiniciar</button>
-                    {!bloqueada && <button type="button" className="boton boton--texto boton--pequeno" onClick={() => f.cambiar('modo_prueba', 'manual')}>Prefiero hacerla a mano</button>}
-                  </div>
-                  <p className="tc-nota" aria-live="polite">{paso === 0 ? 'Aún no empiezan.' : `Paso ${Math.min(paso, pasos.length)} de ${pasos.length}`}{ejec.truncado ? ' (se cortó por límite de pasos)' : ''}</p>
-
-                  <div className="tc-prueba">
-                    <ol className="tc-codigo-lineas" aria-label="Pseudocódigo">
-                      {lineasDe(c.pseudo).map((l) => (
-                        <li key={l.n} className={actual?.linea === l.n ? 'tc-codigo-lineas__actual' : ''} aria-current={actual?.linea === l.n ? 'step' : undefined}>
-                          <span className="tc-codigo-lineas__n">{l.n}</span>
-                          <code>{l.crudo}</code>
-                        </li>
-                      ))}
-                    </ol>
-                    <div className="tabla-envoltura tc-prueba__tabla">
-                      <table className="tabla">
-                        <thead>
-                          <tr>
-                            <th scope="col">Paso</th>
-                            <th scope="col">Línea</th>
-                            <th scope="col">Qué pasa</th>
-                            <th scope="col">Valores de las variables</th>
-                            <th scope="col">Resultado parcial</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {pasos.slice(0, paso).map((p) => (
-                            <tr key={p.paso} className={p.paso === paso ? 'tc-fila-actual' : ''}>
-                              <th scope="row">{p.paso}</th>
-                              <td>{p.linea}</td>
-                              <td>{p.nota}</td>
-                              <td>{Object.entries(p.vars).map(([k, v]) => `${k} = ${v}`).join(' · ')}</td>
-                              <td>{p.resultado ?? '—'}</td>
-                            </tr>
-                          ))}
-                          {paso === 0 && (
-                            <tr>
-                              <td colSpan={5}>Pulsen «Empezar» para ver el primer paso.</td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
+                  <TablaGuiada key={firmaEjecucion(c)} c={c} f={f} bloqueada={bloqueada} pasos={pasos} firma={firmaEjecucion(c)} marcarTerminada={marcarTerminada} />
+                  {c.prueba_ayuda === 'si' && esDocente && <p className="aviso aviso--nota">El equipo usó «mostrar la tabla correcta» para completar la prueba.</p>}
+                  <details className="tc-ver-paso">
+                    <summary>Ver cómo lo hace la página, paso a paso (para aprender; no reemplaza tu tabla)</summary>
+                    <div className="tc-acciones" role="group" aria-label="Controles del recorrido">
+                      <button type="button" className="boton boton--secundario boton--pequeno" disabled={paso <= 0} onClick={() => setPaso(Math.max(0, paso - 1))}>← Paso anterior</button>
+                      <button type="button" className="boton boton--principal boton--pequeno" disabled={paso >= pasos.length} onClick={siguiente}>{paso === 0 ? 'Empezar' : 'Paso siguiente →'}</button>
+                      <button type="button" className="boton boton--secundario boton--pequeno" disabled={paso >= pasos.length} onClick={irAlFinal}>Ver todo</button>
+                      <button type="button" className="boton boton--texto boton--pequeno" disabled={paso === 0} onClick={() => setPaso(0)}>Reiniciar</button>
                     </div>
-                  </div>
+                    <p className="tc-nota" aria-live="polite">{paso === 0 ? 'Aún no empiezan.' : `Paso ${Math.min(paso, pasos.length)} de ${pasos.length}`}{ejec.truncado ? ' (se cortó por límite de pasos)' : ''}</p>
+                    <div className="tc-prueba">
+                      <ol className="tc-codigo-lineas" aria-label="Pseudocódigo">
+                        {lineasDe(c.pseudo).map((l) => (
+                          <li key={l.n} className={actual?.linea === l.n ? 'tc-codigo-lineas__actual' : ''} aria-current={actual?.linea === l.n ? 'step' : undefined}>
+                            <span className="tc-codigo-lineas__n">{l.n}</span>
+                            <code>{l.crudo}</code>
+                          </li>
+                        ))}
+                      </ol>
+                      <div className="tabla-envoltura tc-prueba__tabla">
+                        <table className="tabla">
+                          <thead>
+                            <tr>
+                              <th scope="col">Paso</th>
+                              <th scope="col">Línea</th>
+                              <th scope="col">Qué pasa</th>
+                              <th scope="col">Valores de las variables</th>
+                              <th scope="col">Resultado parcial</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {pasos.slice(0, paso).map((p) => (
+                              <tr key={p.paso} className={p.paso === paso ? 'tc-fila-actual' : ''}>
+                                <th scope="row">{p.paso}</th>
+                                <td>{p.linea}</td>
+                                <td>{p.nota}</td>
+                                <td>{Object.entries(p.vars).map(([k, v]) => `${k} = ${v}`).join(' · ')}</td>
+                                <td>{p.resultado ?? '—'}</td>
+                              </tr>
+                            ))}
+                            {paso === 0 && (
+                              <tr>
+                                <td colSpan={5}>Pulsen «Empezar» para ver el primer paso.</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </details>
                 </>
               )}
-              {ejec?.ok && (termino || pruebaOk) && (
+              {ejec?.ok && pruebaOk && (
                 <Comparacion obtenido={obtenido} esperado={c.esperado} coincide={coincide} esperadoEscrito={esperadoEscrito} lineaSospechosa={lineaSospechosa} />
               )}
             </>

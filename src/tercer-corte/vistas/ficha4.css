@@ -58,3 +58,32 @@
 .tc-fila-actual { background: var(--acento-suave); }
 .tc-manual { display: flex; flex-direction: column; gap: .8rem; align-items: flex-start; }
 .tc-manual .tabla-envoltura { width: 100%; }
+
+/* ---------------------- Ficha 4: juegos de arrastrar y prueba guiada ---------------------- */
+
+.tc-ficha-codigo { font-family: var(--fuente-mono); font-size: .85rem; text-align: left; }
+.tc-codigo-final { margin: .8rem 0 0; padding: .8rem 1rem; background: var(--papel); border: 1px solid var(--borde); border-radius: var(--radio); font-size: .88rem; overflow-x: auto; }
+.tc-valores { display: flex; flex-wrap: wrap; gap: .5rem; margin: .4rem 0 1rem; }
+.tc-valor { font-family: var(--fuente-mono); min-width: 4.5rem; text-align: center; }
+.tc-tabla-juego th[scope='row'] { font-weight: 500; text-align: left; }
+.tc-celda { position: relative; display: flex; align-items: center; gap: .3rem; min-width: 8rem; min-height: 2.6rem; padding: .2rem; border: 2px dashed var(--borde-fuerte); border-radius: var(--radio); background: var(--papel); flex-wrap: wrap; }
+.tc-celda--sin { border: 0; background: none; color: var(--tinta-tenue); font-size: .85rem; font-style: italic; }
+.tc-celda--ok { border: 2px solid var(--ok); background: var(--ok-suave); }
+.tc-celda--mal { border: 2px solid var(--mal); background: var(--mal-suave); }
+.tc-celda__boton { flex: 1; min-height: 2.2rem; border: 0; background: none; font: inherit; font-family: var(--fuente-mono); cursor: pointer; color: var(--tinta); }
+.tc-celda__boton:disabled { cursor: default; color: var(--tinta); }
+.tc-celda__quitar { border: 0; background: none; cursor: pointer; color: var(--tinta-tenue); padding: .2rem .4rem; }
+.tc-celda__pista { flex-basis: 100%; font-size: .8rem; color: var(--mal); }
+
+.tc-guiada { margin-top: .6rem; }
+.tc-como { margin: 0 0 1rem; padding: .9rem 1rem .9rem 2.2rem; background: var(--acento-suave); border: 1px solid var(--borde); border-radius: var(--radio); display: flex; flex-direction: column; gap: .3rem; }
+.tc-tabla-guiada { min-width: 640px; }
+.tc-tabla-guiada td, .tc-tabla-guiada th { vertical-align: top; }
+.tc-guiada__variable { font-family: var(--fuente-mono); }
+.tc-linea-codigo { display: block; font-family: var(--fuente-mono); font-size: .88rem; white-space: pre-wrap; }
+.tc-linea-codigo__n { display: inline-block; min-width: 1.6rem; margin-right: .5rem; color: var(--tinta-tenue); text-align: right; user-select: none; }
+.tc-fila__tipo { display: block; font-size: .78rem; color: var(--tinta-tenue); margin-top: .15rem; }
+.tc-fila__contexto { display: block; font-size: .85rem; color: var(--acento-oscuro); background: var(--acento-suave); border-radius: 4px; padding: .15rem .45rem; margin-top: .25rem; }
+.tc-celda-gris { color: var(--tinta-tenue); font-family: var(--fuente-mono); font-size: .9rem; }
+.tc-ver-paso { margin-top: 1rem; border: 1px solid var(--borde); border-radius: var(--radio); padding: .7rem 1rem; background: var(--papel-suave); }
+.tc-ver-paso summary { cursor: pointer; font-weight: 600; color: var(--acento-oscuro); }

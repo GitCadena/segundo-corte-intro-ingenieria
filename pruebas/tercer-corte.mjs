@@ -12,6 +12,7 @@ import {
 } from '../src/tercer-corte/lib/interprete.js'
 import { revisarFicha4, firmaEjecucion, firmaPrueba } from '../src/tercer-corte/lib/ficha4.js'
 import { normalizarLineas, limpiarPseudocodigo } from '../src/tercer-corte/lib/normalizar.js'
+import { construirTabla, revisarTabla, respuestasCorrectas, sugerirCaso, tipoDePaso } from '../src/tercer-corte/lib/pruebaGuiada.js'
 
 let ok = 0
 const fallos = []
@@ -542,6 +543,38 @@ prueba('flexible · en la revisión de la ficha 4, el inglés pide traducir pero
   const r = revisarFicha4(c)
   const esp = r.puntos.find((p) => p.id === 'espanol')
   return r.ejecucion?.ok && r.ejecucion.resultado === 31500 && !esp.ok && /inglés/.test(esp.pista) ? true : JSON.stringify([r.analisis.errores, esp])
+})
+
+
+prueba('guiada · la tabla se arma con SU algoritmo: casillas solo donde una línea cambia una variable', () => {
+  const c = ficha4Completa()
+  const e = revisarFicha4(c).ejecucion
+  const t = construirTabla(e.pasos)
+  return e.ok && t.filas.length > 0 && t.pedidas > 0 && t.columnas.includes('total') ? true : JSON.stringify([t.columnas, t.pedidas])
+})
+
+prueba('guiada · la tabla correcta se aprueba y una casilla mal se detecta', () => {
+  const c = ficha4Completa()
+  const e = revisarFicha4(c).ejecucion
+  const t = construirTabla(e.pasos)
+  const buenas = respuestasCorrectas(t)
+  const ok1 = revisarTabla(t, buenas).todas
+  const claves = Object.keys(buenas).filter((k) => !k.endsWith('|?'))
+  const r2 = revisarTabla(t, { ...buenas, [claves[0]]: '99999' })
+  return ok1 && !r2.todas && r2.ok[claves[0]] === false ? true : JSON.stringify([ok1, r2.buenas, r2.total])
+})
+
+prueba('guiada · tipoDePaso reconoce entrada, decisión, vuelta y salida', () => {
+  const r = [tipoDePaso('ENTRADA: x'), tipoDePaso('SI x > 3 ENTONCES'), tipoDePaso('PARA CADA i EN l'), tipoDePaso('SALIDA total'), tipoDePaso('total ← 0')]
+  return r.join() === 'entrada,decide,vuelta,salida,asigna' ? true : r.join()
+})
+
+prueba('guiada · el caso sugerido usa los nombres del algoritmo y se puede ejecutar', () => {
+  const c = ficha4Completa()
+  const rev = revisarFicha4(c)
+  const caso = sugerirCaso(rev.analisis.programa, c.pseudo)
+  const e = revisarFicha4({ ...c, ...caso }).ejecucion
+  return Object.keys(caso).length > 0 && e?.ok ? true : JSON.stringify([caso, e?.error])
 })
 
 console.log(`\n${ok} comprobaciones pasaron.`)
