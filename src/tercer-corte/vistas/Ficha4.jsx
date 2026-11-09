@@ -183,7 +183,8 @@ function BloquePseudocodigo({ c, f, bloqueada, equipo, esDocente, autorId, revis
         <ul className="tc-errores" aria-label="Cosas por corregir en el pseudocódigo">
           {analisis.errores.slice(0, 4).map((e, i) => (
             <li key={i}>
-              <strong>Línea {e.linea}:</strong> {e.mensaje} {e.pista && <span>{e.pista}</span>}
+              {!String(e.mensaje).includes(`línea ${e.linea}`) && <strong>Línea {e.linea}: </strong>}
+              {e.mensaje} {e.pista && <span>{e.pista}</span>}
             </li>
           ))}
         </ul>

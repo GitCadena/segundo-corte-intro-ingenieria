@@ -220,7 +220,7 @@ prueba('análisis · cierres cruzados: FIN PARA donde iba FIN SI', () => {
 })
 
 prueba('análisis · una línea que no es pseudocódigo da una pista, no un error técnico', () => {
-  const a = analizar(['PROCESO x', 'ENTRADA: a (número)', 'imprimir resultado por pantalla', 'SALIDA: a'].join('\n'))
+  const a = analizar(['PROCESO x', 'ENTRADA: a (número)', 'hacer cuentas raras', 'SALIDA: a'].join('\n'))
   const e = a.errores[0]
   return !a.ok && e.linea === 3 && /No entiendo la línea 3/.test(e.mensaje) && /flecha/.test(e.pista) && !/undefined|TypeError|Unexpected/.test(e.mensaje + e.pista) ? true : JSON.stringify(e)
 })
@@ -267,6 +267,72 @@ prueba('caso de prueba · resultados que coinciden: 31500, 31.500 y $31.500 sí;
   return resultadosCoinciden(31500, '31500') && resultadosCoinciden(31500, '31.500') && resultadosCoinciden(31500, '$31.500') && !resultadosCoinciden(31500, '31,5') && !resultadosCoinciden(31500, '')
     ? true
     : 'comparación incorrecta'
+})
+
+/* ============== Ficha 4 · lo que escriben los estudiantes (casos reales) ============== */
+
+const PRECIOS = [
+  'PROCESO descuentoPrecio',
+  'ENTRADA: precio (número)',
+  'total_a_pagar ← 0',
+  'intentos ← 0',
+  'MIENTRAS intentos < 3 HACER',
+  '    SI precio > 0 ENTONCES',
+  '        SI precio > 100 ENTONCES',
+  '            total_a_pagar ← precio * 0.90',
+  '        SI NO',
+  '            total_a_pagar ← precio',
+  '        FIN SI',
+  '        SALIDA: total_a_pagar',
+  '        intentos ← 3',
+  '    SI NO',
+  '        SALIDA: "Precio inválido, intente de nuevo"',
+  '        intentos ← intentos + 1',
+  '    FIN SI',
+  'FIN MIENTRAS',
+  'FIN PROCESO',
+].join('\n')
+
+prueba('estudiantes · «FIN PROCESO» al final se acepta (era el error «No entiendo la línea 21»)', () => {
+  const a = analizar(PRECIOS)
+  return a.ok ? true : JSON.stringify(a.errores)
+})
+
+prueba('estudiantes · el algoritmo del precio: 150 da 135, 5 da 5, y -1 repite 3 veces el aviso', () => {
+  const r150 = correr(PRECIOS, { precio: 150 })
+  const r5 = correr(PRECIOS, { precio: 5 })
+  const rNeg = correr(PRECIOS, { precio: -1 })
+  const avisos = rNeg.pasos.filter((p) => /Precio inválido/.test(p.texto)).length
+  return r150.resultado === 135 && r5.resultado === 5 && rNeg.ok && avisos === 3 && rNeg.resultado === 'Precio inválido, intente de nuevo'
+    ? true
+    : JSON.stringify([r150.resultado, r5.resultado, rNeg.resultado, avisos, r150.error, rNeg.error])
+})
+
+prueba('estudiantes · LEER, ESCRIBIR, IMPRIMIR y MOSTRAR equivalen a ENTRADA y SALIDA', () => {
+  const texto = ['ALGORITMO doble', 'DEFINIR n COMO ENTERO', 'LEER n', 'ESCRIBIR "El doble es: ", n * 2', 'FIN ALGORITMO'].join('\n')
+  const r = correr(texto, { n: 4 })
+  return r.ok && r.resultado === 'El doble es: 8' ? true : JSON.stringify([r.ok, r.resultado, r.error, r.errores])
+})
+
+prueba('estudiantes · varias salidas con coma: la coma decimal no separa (0,5)', () => {
+  const r = correr(['PROCESO c', 'ENTRADA: a (número)', 'MOSTRAR "Mitad:", a * 0,5, " listo"', 'FIN PROCESO'].join('\n'), { a: 3 })
+  return r.ok && r.resultado === 'Mitad:1,5 listo' ? true : JSON.stringify([r.resultado, r.error, r.errores])
+})
+
+prueba('estudiantes · ENTRADA sin dos puntos y una variable llamada «salida» se aceptan', () => {
+  const r = correr(['PROCESO c', 'ENTRADA n (número)', 'salida ← n + 1', 'SALIDA: salida'].join('\n'), { n: 1 })
+  return r.ok && r.resultado === 2 ? true : JSON.stringify([r.resultado, r.error, r.errores])
+})
+
+prueba('estudiantes · «PROCESO» solo, sin nombre, también se acepta', () => {
+  const r = correr(['PROCESO', 'ENTRADA: n (número)', 'SALIDA: n', 'FIN PROCESO'].join('\n'), { n: 7 })
+  return r.ok && r.resultado === 7 ? true : JSON.stringify([r.error, r.errores])
+})
+
+prueba('estudiantes · el error de línea no repite «línea N» dos veces en el texto mostrado', () => {
+  const a = analizar(['PROCESO x', 'ENTRADA: a (número)', 'hacer cuentas raras', 'SALIDA: a'].join('\n'))
+  const e = a.errores[0]
+  return (e.mensaje.match(/línea 3/g) ?? []).length === 1 ? true : e.mensaje
 })
 
 /* ======================== Ficha 4 · revisión y entrega ======================== */

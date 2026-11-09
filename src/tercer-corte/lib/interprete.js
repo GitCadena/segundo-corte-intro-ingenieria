@@ -5,9 +5,9 @@
  * analizador descendente) y se ejecuta paso a paso. Solo conoce lo que está en
  * esta gramática:
  *
- *   PROCESO nombre
- *   ENTRADA: nombre (tipo), nombre (tipo), ...
- *   SALIDA: expresión
+ *   PROCESO nombre                     (y, si quieren, FIN PROCESO al final)
+ *   ENTRADA: nombre (tipo), nombre (tipo), ...   (también LEER nombre)
+ *   SALIDA: expresión                  (también ESCRIBIR / IMPRIMIR / MOSTRAR; varios valores separados por coma)
  *   x ← expresión                      (también  x <- expresión)
  *   SI condición ENTONCES
  *     ...
@@ -247,6 +247,35 @@ function analizarExpresion(texto, linea) {
   return e
 }
 
+// Separa «"Total: ", total» en sus partes. Una coma entre dos dígitos es decimal (0,5), no separador.
+function separarArgumentos(texto) {
+  const partes = []
+  let actual = ''
+  let comilla = null
+  let profundidad = 0
+  for (let i = 0; i < texto.length; i += 1) {
+    const c = texto[i]
+    if (comilla) {
+      actual += c
+      if (c === comilla) comilla = null
+    } else if (c === '"' || c === "'" || c === '“') {
+      comilla = c === '“' ? '”' : c
+      actual += c
+    } else if (c === '(') {
+      profundidad += 1
+      actual += c
+    } else if (c === ')') {
+      profundidad -= 1
+      actual += c
+    } else if (c === ',' && profundidad === 0 && !(/\d/.test(texto[i - 1] ?? '') && /\d/.test(texto[i + 1] ?? ''))) {
+      partes.push(actual)
+      actual = ''
+    } else actual += c
+  }
+  partes.push(actual)
+  return partes.map((p) => p.trim()).filter((p) => p !== '')
+}
+
 function variablesDe(expr, acumulado = new Set()) {
   if (!expr) return acumulado
   if (expr.t === 'var') acumulado.add(expr.partes[0])
@@ -326,7 +355,7 @@ export function analizar(texto) {
     try {
       // Asignación (se mira primero para que «total ← ...» no se confunda con otra cosa).
       const asig = l.texto.match(RE_ASIGNACION)
-      if (asig && !/^(SI|MIENTRAS|PARA|SALIDA|ENTRADAS?|PROCESO)\b/.test(M)) {
+      if (asig) {
         idx += 1
         resumen.lineasUtiles += 1
         if (asig[2].trim() === '') {
@@ -335,25 +364,39 @@ export function analizar(texto) {
         return { t: 'asig', linea: l.n, destino: asig[1], expr: analizarExpresion(asig[2], l.n), texto: l.texto }
       }
       let m
-      if ((m = M.match(/^PROCESO\s+(.+)$/))) {
+      // «FIN PROCESO» (o FIN ALGORITMO) cierra el proceso: es opcional y no hace nada.
+      if (/^FIN ?(PROCESO|ALGORITMO)$/.test(M)) {
         idx += 1
-        resumen.proceso = l.texto.replace(/^\S+\s+/, '').trim()
+        return null
+      }
+      // «DEFINIR x COMO tipo» (como en PSeInt): se acepta y se ignora.
+      if (/^DEFINIR\b/.test(M)) {
+        idx += 1
+        return null
+      }
+      if ((m = M.match(/^(?:PROCESO|ALGORITMO)(?:\s+(.+))?$/))) {
+        idx += 1
+        resumen.proceso = l.texto.replace(/^\S+\s*/, '').trim()
         resumen.lineasUtiles += 1
         return { t: 'proceso', linea: l.n, nombre: resumen.proceso, texto: l.texto }
       }
-      if ((m = l.texto.match(/^ENTRADAS?\s*:\s*(.*)$/i)) || /^ENTRADAS?:?$/.test(M)) {
+      if ((m = l.texto.match(/^(ENTRADAS?|LEER)\b\s*:?\s*(.*)$/i))) {
         idx += 1
         resumen.lineasUtiles += 1
-        const declaradas = declararEntradas(m ? m[1] : '', l.n)
+        const declaradas = declararEntradas(m[2], l.n)
+        if (declaradas.length === 0) {
+          throw new ErrorPseudo(`A la línea ${l.n} le falta el nombre de lo que entra.`, 'Escribe, por ejemplo, «ENTRADA: precio (número)».', l.n)
+        }
         resumen.entradas.push(...declaradas)
-        return { t: 'entrada', linea: l.n, entradas: declaradas, texto: l.texto }
+        return { t: 'entrada', linea: l.n, entradas: declaradas, texto: l.texto, leer: /^LEER/i.test(l.texto) }
       }
-      if ((m = l.texto.match(/^SALIDA\s*:\s*(.*)$/i))) {
+      if ((m = l.texto.match(/^(SALIDA|ESCRIBIR|IMPRIMIR|MOSTRAR)\b\s*:?\s*(.*)$/i))) {
         idx += 1
         resumen.lineasUtiles += 1
         resumen.tieneSalida = true
-        if (m[1].trim() === '') throw new ErrorPseudo(`A la SALIDA le falta lo que se entrega (línea ${l.n}).`, 'Escribe, por ejemplo, «SALIDA: total».', l.n)
-        return { t: 'salida', linea: l.n, expr: analizarExpresion(m[1], l.n), texto: l.texto }
+        if (m[2].trim() === '') throw new ErrorPseudo(`A la ${m[1].toUpperCase()} le falta lo que se entrega (línea ${l.n}).`, 'Escribe, por ejemplo, «SALIDA: total».', l.n)
+        const exprs = separarArgumentos(m[2]).map((t) => analizarExpresion(t, l.n))
+        return { t: 'salida', linea: l.n, exprs, texto: l.texto }
       }
       if ((m = l.texto.match(/^SI\s+(.+?)\s+ENTONCES\s*$/i))) {
         idx += 1
@@ -474,7 +517,7 @@ export function variablesSinAsignar(programa) {
       if (s.t === 'asig') {
         usar(s.expr)
         activas.add(s.destino)
-      } else if (s.t === 'salida') usar(s.expr)
+      } else if (s.t === 'salida') s.exprs.forEach(usar)
       else if (s.t === 'si') {
         usar(s.cond)
         const a1 = new Set(activas)
@@ -526,6 +569,8 @@ export function detectarCodigo(texto) {
 /* ------------------------------ ejecución ------------------------------ */
 
 const redondear = (n) => (Number.isInteger(n) ? n : Math.round(n * 1e6) / 1e6)
+
+const textoPlano = (v) => (typeof v === 'string' ? v : typeof v === 'boolean' ? (v ? 'verdadero' : 'falso') : typeof v === 'number' ? String(redondear(v)).replace('.', ',') : mostrarValor(v))
 
 export function mostrarValor(v) {
   if (Array.isArray(v)) return `lista de ${v.length} ${v.length === 1 ? 'registro' : 'registros'}`
@@ -673,14 +718,16 @@ export function ejecutarPrograma(programa, entradas = {}) {
           }
           vars[e.nombre] = copiar(entradas[e.nombre])
         }
-        registrar(s.linea, s.texto, `Entran los valores: ${s.entradas.map((e) => `${e.nombre} = ${mostrarValor(vars[e.nombre])}`).join(', ')}`)
+        registrar(s.linea, s.texto, `${s.leer ? 'Se leen' : 'Entran'} los valores: ${s.entradas.map((e) => `${e.nombre} = ${mostrarValor(vars[e.nombre])}`).join(', ')}`)
       } else if (s.t === 'asig') {
         const v = evaluar(s.expr, vars, s.linea)
         vars[s.destino] = v
         registrar(s.linea, s.texto, `${s.destino} vale ahora ${mostrarValor(v)}`)
       } else if (s.t === 'salida') {
-        resultado = evaluar(s.expr, vars, s.linea)
-        registrar(s.linea, s.texto, `El resultado es ${mostrarValor(resultado)}`)
+        const valores = s.exprs.map((x) => evaluar(x, vars, s.linea))
+        // Un solo valor conserva su tipo (para compararlo con lo esperado); varios se unen en un texto.
+        resultado = valores.length === 1 ? valores[0] : valores.map(textoPlano).join('')
+        registrar(s.linea, s.texto, `${s.texto.match(/^\w+/)?.[0]?.toUpperCase() === 'SALIDA' ? 'El resultado es' : 'Se muestra'} ${mostrarValor(resultado)}`)
       } else if (s.t === 'si') {
         const c = evaluar(s.cond, vars, s.linea)
         aBooleano(c, s.linea)
