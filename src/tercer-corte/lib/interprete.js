@@ -29,6 +29,8 @@
  * Todos los mensajes de error están en lenguaje simple y traen una pista.
  */
 
+import { normalizarLineas } from './normalizar.js'
+
 export const MAX_PASOS = 1000
 
 const LETRA = 'A-Za-zÁÉÍÓÚÜÑáéíóúüñ_'
@@ -59,7 +61,7 @@ class ErrorPseudo extends Error {
 
 /* -------------------------------- tokenizador -------------------------------- */
 
-const OPERADORES = ['>=', '<=', '<>', '!=', '==', '≥', '≤', '≠', '>', '<', '=', '+', '-', '−', '×', '*', '÷', '/', '%', '(', ')']
+const OPERADORES = ['>=', '<=', '<>', '!=', '==', '≥', '≤', '≠', '>', '<', '=', '+', '-', '−', '×', '*', '÷', '/', '%', '(', ')', '[', ']', ',']
 
 function tokenizar(texto, linea) {
   const tokens = []
@@ -105,6 +107,13 @@ function tokenizar(texto, linea) {
       } else {
         tokens.push({ t: 'id', partes })
       }
+      continue
+    }
+    // Campo después de una posición de lista: productos[1].precio
+    const campo = resto.match(new RegExp(`^\\.(${LETRA.length ? `[${LETRA}][${LETRA}0-9]*` : ''})`))
+    if (campo && tokens.length > 0 && tokens[tokens.length - 1].t === 'op' && tokens[tokens.length - 1].v === ']') {
+      tokens.push({ t: 'campo', v: campo[1] })
+      i += campo[0].length
       continue
     }
     const op = OPERADORES.find((o) => resto.startsWith(o))
@@ -219,6 +228,43 @@ function analizarExpresion(texto, linea) {
     }
     if (tk.t === 'id') {
       p += 1
+      const siguiente = sig()
+      // Función: LONGITUD(lista), REDONDEAR(x), MAX(a, b)…
+      if (siguiente?.t === 'op' && siguiente.v === '(' && tk.partes.length === 1) {
+        const nombre = mayus(tk.partes[0])
+        if (!FUNCIONES[nombre]) {
+          throw new ErrorPseudo(
+            `No conozco la función «${tk.partes[0]}».`,
+            `Las que sí conozco son: ${FUNCIONES_VISIBLES}. Si «${tk.partes[0]}» es una variable, quita los paréntesis.`,
+            linea,
+          )
+        }
+        p += 1
+        const args = []
+        if (!esOp(')')) {
+          args.push(disyuncion())
+          while (esOp(',')) {
+            p += 1
+            args.push(disyuncion())
+          }
+        }
+        if (!esOp(')')) throw new ErrorPseudo('Falta cerrar un paréntesis.', 'Cada «(» necesita su «)».', linea)
+        p += 1
+        return { t: 'fn', nombre, args }
+      }
+      // Posición de una lista: precios[2], productos[i + 1].precio
+      if (siguiente?.t === 'op' && siguiente.v === '[' && tk.partes.length === 1) {
+        p += 1
+        const indice = disyuncion()
+        if (!esOp(']')) throw new ErrorPseudo('Falta cerrar un corchete.', 'Cada «[» necesita su «]».', linea)
+        p += 1
+        let nodo = { t: 'idx', base: { t: 'var', partes: tk.partes }, indice }
+        while (sig()?.t === 'campo') {
+          nodo = { t: 'campoDe', e: nodo, campo: sig().v }
+          p += 1
+        }
+        return nodo
+      }
       return { t: 'var', partes: tk.partes }
     }
     if (tk.t === 'op' && tk.v === '(') {
@@ -276,9 +322,44 @@ function separarArgumentos(texto) {
   return partes.map((p) => p.trim()).filter((p) => p !== '')
 }
 
+const FUNCIONES = {
+  LONGITUD: (a) => longitudDe(a),
+  LARGO: (a) => longitudDe(a),
+  TAMANO: (a) => longitudDe(a),
+  LEN: (a) => longitudDe(a),
+  REDONDEAR: (x, d = 0) => Math.round(x * 10 ** d) / 10 ** d,
+  ROUND: (x, d = 0) => Math.round(x * 10 ** d) / 10 ** d,
+  TRUNC: (x) => Math.trunc(x),
+  TRUNCAR: (x) => Math.trunc(x),
+  ENTERO: (x) => Math.trunc(x),
+  ABS: (x) => Math.abs(x),
+  RAIZ: (x) => Math.sqrt(x),
+  SQRT: (x) => Math.sqrt(x),
+  POTENCIA: (x, y) => x ** y,
+  POW: (x, y) => x ** y,
+  MAX: (...v) => Math.max(...v.flat()),
+  MAXIMO: (...v) => Math.max(...v.flat()),
+  MIN: (...v) => Math.min(...v.flat()),
+  MINIMO: (...v) => Math.min(...v.flat()),
+  SUMA: (...v) => v.flat().reduce((s, x) => s + x, 0),
+  SUM: (...v) => v.flat().reduce((s, x) => s + x, 0),
+  PROMEDIO: (...v) => v.flat().reduce((s, x) => s + x, 0) / v.flat().length,
+  MEDIA: (...v) => v.flat().reduce((s, x) => s + x, 0) / v.flat().length,
+}
+const FUNCIONES_VISIBLES = 'LONGITUD, REDONDEAR, TRUNCAR, ABS, RAIZ, POTENCIA, MAX, MIN, SUMA, PROMEDIO'
+function longitudDe(a) {
+  if (Array.isArray(a) || typeof a === 'string') return a.length
+  return NaN
+}
+
 function variablesDe(expr, acumulado = new Set()) {
   if (!expr) return acumulado
   if (expr.t === 'var') acumulado.add(expr.partes[0])
+  else if (expr.t === 'idx') {
+    variablesDe(expr.base, acumulado)
+    variablesDe(expr.indice, acumulado)
+  } else if (expr.t === 'fn') expr.args.forEach((a) => variablesDe(a, acumulado))
+  else if (expr.t === 'campoDe') variablesDe(expr.e, acumulado)
   else if (expr.t === 'bin') {
     variablesDe(expr.izq, acumulado)
     variablesDe(expr.der, acumulado)
@@ -299,7 +380,7 @@ const esVacia = (l) => l.texto === '' || l.texto.startsWith('//') || l.texto.sta
 const COMO_ESCRIBIR = {
   si: 'SI condición ENTONCES … SI NO … FIN SI',
   mientras: 'MIENTRAS condición … FIN MIENTRAS',
-  para: 'PARA CADA item EN lista … FIN PARA',
+  para: 'PARA CADA item EN lista … FIN PARA   (o   PARA i ← 1 HASTA n … FIN PARA)',
 }
 
 /**
@@ -307,7 +388,8 @@ const COMO_ESCRIBIR = {
  * @returns {{ ok: boolean, programa: object|null, errores: {linea:number, mensaje:string, pista:string|null}[], resumen: object }}
  */
 export function analizar(texto) {
-  const lineas = lineasDe(texto)
+  // El pseudocódigo pegado de otras fuentes se lleva primero a la forma canónica, línea por línea.
+  const lineas = lineasDe(normalizarLineas(texto).texto)
   const errores = []
   const resumen = { proceso: null, entradas: [], tieneSi: false, tieneSiNo: false, tieneRepetir: false, tieneSalida: false, lineasUtiles: 0 }
   let idx = 0
@@ -327,6 +409,16 @@ export function analizar(texto) {
       const l = lineas[idx]
       const M = mayus(l.texto).replace(/\s+/g, ' ')
       const F = M.replace(/^FIN ?(SI|MIENTRAS|PARA)$/, 'FIN $1')
+      const sinoSi = l.texto.match(/^SINO\s*SI\s+(.+?)(?:\s+ENTONCES)?\s*$/i)
+      if (terminadores.includes('SINOSI') && sinoSi) {
+        idx += 1
+        return { cuerpo, fin: 'SINOSI', condSinoSi: sinoSi[1], lineaFin: l.n, textoFin: l.texto }
+      }
+      const hastaQue = l.texto.match(/^HASTA\s+QUE\s+(.+)$/i)
+      if (terminadores.includes('HASTA QUE') && hastaQue) {
+        idx += 1
+        return { cuerpo, fin: 'HASTA QUE', condHasta: hastaQue[1], lineaFin: l.n, textoFin: l.texto }
+      }
       if (terminadores.includes(F) || (terminadores.includes('SI NO') && /^SI ?NO:?$/.test(M))) {
         idx += 1
         return { cuerpo, fin: /^SI ?NO/.test(M) ? 'SI NO' : F, lineaFin: l.n }
@@ -353,6 +445,16 @@ export function analizar(texto) {
     const l = lineas[idx]
     const M = mayus(l.texto).replace(/\s+/g, ' ')
     try {
+      // Asignación a una posición de lista: precios[2] ← 10
+      const asigIdx = l.texto.match(new RegExp(`^([${LETRA}][${LETRA}0-9]*)\\s*\\[(.+?)\\]\\s*(?:←|<-|:=)\\s*(.*)$`))
+      if (asigIdx) {
+        idx += 1
+        resumen.lineasUtiles += 1
+        if (asigIdx[3].trim() === '') {
+          throw new ErrorPseudo(`A «${asigIdx[1]}[${asigIdx[2]}]» le falta el valor (línea ${l.n}).`, 'Escribe algo después de la flecha.', l.n)
+        }
+        return { t: 'asigIdx', linea: l.n, destino: asigIdx[1], indice: analizarExpresion(asigIdx[2], l.n), expr: analizarExpresion(asigIdx[3], l.n), texto: l.texto }
+      }
       // Asignación (se mira primero para que «total ← ...» no se confunda con otra cosa).
       const asig = l.texto.match(RE_ASIGNACION)
       if (asig) {
@@ -374,9 +476,9 @@ export function analizar(texto) {
         idx += 1
         return null
       }
-      if ((m = M.match(/^(?:PROCESO|ALGORITMO)(?:\s+(.+))?$/))) {
+      if ((m = M.match(/^(?:PROCESO|ALGORITMO)\b\s*:?\s*(.*)$/))) {
         idx += 1
-        resumen.proceso = l.texto.replace(/^\S+\s*/, '').trim()
+        resumen.proceso = l.texto.replace(/^[^\s:]+\s*:?\s*/, '').trim()
         resumen.lineasUtiles += 1
         return { t: 'proceso', linea: l.n, nombre: resumen.proceso, texto: l.texto }
       }
@@ -398,24 +500,11 @@ export function analizar(texto) {
         const exprs = separarArgumentos(m[2]).map((t) => analizarExpresion(t, l.n))
         return { t: 'salida', linea: l.n, exprs, texto: l.texto }
       }
-      if ((m = l.texto.match(/^SI\s+(.+?)\s+ENTONCES\s*$/i))) {
+      if ((m = l.texto.match(/^SI\s+(.+?)(?:\s+ENTONCES)?\s*$/i))) {
         idx += 1
         resumen.lineasUtiles += 1
         resumen.tieneSi = true
-        const cond = analizarExpresion(m[1], l.n)
-        const a = bloque(['FIN SI', 'SI NO'], true)
-        let sino = null
-        let lineaSino = null
-        let lineaFin = a.lineaFin
-        if (a.fin === 'SI NO') {
-          resumen.tieneSiNo = true
-          lineaSino = a.lineaFin
-          const b = bloque(['FIN SI'], true)
-          sino = b.cuerpo
-          lineaFin = b.lineaFin
-          if (b.fin !== 'FIN SI') abierto('SI', l.n, 'FIN SI')
-        } else if (a.fin !== 'FIN SI') abierto('SI', l.n, 'FIN SI')
-        return { t: 'si', linea: l.n, cond, entonces: a.cuerpo, sino, lineaSino, lineaFin, texto: l.texto }
+        return armarSi(m[1], l.n, l.texto)
       }
       if (/^SI\b/.test(M)) {
         idx += 1
@@ -434,6 +523,29 @@ export function analizar(texto) {
         if (a.fin !== 'FIN MIENTRAS') abierto('MIENTRAS', l.n, 'FIN MIENTRAS')
         return { t: 'mientras', linea: l.n, cond, cuerpo: a.cuerpo, lineaFin: a.lineaFin, texto: l.texto }
       }
+      if (/^REPETIR\s*$/i.test(l.texto)) {
+        idx += 1
+        resumen.lineasUtiles += 1
+        resumen.tieneRepetir = true
+        const a = bloque(['HASTA QUE'], true)
+        if (a.fin !== 'HASTA QUE') {
+          abierto('REPETIR', l.n, 'HASTA QUE condición')
+          return { t: 'repetir', linea: l.n, cond: { t: 'bool', v: true }, cuerpo: a.cuerpo, lineaFin: l.n, textoFin: 'HASTA QUE', texto: l.texto }
+        }
+        return { t: 'repetir', linea: l.n, cond: analizarExpresion(a.condHasta, a.lineaFin), cuerpo: a.cuerpo, lineaFin: a.lineaFin, textoFin: a.textoFin, texto: l.texto }
+      }
+      if ((m = l.texto.match(new RegExp(`^PARA\\s+([${LETRA}][${LETRA}0-9]*)\\s*(?:←|<-|:=)\\s*(.+?)\\s+HASTA\\s+(.+?)(?:\\s+CON\\s+PASO\\s+(.+?)|\\s+PASO\\s+(.+?))?(?:\\s+HACER)?\\s*$`, 'i'))) && !/^CADA$/i.test(m[1])) {
+        idx += 1
+        resumen.lineasUtiles += 1
+        resumen.tieneRepetir = true
+        const desde = analizarExpresion(m[2], l.n)
+        const hasta = analizarExpresion(m[3], l.n)
+        const pasoTxt = m[4] ?? m[5]
+        const paso = pasoTxt ? analizarExpresion(pasoTxt, l.n) : null
+        const a = bloque(['FIN PARA'], true)
+        if (a.fin !== 'FIN PARA') abierto('PARA', l.n, 'FIN PARA')
+        return { t: 'paraNum', linea: l.n, variable: m[1], desde, hasta, paso, cuerpo: a.cuerpo, lineaFin: a.lineaFin, texto: l.texto }
+      }
       if ((m = l.texto.match(new RegExp(`^PARA\\s+CADA\\s+([${LETRA}][${LETRA}0-9]*)\\s+EN\\s+(.+?)(?:\\s+HACER)?\\s*$`, 'i')))) {
         idx += 1
         resumen.lineasUtiles += 1
@@ -443,7 +555,7 @@ export function analizar(texto) {
         if (a.fin !== 'FIN PARA') abierto('PARA CADA', l.n, 'FIN PARA')
         return { t: 'para', linea: l.n, item: m[1], lista, cuerpo: a.cuerpo, lineaFin: a.lineaFin, texto: l.texto }
       }
-      if (/^(MIENTRAS|PARA)\b/.test(M)) {
+      if (/^(MIENTRAS|PARA|REPETIR)\b/.test(M)) {
         idx += 1
         const clave = /^MIENTRAS/.test(M) ? 'mientras' : 'para'
         throw new ErrorPseudo(`No entiendo cómo escribiste la línea ${l.n}.`, `Se escribe así: ${COMO_ESCRIBIR[clave]}.`, l.n)
@@ -451,7 +563,7 @@ export function analizar(texto) {
       idx += 1
       throw new ErrorPseudo(
         `No entiendo la línea ${l.n}: «${l.texto}».`,
-        'Cada línea es una asignación (total ← 0), una SALIDA, o un bloque SI / MIENTRAS / PARA CADA. Para guardar un valor usa la flecha ← (o <-).',
+        'Cada línea es una asignación (total ← 0), una SALIDA, o un bloque SI / MIENTRAS / PARA / REPETIR. Para guardar un valor usa la flecha ← (o <-).',
         l.n,
       )
     } catch (e) {
@@ -461,6 +573,36 @@ export function analizar(texto) {
       }
       throw e
     }
+  }
+
+  // SI … [SINO SI …]* [SI NO …] FIN SI. El «SINO SI» se guarda como un SI anidado dentro del SI NO.
+  function armarSi(condTexto, linea, texto) {
+    const cond = analizarExpresion(condTexto, linea)
+    const a = bloque(['FIN SI', 'SI NO', 'SINOSI'], true)
+    let sino = null
+    let lineaSino = null
+    let lineaFin = a.lineaFin
+    if (a.fin === 'SI NO') {
+      resumen.tieneSiNo = true
+      lineaSino = a.lineaFin
+      const b = bloque(['FIN SI'], true)
+      sino = b.cuerpo
+      lineaFin = b.lineaFin
+      if (b.fin !== 'FIN SI') abierto('SI', linea, 'FIN SI')
+    } else if (a.fin === 'SINOSI') {
+      resumen.tieneSiNo = true
+      lineaSino = a.lineaFin
+      let anidado = null
+      try {
+        anidado = armarSi(a.condSinoSi, a.lineaFin, a.textoFin)
+      } catch (e) {
+        if (!(e instanceof ErrorPseudo)) throw e
+        agregar(e)
+      }
+      sino = anidado ? [anidado] : []
+      lineaFin = anidado?.lineaFin ?? a.lineaFin
+    } else if (a.fin !== 'FIN SI') abierto('SI', linea, 'FIN SI')
+    return { t: 'si', linea, cond, entonces: a.cuerpo, sino, lineaSino, lineaFin, texto }
   }
 
   function abierto(que, linea, cierre) {
@@ -517,6 +659,23 @@ export function variablesSinAsignar(programa) {
       if (s.t === 'asig') {
         usar(s.expr)
         activas.add(s.destino)
+      } else if (s.t === 'asigIdx') {
+        usar(s.expr)
+        usar(s.indice)
+        if (!activas.has(s.destino)) leidas.push({ nombre: s.destino, linea: s.linea })
+      } else if (s.t === 'paraNum') {
+        usar(s.desde)
+        usar(s.hasta)
+        if (s.paso) usar(s.paso)
+        const dentro = new Set(activas)
+        dentro.add(s.variable)
+        recorrer(s.cuerpo, dentro)
+      } else if (s.t === 'repetir') {
+        // El cuerpo se ejecuta al menos una vez: lo que se asigna adentro vale para la condición.
+        const dentro = new Set(activas)
+        recorrer(s.cuerpo, dentro)
+        variablesDe(s.cond).forEach((v) => !dentro.has(v) && leidas.push({ nombre: v, linea: s.lineaFin }))
+        for (const v of dentro) activas.add(v)
       } else if (s.t === 'salida') s.exprs.forEach(usar)
       else if (s.t === 'si') {
         usar(s.cond)
@@ -573,7 +732,10 @@ const redondear = (n) => (Number.isInteger(n) ? n : Math.round(n * 1e6) / 1e6)
 const textoPlano = (v) => (typeof v === 'string' ? v : typeof v === 'boolean' ? (v ? 'verdadero' : 'falso') : typeof v === 'number' ? String(redondear(v)).replace('.', ',') : mostrarValor(v))
 
 export function mostrarValor(v) {
-  if (Array.isArray(v)) return `lista de ${v.length} ${v.length === 1 ? 'registro' : 'registros'}`
+  if (Array.isArray(v)) {
+    if (v.length > 0 && v.length <= 12 && v.every((x) => x === null || typeof x !== 'object')) return `[${v.map(mostrarValor).join(', ')}]`
+    return `lista de ${v.length} ${v.length === 1 ? 'registro' : 'registros'}`
+  }
   if (v && typeof v === 'object') return `{ ${Object.entries(v).map(([k, x]) => `${k}=${mostrarValor(x)}`).join(', ')} }`
   if (typeof v === 'boolean') return v ? 'verdadero' : 'falso'
   if (typeof v === 'number') return String(redondear(v)).replace('.', ',')
@@ -616,6 +778,40 @@ function evaluar(e, vars, linea) {
         valor = buscarCampo(valor, campo, linea)
       }
       return valor
+    }
+    case 'idx': {
+      const lista = evaluar(e.base, vars, linea)
+      const i = evaluar(e.indice, vars, linea)
+      if (!Array.isArray(lista)) {
+        throw new ErrorPseudo(`«${e.base.partes[0]}» no es una lista, así que no tiene posiciones (línea ${linea}).`, 'Las posiciones se piden de una entrada de tipo lista, por ejemplo precios[1].', linea)
+      }
+      aNumero(i, linea)
+      if (!Number.isInteger(i) || i < 1 || i > lista.length) {
+        throw new ErrorPseudo(
+          `La posición ${mostrarValor(i)} no existe en «${e.base.partes[0]}» (línea ${linea}): la lista tiene ${lista.length} ${lista.length === 1 ? 'elemento' : 'elementos'}.`,
+          'Las posiciones empiezan en 1 y llegan hasta la cantidad de elementos.',
+          linea,
+        )
+      }
+      return lista[i - 1]
+    }
+    case 'campoDe': {
+      const reg = evaluar(e.e, vars, linea)
+      if (!reg || typeof reg !== 'object' || Array.isArray(reg)) {
+        throw new ErrorPseudo(`Eso no es un registro, así que no tiene el campo «${e.campo}» (línea ${linea}).`, 'Los campos solo se piden de un registro.', linea)
+      }
+      return buscarCampo(reg, e.campo, linea)
+    }
+    case 'fn': {
+      const args = e.args.map((a) => evaluar(a, vars, linea))
+      const f = FUNCIONES[e.nombre]
+      const necesitaLista = ['LONGITUD', 'LARGO', 'TAMANO', 'LEN'].includes(e.nombre)
+      if (!necesitaLista) args.flat().forEach((a) => aNumero(a, linea))
+      const r = f(...args)
+      if (typeof r === 'number' && Number.isNaN(r)) {
+        throw new ErrorPseudo(`No se pudo calcular ${e.nombre}(…) en la línea ${linea}.`, necesitaLista ? 'LONGITUD pide una lista o un texto.' : 'Revisa los valores que le das: por ejemplo, RAIZ no acepta números negativos y PROMEDIO no acepta una lista vacía.', linea)
+      }
+      return r
     }
     case 'neg': {
       const v = evaluar(e.e, vars, linea)
@@ -723,6 +919,43 @@ export function ejecutarPrograma(programa, entradas = {}) {
         const v = evaluar(s.expr, vars, s.linea)
         vars[s.destino] = v
         registrar(s.linea, s.texto, `${s.destino} vale ahora ${mostrarValor(v)}`)
+      } else if (s.t === 'asigIdx') {
+        const lista = vars[s.destino]
+        const i = evaluar(s.indice, vars, s.linea)
+        const v = evaluar(s.expr, vars, s.linea)
+        if (!Array.isArray(lista)) {
+          throw new ErrorPseudo(`«${s.destino}» no es una lista (línea ${s.linea}).`, 'Solo se puede asignar a una posición de una lista.', s.linea)
+        }
+        aNumero(i, s.linea)
+        if (!Number.isInteger(i) || i < 1 || i > lista.length + 1) {
+          throw new ErrorPseudo(`La posición ${mostrarValor(i)} no existe en «${s.destino}» (línea ${s.linea}): la lista tiene ${lista.length} elementos.`, 'Las posiciones empiezan en 1; para agregar uno nuevo usa la siguiente a la última.', s.linea)
+        }
+        lista[i - 1] = v
+        registrar(s.linea, s.texto, `${s.destino}[${mostrarValor(i)}] vale ahora ${mostrarValor(v)}`)
+      } else if (s.t === 'paraNum') {
+        const desde = evaluar(s.desde, vars, s.linea)
+        const hasta = evaluar(s.hasta, vars, s.linea)
+        const paso = s.paso ? evaluar(s.paso, vars, s.linea) : 1
+        aNumero(desde, s.linea)
+        aNumero(hasta, s.linea)
+        aNumero(paso, s.linea)
+        if (paso === 0) throw new ErrorPseudo(`El paso del PARA de la línea ${s.linea} es cero: nunca terminaría.`, 'Usa un paso distinto de cero, por ejemplo 1.', s.linea)
+        let entro = false
+        for (let i = desde; paso > 0 ? i <= hasta : i >= hasta; i += paso) {
+          entro = true
+          vars[s.variable] = i
+          registrar(s.linea, s.texto, `${s.variable} vale ${mostrarValor(i)}`)
+          ejecutar(s.cuerpo)
+        }
+        if (!entro) registrar(s.linea, s.texto, 'El rango está vacío: no entra al ciclo')
+      } else if (s.t === 'repetir') {
+        for (;;) {
+          ejecutar(s.cuerpo)
+          const c = evaluar(s.cond, vars, s.lineaFin)
+          aBooleano(c, s.lineaFin)
+          registrar(s.lineaFin, s.textoFin ?? 'HASTA QUE', c ? 'La condición se cumple: sale del ciclo' : 'La condición no se cumple: repite')
+          if (c) break
+        }
       } else if (s.t === 'salida') {
         const valores = s.exprs.map((x) => evaluar(x, vars, s.linea))
         // Un solo valor conserva su tipo (para compararlo con lo esperado); varios se unen en un texto.

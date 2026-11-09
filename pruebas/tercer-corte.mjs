@@ -11,6 +11,7 @@ import {
   MAX_PASOS, analizar, correr, valorDeEntrada, valorSimple, resultadosCoinciden, detectarCodigo, variablesSinAsignar,
 } from '../src/tercer-corte/lib/interprete.js'
 import { revisarFicha4, firmaEjecucion, firmaPrueba } from '../src/tercer-corte/lib/ficha4.js'
+import { normalizarLineas, limpiarPseudocodigo } from '../src/tercer-corte/lib/normalizar.js'
 
 let ok = 0
 const fallos = []
@@ -211,7 +212,7 @@ prueba('análisis · bloque sin cerrar: mensaje con la línea y cómo cerrarlo',
 prueba('análisis · FIN que sobra y SI sin ENTONCES', () => {
   const a = analizar(['PROCESO x', 'ENTRADA: a (número)', 'FIN SI', 'SI a > 1', 'SALIDA: a'].join('\n'))
   const m = a.errores.map((e) => e.mensaje).join(' | ')
-  return !a.ok && /sobra/.test(m) && /ENTONCES/.test(m) ? true : m
+  return !a.ok && /sobra/.test(m) && /no está cerrado/.test(m) ? true : m
 })
 
 prueba('análisis · cierres cruzados: FIN PARA donde iba FIN SI', () => {
@@ -436,6 +437,111 @@ prueba('csv y pdf · la ficha 4 se exporta', () => {
   const bytes = pdfFicha4(datos)
   const txt = Array.from(bytes, (b) => String.fromCharCode(b)).join('')
   return csv.startsWith('﻿') && csv.includes('calcularTotal') && txt.startsWith('%PDF-1.4') && txt.includes('Ficha 4') ? true : csv.slice(0, 200)
+})
+
+/* ====================== Ficha 4 · pseudocódigo de otras fuentes (IA, PSeInt…) ====================== */
+
+const DESDE_IA = [
+  '```',
+  '**Algoritmo:** Descuento por cantidad',
+  '',
+  'ENTRADA:',
+  '- precio (número)',
+  '- cantidad (entero)',
+  '',
+  '1. INICIO',
+  '2. total = precio * cantidad;',
+  '3. IF cantidad >= 10 AND precio > 0 THEN',
+  '     total = total - total * 0.1',
+  '   ELSE IF cantidad >= 5 THEN',
+  '     total = total - total * 0.05',
+  '   ELSE',
+  '     total = total',
+  '   END IF',
+  '4. PRINT "Total: ", total',
+  '5. FIN',
+  '```',
+].join('\n')
+
+prueba('flexible · pseudocódigo pegado de una IA (viñetas, markdown, inglés, = y ;) se entiende y se ejecuta', () => {
+  const r = correr(DESDE_IA, { precio: 1000, cantidad: 10 })
+  const r2 = correr(DESDE_IA, { precio: 1000, cantidad: 6 })
+  const r3 = correr(DESDE_IA, { precio: 1000, cantidad: 2 })
+  return r.ok && r.resultado === 'Total: 9000' && r2.resultado === 'Total: 5700' && r3.resultado === 'Total: 2000'
+    ? true
+    : JSON.stringify([r.errores, r.error, r.resultado, r2.resultado, r3.resultado])
+})
+
+prueba('flexible · la normalización conserva el número de líneas (los mensajes siguen señalando la línea que ven)', () => {
+  const n = normalizarLineas(DESDE_IA)
+  return n.texto.split('\n').length === DESDE_IA.split('\n').length ? true : `${n.texto.split('\n').length} vs ${DESDE_IA.split('\n').length}`
+})
+
+prueba('flexible · avisa qué palabras estaban en inglés y «Limpiar y traducir» las pasa a español sin cambiar el resultado', () => {
+  const n = normalizarLineas(DESDE_IA)
+  const limpio = limpiarPseudocodigo(DESDE_IA)
+  const otra = normalizarLineas(limpio)
+  const r = correr(limpio, { precio: 1000, cantidad: 10 })
+  return n.ingles.includes('IF') && n.ingles.includes('OUTPUT / PRINT') && otra.ingles.length === 0 && r.ok && r.resultado === 'Total: 9000' ? true : JSON.stringify([n.ingles, otra.ingles, r.errores, r.error])
+})
+
+prueba('flexible · «SINO SI» encadena varias condiciones en español', () => {
+  const t = ['PROCESO nota', 'ENTRADA: n (número)', 'SI n >= 4,5 ENTONCES', '  r ← "Excelente"', 'SINO SI n >= 3 ENTONCES', '  r ← "Aprobado"', 'SI NO', '  r ← "Reprobado"', 'FIN SI', 'SALIDA: r'].join('\n')
+  const casos = [[5, 'Excelente'], [3.2, 'Aprobado'], [1, 'Reprobado']]
+  const malos = casos.filter(([n, esperado]) => correr(t, { n }).resultado !== esperado)
+  const a = analizar(t)
+  return malos.length === 0 && a.ok && a.resumen.tieneSiNo ? true : JSON.stringify([malos, a.errores])
+})
+
+prueba('flexible · PARA i ← 1 HASTA n (con y sin PASO) y listas por posición', () => {
+  const t = ['PROCESO suma', 'ENTRADA: precios (lista), n (número)', 'suma ← 0', 'PARA i ← 1 HASTA n', '  suma ← suma + precios[i]', 'FIN PARA', 'SALIDA: suma'].join('\n')
+  const r = correr(t, { precios: [10, 20, 30, 40], n: 4 })
+  const t2 = ['PROCESO pares', 'ENTRADA: n (número)', 'c ← 0', 'PARA i ← 2 HASTA n CON PASO 2', '  c ← c + 1', 'FIN PARA', 'SALIDA: c'].join('\n')
+  const t3 = ['PROCESO cuenta', 'ENTRADA: n (número)', 'c ← 0', 'PARA i ← n HASTA 1 PASO -1', '  c ← c + i', 'FIN PARA', 'SALIDA: c'].join('\n')
+  return r.resultado === 100 && correr(t2, { n: 10 }).resultado === 5 && correr(t3, { n: 4 }).resultado === 10 ? true : JSON.stringify([r.resultado, r.error, r.errores])
+})
+
+prueba('flexible · REPETIR … HASTA QUE ejecuta el cuerpo al menos una vez', () => {
+  const t = ['PROCESO intentos', 'ENTRADA: n (número)', 'REPETIR', '  n ← n + 1', 'HASTA QUE n >= 3', 'SALIDA: n'].join('\n')
+  return correr(t, { n: 10 }).resultado === 11 && correr(t, { n: 0 }).resultado === 3 ? true : JSON.stringify(correr(t, { n: 0 }))
+})
+
+prueba('flexible · funciones LONGITUD, REDONDEAR, MAX, MIN y PROMEDIO; posición de lista con campo', () => {
+  const t = ['PROCESO f', 'ENTRADA: lista (lista), items (lista)', 'a ← LONGITUD(lista)', 'b ← REDONDEAR(10 / 3, 1)', 'c ← MAX(3, 9, 4) - MIN(3, 9, 4)', 'd ← PROMEDIO(lista)', 'e ← items[2].precio', 'SALIDA: a, " ", b, " ", c, " ", d, " ", e'].join('\n')
+  const r = correr(t, { lista: [2, 4, 6], items: [{ precio: 5 }, { precio: 7 }] })
+  return r.ok && r.resultado === '3 3,3 6 4 7' ? true : JSON.stringify([r.resultado, r.error, r.errores])
+})
+
+prueba('flexible · una función desconocida y una posición inexistente dan mensajes claros', () => {
+  const a = correr(['PROCESO f', 'ENTRADA: n (número)', 'x ← raiz2(n)', 'SALIDA: x'].join('\n'), { n: 4 })
+  const b = correr(['PROCESO f', 'ENTRADA: l (lista)', 'x ← l[5]', 'SALIDA: x'].join('\n'), { l: [1, 2] })
+  return a.errores?.[0]?.mensaje.includes('No conozco la función') && !b.ok && /no existe/.test(b.error.mensaje) && /empiezan en 1/.test(b.error.pista) ? true : JSON.stringify([a, b.error])
+})
+
+prueba('flexible · asignar a una posición de lista y mostrar la lista', () => {
+  const t = ['PROCESO p', 'ENTRADA: l (lista)', 'l[2] ← 99', 'SALIDA: l[2]'].join('\n')
+  const r = correr(t, { l: [1, 2, 3] })
+  return r.ok && r.resultado === 99 && /\[1, 99, 3\]/.test(r.pasos[1].vars.l) ? true : JSON.stringify([r.resultado, r.pasos[1]?.vars])
+})
+
+prueba('flexible · estilo PSeInt: Algoritmo, Leer, Escribir, Sino, FinSi, FinMientras', () => {
+  const t = ['Algoritmo contador', '  Definir n Como Entero', '  Leer n', '  i <- 0', '  Mientras i < n Hacer', '    i <- i + 1', '  FinMientras', '  Si i = n Entonces', '    Escribir "Llegó a ", i', '  Sino', '    Escribir "No llegó"', '  FinSi', 'FinAlgoritmo'].join('\n')
+  const r = correr(t, { n: 3 })
+  return r.ok && r.resultado === 'Llegó a 3' ? true : JSON.stringify([r.resultado, r.error, r.errores])
+})
+
+prueba('flexible · el encabezado «ENTRADA:» con la lista de datos debajo declara las entradas', () => {
+  const a = analizar(normalizarLineas(DESDE_IA).texto)
+  return a.ok && a.resumen.entradas.map((e) => e.nombre).join(',') === 'precio,cantidad' ? true : JSON.stringify([a.errores, a.resumen.entradas])
+})
+
+prueba('flexible · en la revisión de la ficha 4, el inglés pide traducir pero el algoritmo sí se ejecuta', () => {
+  const c = ficha4Completa()
+  c.pseudo = PSEUDO_EJEMPLO.replace('PARA CADA item EN productos', 'FOR EACH item IN productos').replace('FIN PARA', 'END FOR')
+  c.prueba_terminada = firmaEjecucion(c)
+  const r = revisarFicha4(c)
+  const esp = r.puntos.find((p) => p.id === 'espanol')
+  return r.ejecucion?.ok && r.ejecucion.resultado === 31500 && !esp.ok && /inglés/.test(esp.pista) ? true : JSON.stringify([r.analisis.errores, esp])
 })
 
 console.log(`\n${ok} comprobaciones pasaron.`)

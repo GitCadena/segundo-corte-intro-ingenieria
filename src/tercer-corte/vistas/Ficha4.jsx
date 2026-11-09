@@ -5,6 +5,7 @@ import { almacenTc } from '../lib/almacenTc.js'
 import { useFicha } from '../lib/useFicha.js'
 import { revisarFicha4, firmaEjecucion, firmaPrueba, procesar } from '../lib/ficha4.js'
 import { camposUsados, lineasDe, mostrarValor, resultadosCoinciden } from '../lib/interprete.js'
+import { limpiarPseudocodigo, normalizarLineas } from '../lib/normalizar.js'
 import { IDEAS_DE_PROCESO, PLANTILLAS } from '../data/pseudocodigo.js'
 import { Campo, Comentarios as ComentariosFicha, EstadoFicha } from './componentes.jsx'
 import Aprende from './Aprende.jsx'
@@ -238,9 +239,11 @@ function reindentar(texto) {
       const t = l.trim()
       if (t === '') return ''
       const M = t.toUpperCase().replace(/\s+/g, ' ')
-      if (/^FIN ?(SI|MIENTRAS|PARA)$/.test(M)) nivel = Math.max(0, nivel - 1)
-      const dibujo = '  '.repeat(/^SI ?NO:?$/.test(M) ? Math.max(0, nivel - 1) : nivel) + t
-      if (/ENTONCES$/.test(M) || /^SI ?NO:?$/.test(M) || /^MIENTRAS\b/.test(M) || /^PARA CADA\b/.test(M)) nivel += 1
+      const esSiNo = /^SI ?NO:?$/.test(M) || /^SINO ?SI\b/.test(M)
+      if (/^FIN ?(SI|MIENTRAS|PARA)$/.test(M) || /^HASTA QUE\b/.test(M)) nivel = Math.max(0, nivel - 1)
+      // SI NO y SINO SI se escriben a la altura del SI, y lo de adentro sigue una sangría más
+      const dibujo = '  '.repeat(esSiNo ? Math.max(0, nivel - 1) : nivel) + t
+      if (!esSiNo && (/ENTONCES$/.test(M) || /^MIENTRAS\b/.test(M) || /^PARA\b/.test(M) || /^REPETIR$/.test(M))) nivel += 1
       return dibujo
     })
     .join('\n')
@@ -292,7 +295,7 @@ function EditorPseudo({ valor, onCambio, deshabilitado, errores }) {
     const linea = antes.slice(antes.lastIndexOf('\n') + 1)
     const sangria = (linea.match(/^\s*/) ?? [''])[0]
     const M = linea.trim().toUpperCase().replace(/\s+/g, ' ')
-    const abre = /ENTONCES$/.test(M) || /^SI ?NO:?$/.test(M) || /^MIENTRAS\b/.test(M) || /^PARA CADA\b/.test(M)
+    const abre = /ENTONCES$/.test(M) || /^SI ?NO:?$/.test(M) || /^MIENTRAS\b/.test(M) || /^PARA\b/.test(M) || /^REPETIR$/.test(M)
     e.preventDefault()
     const inserto = '\n' + sangria + (abre ? '  ' : '')
     onCambio(antes + inserto + valor.slice(ta.selectionEnd))
@@ -310,6 +313,15 @@ function EditorPseudo({ valor, onCambio, deshabilitado, errores }) {
           ))}
           <button type="button" className="boton boton--texto boton--pequeno" onClick={() => onCambio(reindentar(valor))}>
             Ordenar sangría
+          </button>
+          <button
+            type="button"
+            className="boton boton--secundario boton--pequeno"
+            title="Para algoritmos pegados de una IA o de otra fuente: quita viñetas y formato, pasa el inglés a español y ordena los cierres"
+            disabled={!normalizarLineas(valor).cambios}
+            onClick={() => onCambio(reindentar(limpiarPseudocodigo(valor)))}
+          >
+            Limpiar y traducir lo pegado
           </button>
         </div>
       )}

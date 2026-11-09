@@ -2,6 +2,7 @@
  * Lógica de la Ficha 4 · Pseudocódigo del proceso principal. Pura: sin React ni
  * red, para probarla en Node (pruebas/tercer-corte.mjs).
  */
+import { detectarIngles } from './normalizar.js'
 import {
   analizar,
   ejecutarPrograma,
@@ -96,6 +97,7 @@ export function revisarFicha4(c = {}, ctx = {}) {
   const { analisis, ejecucion } = procesar(c)
   const entradas = revisarEntradasEscritas(c.entradas)
   const codigo = detectarCodigo(c.pseudo)
+  const ingles = detectarIngles(c.pseudo)
   const r = analisis.resumen
   const sinAsignar = analisis.programa ? variablesSinAsignar(analisis.programa) : []
   const escribioAlgo = lleno(c.pseudo)
@@ -138,8 +140,13 @@ export function revisarFicha4(c = {}, ctx = {}) {
     {
       id: 'espanol',
       texto: 'Está escrito en español, no en código de un lenguaje',
-      ok: escribioAlgo && codigo.length === 0,
-      pista: codigo.length > 0 ? `Encontré rastros de código (${codigo.join(', ')}). Escribe el proceso con palabras en español: SI, ENTONCES, MIENTRAS, ←.` : null,
+      ok: escribioAlgo && codigo.length === 0 && ingles.length === 0,
+      pista:
+        codigo.length > 0
+          ? `Encontré rastros de código (${codigo.join(', ')}). Escribe el proceso con palabras en español: SI, ENTONCES, MIENTRAS, ←.`
+          : ingles.length > 0
+            ? `Hay palabras en inglés (${ingles.join(', ')}). Pulsa «Limpiar y traducir» sobre el editor para pasarlas a español, o cámbialas a mano (SI, ENTONCES, SI NO, MIENTRAS…).`
+            : null,
     },
     {
       id: 'prueba',
