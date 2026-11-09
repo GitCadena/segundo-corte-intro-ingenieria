@@ -1,0 +1,54 @@
+/* =========================================================================
+   Tercer corte. Usa solo las variables y los componentes de styles.css
+   (tarjetas, botones, campos, chips). Todas las clases propias llevan el
+   prefijo tc- para no tocar nada del segundo corte.
+   ========================================================================= */
+
+.tc { display: flex; flex-direction: column; gap: 1.2rem; }
+
+.tc-cabecera { display: grid; gap: 1rem; grid-template-columns: 1fr; align-items: start; }
+@media (min-width: 820px) { .tc-cabecera { grid-template-columns: 1fr 260px; } }
+.tc-objetivo { color: var(--tinta-suave); margin: 0; max-width: 68ch; }
+.tc-estado { display: flex; flex-direction: column; gap: .3rem; align-items: flex-start; }
+@media (min-width: 820px) { .tc-estado { align-items: flex-end; text-align: right; } }
+.tc-ultimo { font-size: .85rem; color: var(--tinta-tenue); margin: 0; }
+.tc-aviso { margin: 0; }
+
+.tc-ejemplo { background: var(--acento-suave); border: 1px solid var(--borde); border-radius: var(--radio); padding: .9rem 1.1rem; }
+.tc-ejemplo summary { cursor: pointer; font-weight: 600; color: var(--acento-oscuro); }
+.tc-ejemplo p { margin: .8rem 0 0; }
+.tc-ejemplo .tabla-envoltura { background: var(--papel); }
+
+.tc-bloque__titulo { display: flex; align-items: center; gap: .7rem; font-size: 1.2rem; margin: 0 0 1rem; }
+.tc-bloque { display: flex; flex-direction: column; }
+.tc-campo { margin-bottom: 1rem; }
+.tc-campo:last-of-type { margin-bottom: 0; }
+
+.tc-pista { display: block; font-size: .86rem; color: var(--tinta-suave); background: var(--papel-suave); border-left: 3px solid var(--acento); padding: .45rem .7rem; border-radius: 4px; }
+.tc-pista--alerta { color: var(--alerta); background: var(--alerta-suave); border-left-color: var(--alerta); }
+
+.tc-lista { list-style: none; margin: 0 0 1rem; padding: 0; display: flex; flex-direction: column; gap: .4rem; }
+.tc-lista li { display: flex; gap: .5rem; align-items: baseline; }
+.tc-lista__ok { color: var(--ok); }
+.tc-lista__pendiente { color: var(--tinta-suave); }
+.tc-nota { font-size: .87rem; color: var(--tinta-tenue); }
+.tc-entrega { margin-top: 1rem; }
+.tc-confirmar { background: var(--alerta-suave); border: 1px solid var(--alerta); border-radius: var(--radio); padding: .9rem 1.1rem; }
+.tc-confirmar p { margin: 0 0 .7rem; }
+
+.tc-comentarios { margin-top: 1rem; border-top: 1px dashed var(--borde-fuerte); padding-top: .8rem; display: flex; flex-direction: column; gap: .5rem; }
+.tc-comentario { margin: 0; background: var(--alerta-suave); border-radius: var(--radio); padding: .6rem .8rem; font-size: .93rem; }
+.tc-comentar { display: flex; flex-direction: column; gap: .5rem; align-items: flex-start; }
+.tc-comentar .campo { width: 100%; }
+
+/* Inicio del tercer corte y panel docente */
+.tc-rejilla { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.tc-codigo { font-family: var(--fuente-mono); font-size: 1.4rem; letter-spacing: .12em; font-weight: 600; color: var(--acento-oscuro); background: var(--acento-suave); padding: .3rem .8rem; border-radius: var(--radio); display: inline-block; }
+.tc-integrantes { list-style: none; padding: 0; margin: .5rem 0 0; display: flex; flex-direction: column; gap: .2rem; }
+.tc-ficha-fila { display: flex; flex-wrap: wrap; gap: .8rem; align-items: center; justify-content: space-between; padding: .9rem 0; border-top: 1px solid var(--borde); }
+.tc-ficha-fila:first-of-type { border-top: 0; }
+.tc-ficha-fila h3 { margin: 0; font-size: 1.05rem; }
+.tc-ficha-fila p { margin: 0; color: var(--tinta-suave); font-size: .92rem; }
+.tc-formulario { display: flex; flex-direction: column; gap: .8rem; align-items: flex-start; }
+.tc-formulario .campo { width: 100%; }
+.tc-acciones { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }

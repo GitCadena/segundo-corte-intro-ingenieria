@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "pruebas": "node pruebas/verificar.mjs",
+    "pruebas:tercer-corte": "node pruebas/tercer-corte.mjs",
     "catalogo": "node scripts/generar-catalogo.mjs",
     "seguridad": "node pruebas/rls.mjs",
     "supabase": "supabase start"

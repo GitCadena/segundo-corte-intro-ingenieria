@@ -11,6 +11,9 @@ import Laboratorio from './vistas/Laboratorio.jsx'
 import MiProgreso from './vistas/MiProgreso.jsx'
 import PanelDocente from './vistas/PanelDocente.jsx'
 import Glosario from './vistas/Glosario.jsx'
+import TercerCorte, { FichaDelEquipo } from './tercer-corte/vistas/TercerCorte.jsx'
+import DocenteTercerCorte, { FichaParaDocente } from './tercer-corte/vistas/DocenteTercerCorte.jsx'
+import { TERCER_CORTE_ACTIVO } from './tercer-corte/config.js'
 import LimiteDeError from './componentes/LimiteDeError.jsx'
 import { catalogoEstaciones } from './data/catalogo.js'
 
@@ -85,6 +88,14 @@ function Rutas({ usuario, esDocente }) {
       <Route path="/laboratorio" element={<Protegida usuario={usuario}><Laboratorio /></Protegida>} />
       <Route path="/progreso" element={<Protegida usuario={usuario}><MiProgreso /></Protegida>} />
       <Route path="/glosario" element={<Glosario />} />
+      {TERCER_CORTE_ACTIVO && (
+        <>
+          <Route path="/tercer-corte" element={<Protegida usuario={usuario}><TercerCorte /></Protegida>} />
+          <Route path="/tercer-corte/ficha/:n" element={<Protegida usuario={usuario}><FichaDelEquipo /></Protegida>} />
+          <Route path="/tercer-corte/docente" element={<Protegida usuario={usuario}>{esDocente ? <DocenteTercerCorte /> : <SinPermiso />}</Protegida>} />
+          <Route path="/tercer-corte/docente/:equipoId/ficha/:n" element={<Protegida usuario={usuario}>{esDocente ? <FichaParaDocente /> : <SinPermiso />}</Protegida>} />
+        </>
+      )}
       <Route
         path="/docente"
         element={
@@ -139,6 +150,7 @@ function BarraSuperior({ proyeccion, setProyeccion }) {
             <NavLink to="/panel">Panel</NavLink>
             <NavLink to="/laboratorio">Laboratorio</NavLink>
             <NavLink to="/progreso">Mi progreso</NavLink>
+            {TERCER_CORTE_ACTIVO && <NavLink to="/tercer-corte">Tercer corte</NavLink>}
             <NavLink to="/glosario">Glosario</NavLink>
             {esDocente && <NavLink to="/docente">Panel docente</NavLink>}
           </nav>
