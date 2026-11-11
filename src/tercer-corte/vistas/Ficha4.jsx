@@ -94,13 +94,15 @@ function FichaCuatro({ equipo, modo }) {
             </li>
           ))}
         </ul>
-        <p className="tc-nota">Para entregar necesitan todos los puntos en verde: la prueba de escritorio completa y la confirmación de un compañero.</p>
+        <p className="tc-nota">
+          Lo ideal es tener todos los puntos en verde. Aunque alguno quede pendiente (por ejemplo si la página no entiende alguna forma de escribir su código, o si trabajan solos), pueden entregar en cuanto escriban el pseudocódigo: el docente revisa cada ficha.
+        </p>
 
         {!esDocente && !entregada && (
           <div className="tc-entrega">
             {!confirmando ? (
               <button type="button" className="boton boton--principal" disabled={!revision.puedeEntregar} onClick={() => setConfirmando(true)}>
-                {revision.puedeEntregar ? 'Entregar la ficha' : 'Completa todos los puntos para entregar'}
+                {revision.puedeEntregar ? 'Entregar la ficha' : 'Escriban el pseudocódigo para poder entregar'}
               </button>
             ) : (
               <div className="tc-confirmar" role="alert">

@@ -364,14 +364,14 @@ prueba('ficha 4 · completa con prueba hecha y compañero distinto: todo en verd
 
 prueba('ficha 4 · vacía: no se entrega y no se rompe', () => {
   const r = revisarFicha4({})
-  return !r.puedeEntregar && r.puntos.filter((p) => p.ok).length === 0 ? true : JSON.stringify(r.puntos.filter((p) => p.ok).map((p) => p.id))
+  return !r.completa && r.puntos.filter((p) => p.ok).length === 0 ? true : JSON.stringify(r.puntos.filter((p) => p.ok).map((p) => p.id))
 })
 
 prueba('ficha 4 · sin la confirmación del compañero no se puede entregar', () => {
   const c = ficha4Completa()
   delete c.par_id
   const r = revisarFicha4(c)
-  return !r.puedeEntregar && !r.puntos.find((p) => p.id === 'par').ok ? true : 'permitió entregar sin compañero'
+  return !r.completa && !r.puntos.find((p) => p.id === 'par').ok ? true : 'permitió entregar sin compañero'
 })
 
 prueba('ficha 4 · el mismo integrante no puede confirmar su propia prueba', () => {
@@ -387,7 +387,7 @@ prueba('ficha 4 · si cambian el pseudocódigo o el caso después de la confirma
   const r = revisarFicha4(c)
   const par = r.puntos.find((p) => p.id === 'par')
   const prueba = r.puntos.find((p) => p.id === 'prueba')
-  return !par.ok && par.pista && !prueba.ok && !r.puedeEntregar ? true : JSON.stringify({ par: par.ok, prueba: prueba.ok })
+  return !par.ok && par.pista && !prueba.ok && !r.completa ? true : JSON.stringify({ par: par.ok, prueba: prueba.ok })
 })
 
 prueba('ficha 4 · resultado distinto al esperado: avisa y no deja entregar', () => {
@@ -396,7 +396,7 @@ prueba('ficha 4 · resultado distinto al esperado: avisa y no deja entregar', ()
   c.par_firma = firmaPrueba(c)
   const r = revisarFicha4(c)
   const p = r.puntos.find((x) => x.id === 'resultado')
-  return !p.ok && /no coincide/.test(p.pista) && !r.puedeEntregar ? true : JSON.stringify(p)
+  return !p.ok && /no coincide/.test(p.pista) && !r.completa ? true : JSON.stringify(p)
 })
 
 prueba('ficha 4 · código de otro lenguaje se detecta en la revisión', () => {
@@ -562,6 +562,11 @@ prueba('guiada · la tabla correcta se aprueba y una casilla mal se detecta', ()
   const claves = Object.keys(buenas).filter((k) => !k.endsWith('|?'))
   const r2 = revisarTabla(t, { ...buenas, [claves[0]]: '99999' })
   return ok1 && !r2.todas && r2.ok[claves[0]] === false ? true : JSON.stringify([ok1, r2.buenas, r2.total])
+})
+
+prueba('ficha 4 · se puede entregar con el pseudocódigo escrito aunque la revisión no esté completa, pero no vacía', () => {
+  const r = revisarFicha4({ pseudo: 'PROCESO x\ntotal = 1\nSALIDA total' })
+  return r.puedeEntregar && !r.completa && !revisarFicha4({}).puedeEntregar ? true : JSON.stringify([r.puedeEntregar, r.completa])
 })
 
 prueba('guiada · tipoDePaso reconoce entrada, decisión, vuelta y salida', () => {

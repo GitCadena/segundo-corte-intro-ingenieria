@@ -169,7 +169,10 @@ export function revisarFicha4(c = {}, ctx = {}) {
   ]
   return {
     puntos,
-    puedeEntregar: puntos.every((p) => p.ok),
+    // La entrega solo exige que hayan escrito el pseudocódigo: el intérprete no entiende todas las
+    // variaciones y el docente revisa cada ficha a mano. `completa` dice si todos los puntos están en verde.
+    puedeEntregar: lleno(c.pseudo) && String(c.pseudo).trim().split(/\r?\n/).filter((l) => l.trim() !== '').length >= 2,
+    completa: puntos.every((p) => p.ok),
     analisis,
     ejecucion,
     sinAsignar,
