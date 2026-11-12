@@ -17,7 +17,7 @@ import { sugerirCaso } from '../lib/pruebaGuiada.js'
 import './tercer-corte.css'
 import './ficha4.css'
 
-const Comentarios = (props) => <ComentariosFicha ficha={4} {...props} />
+const Comentarios = (props) => <ComentariosFicha ficha={props.f?.ficha ?? 4} {...props} />
 
 /**
  * Ficha 4 · Pseudocódigo del proceso principal. La edita el equipo; el docente
@@ -142,13 +142,17 @@ function FichaCuatro({ equipo, modo }) {
 
 /* --------------------------------- B · Definir --------------------------------- */
 
-function BloqueDefinir({ c, f, bloqueada, equipo, esDocente, autorId }) {
+export function BloqueDefinir({ c, f, bloqueada, equipo, esDocente, autorId, segundo = false }) {
   return (
     <section className="tarjeta tc-bloque" aria-labelledby="tc-definir">
-      <h2 id="tc-definir" className="tc-bloque__titulo">B · Escribe el tuyo</h2>
+      <h2 id="tc-definir" className="tc-bloque__titulo">{segundo ? 'B · Escriban su segundo proceso' : 'B · Escribe el tuyo'}</h2>
       <h3 className="tc-subtitulo">1. El proceso, las entradas y la salida</h3>
 
-      <Campo etiqueta="¿Cuál es el proceso más importante de su sistema?" ayuda="Es lo que el sistema hace y que más importa que salga bien. Ejemplos en la lista de abajo." id="tc4-proceso">
+      <Campo
+        etiqueta={segundo ? '¿Cuál es el segundo proceso de su sistema?' : '¿Cuál es el proceso más importante de su sistema?'}
+        ayuda={segundo ? 'Otro proceso distinto al de la ficha 4, que también tenga una decisión (SI) y una repetición (PARA CADA).' : 'Es lo que el sistema hace y que más importa que salga bien. Ejemplos en la lista de abajo.'}
+        id="tc4-proceso"
+      >
         <input id="tc4-proceso" className="campo" list="tc4-ideas" value={c.proceso ?? ''} disabled={bloqueada} onChange={(e) => f.cambiar('proceso', e.target.value)} />
         <datalist id="tc4-ideas">
           {IDEAS_DE_PROCESO.map((i) => (
@@ -176,7 +180,7 @@ function BloqueDefinir({ c, f, bloqueada, equipo, esDocente, autorId }) {
 
 /* ------------------------------ B · Pseudocódigo ------------------------------ */
 
-function BloquePseudocodigo({ c, f, bloqueada, equipo, esDocente, autorId, revision }) {
+export function BloquePseudocodigo({ c, f, bloqueada, equipo, esDocente, autorId, revision }) {
   const analisis = revision.analisis
   const mostrados = revision.puntos.filter((p) => ['bloques', 'si', 'repetir', 'variables', 'espanol'].includes(p.id))
 
@@ -371,7 +375,7 @@ function EditorPseudo({ valor, onCambio, deshabilitado, errores }) {
 
 /* ----------------------------- C · Prueba de escritorio ----------------------------- */
 
-function BloquePrueba({ c, f, bloqueada, equipo, esDocente, autorId, perfil, revision }) {
+export function BloquePrueba({ c, f, bloqueada, equipo, esDocente, autorId, perfil, revision }) {
   const analisis = revision.analisis
   const manual = c.modo_prueba === 'manual'
   const listo = analisis.ok && analisis.programa

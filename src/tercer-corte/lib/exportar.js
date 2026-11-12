@@ -124,4 +124,74 @@ export function pdfFicha4({ equipo, miembros, estado, contenido }) {
   return crearPdf(bloques)
 }
 
+/* --------------------------------- Ficha 5 --------------------------------- */
+
+const COLUMNAS_FICHA5 = ['equipo', 'integrantes', 'estado', 'entregada_en', 'proceso_2', 'entradas', 'salida', 'pseudocodigo', 'casos_de_prueba', 'esperado', 'obtenido', 'paradigma', 'justificacion', 'clases_o_funciones', 'lenguaje', 'por_que_el_lenguaje', 'primero_que_programan', 'para_que_sirvio_el_pseudocodigo']
+
+const lenguajeDe = (c) => (c.lenguaje === 'otro' ? c.lenguaje_otro || 'Otro' : { python: 'Python', javascript: 'JavaScript', java: 'Java', csharp: 'C#', cpp: 'C++' }[c.lenguaje] ?? '')
+const paradigmaDe = (c) => ({ estructurado: 'Estructurado', oo: 'Orientado a objetos' }[c.paradigma] ?? '')
+const estructuraDe = (c) => (c.paradigma === 'oo' ? c.clases : c.funciones) ?? ''
+
+/** CSV de la ficha 5 de varios equipos. */
+export function csvFicha5(filas) {
+  const lineas = [COLUMNAS_FICHA5.join(',')]
+  for (const f of filas) {
+    const c = f.contenido ?? {}
+    const valores = [
+      f.equipo,
+      (f.miembros ?? []).map((m) => `${m.apellidos}, ${m.nombres}`).join(' / '),
+      f.estado === 'entregada' ? 'entregada' : 'en progreso',
+      f.entregada_en ?? '',
+      c.proceso ?? '',
+      c.entradas ?? '',
+      c.salida ?? '',
+      c.pseudo ?? '',
+      casosDe(c),
+      c.esperado ?? '',
+      c.resultado_obtenido || c.resultado_auto || '',
+      paradigmaDe(c),
+      c.justificacion ?? '',
+      estructuraDe(c),
+      lenguajeDe(c),
+      c.lenguaje_porque ?? '',
+      c.lenguaje_primero ?? '',
+      c.pseudo_importa ?? '',
+    ]
+    lineas.push(valores.map(celda).join(','))
+  }
+  return '﻿' + lineas.join('\r\n')
+}
+
+/** PDF de la ficha 5 de un equipo. */
+export function pdfFicha5({ equipo, miembros, estado, contenido }) {
+  const c = contenido ?? {}
+  const bloques = [
+    { t: 'titulo', texto: 'Ficha 5 · Segundo proceso, paradigma y lenguaje' },
+    { t: 'sub', texto: `Proyecto: ${equipo} · ${estado === 'entregada' ? 'Entregada' : 'En progreso'}` },
+    { t: 'p', texto: `Integrantes: ${(miembros ?? []).map((m) => `${m.nombres} ${m.apellidos}`).join(', ')}` },
+    { t: 'linea' },
+    { t: 'h', texto: 'Segundo proceso' },
+    { t: 'p', texto: c.proceso || '-' },
+    { t: 'p', texto: `Entradas: ${String(c.entradas || '-').replace(/\r?\n/g, '; ')}` },
+    { t: 'p', texto: `Salida: ${c.salida || '-'}` },
+    { t: 'h', texto: 'Pseudocódigo' },
+  ]
+  for (const linea of String(c.pseudo || '-').split(/\r?\n/)) bloques.push({ t: 'p', texto: linea || ' ', sangria: 8 })
+  bloques.push({ t: 'h', texto: 'Prueba de escritorio' })
+  bloques.push({ t: 'p', texto: `Caso: ${casosDe(c) || '-'}` })
+  bloques.push({ t: 'p', texto: `Resultado esperado: ${c.esperado || '-'}` })
+  bloques.push({ t: 'p', texto: `Resultado obtenido: ${c.resultado_obtenido || c.resultado_auto || '-'}` })
+  bloques.push({ t: 'h', texto: 'Paradigma' })
+  bloques.push({ t: 'p', texto: paradigmaDe(c) || '-' })
+  bloques.push({ t: 'p', texto: `Justificación: ${c.justificacion || '-'}` })
+  bloques.push({ t: 'h', texto: c.paradigma === 'oo' ? 'Clases' : 'Funciones' })
+  for (const linea of String(estructuraDe(c) || '-').split(/\r?\n/)) bloques.push({ t: 'p', texto: linea || ' ', sangria: 8 })
+  bloques.push({ t: 'h', texto: 'Lenguaje de programación' })
+  bloques.push({ t: 'p', texto: lenguajeDe(c) || '-' })
+  bloques.push({ t: 'p', texto: `Por qué: ${c.lenguaje_porque || '-'}` })
+  bloques.push({ t: 'p', texto: `Lo primero que programan: ${c.lenguaje_primero || '-'}` })
+  bloques.push({ t: 'p', texto: `Para qué les sirvió el pseudocódigo: ${c.pseudo_importa || '-'}` })
+  return crearPdf(bloques)
+}
+
 export { descargarPdf }

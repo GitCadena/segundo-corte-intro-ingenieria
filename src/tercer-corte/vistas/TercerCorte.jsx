@@ -4,6 +4,8 @@ import { useSesion } from '../../estado/SesionProvider.jsx'
 import { almacenTc, fijarUsuarioDemo, modoDemostracionTc } from '../lib/almacenTc.js'
 import Ficha3 from './Ficha3.jsx'
 import Ficha4 from './Ficha4.jsx'
+import Ficha5 from './Ficha5.jsx'
+import { esGrupoSencillo } from '../lib/asistente.js'
 import './tercer-corte.css'
 
 const formatearHora = (iso) => {
@@ -146,6 +148,10 @@ function MiEquipo({ equipo }) {
   const estadoDe = (n) => equipo.fichas.find((f) => f.ficha === n)
   const f3 = estadoDe(3)
   const f4 = estadoDe(4)
+  const f5 = estadoDe(5)
+  // El Grupo 3 ya hizo la ficha 3 en una hoja aparte: trabaja las fichas 4 y 5.
+  const { perfil } = useSesion()
+  const grupo3 = esGrupoSencillo(perfil?.grupo)
   const [copiado, setCopiado] = useState(false)
 
   async function copiar() {
@@ -180,21 +186,30 @@ function MiEquipo({ equipo }) {
 
       <section className="tarjeta" aria-labelledby="tc-fichas">
         <h2 id="tc-fichas" className="tc-bloque__titulo">Fichas del corte</h2>
-        <div className="tc-ficha-fila">
-          <div>
-            <h3>Ficha 3 · Calidad con números (ISO/IEC 25010)</h3>
-            <p>
-              {f3?.estado === 'entregada'
-                ? `Entregada${f3.actualizado_en ? ` · ${formatearHora(f3.actualizado_en)}` : ''}`
-                : f3
-                  ? `En progreso · último cambio ${formatearHora(f3.actualizado_en)}`
-                  : 'Todavía sin empezar'}
-            </p>
+        {grupo3 ? (
+          <div className="tc-ficha-fila">
+            <div>
+              <h3>Ficha 3 · Calidad con números (ISO/IEC 25010)</h3>
+              <p>La hicieron en una hoja aparte. Aquí no tienen que repetirla.</p>
+            </div>
           </div>
-          <Link className="boton boton--principal" to="/tercer-corte/ficha/3">
-            {f3?.estado === 'entregada' ? 'Ver la ficha' : f3 ? 'Continuar' : 'Empezar'}
-          </Link>
-        </div>
+        ) : (
+          <div className="tc-ficha-fila">
+            <div>
+              <h3>Ficha 3 · Calidad con números (ISO/IEC 25010)</h3>
+              <p>
+                {f3?.estado === 'entregada'
+                  ? `Entregada${f3.actualizado_en ? ` · ${formatearHora(f3.actualizado_en)}` : ''}`
+                  : f3
+                    ? `En progreso · último cambio ${formatearHora(f3.actualizado_en)}`
+                    : 'Todavía sin empezar'}
+              </p>
+            </div>
+            <Link className="boton boton--principal" to="/tercer-corte/ficha/3">
+              {f3?.estado === 'entregada' ? 'Ver la ficha' : f3 ? 'Continuar' : 'Empezar'}
+            </Link>
+          </div>
+        )}
         <div className="tc-ficha-fila">
           <div>
             <h3>Ficha 4 · Pseudocódigo del proceso principal</h3>
@@ -210,6 +225,23 @@ function MiEquipo({ equipo }) {
             {f4?.estado === 'entregada' ? 'Ver la ficha' : f4 ? 'Continuar' : 'Empezar'}
           </Link>
         </div>
+        {grupo3 && (
+          <div className="tc-ficha-fila">
+            <div>
+              <h3>Ficha 5 · Segundo proceso, paradigma y lenguaje</h3>
+              <p>
+                {f5?.estado === 'entregada'
+                  ? `Entregada${f5.actualizado_en ? ` · ${formatearHora(f5.actualizado_en)}` : ''}`
+                  : f5
+                    ? `En progreso · último cambio ${formatearHora(f5.actualizado_en)}`
+                    : 'Todavía sin empezar'}
+              </p>
+            </div>
+            <Link className="boton boton--principal" to="/tercer-corte/ficha/5">
+              {f5?.estado === 'entregada' ? 'Ver la ficha' : f5 ? 'Continuar' : 'Empezar'}
+            </Link>
+          </div>
+        )}
       </section>
     </>
   )
@@ -219,13 +251,16 @@ function MiEquipo({ equipo }) {
 export function FichaDelEquipo() {
   const { n } = useParams()
   const { equipo, error } = useMiEquipo()
-  const { esDocente } = useSesion()
+  const { esDocente, perfil } = useSesion()
 
   if (esDocente) return <Navigate to="/tercer-corte/docente" replace />
   if (equipo === undefined) return <p className="cargando" role="status">Cargando…</p>
   if (!equipo) return <Navigate to="/tercer-corte" replace />
-  if (n !== '3' && n !== '4') return <Navigate to="/tercer-corte" replace />
-  const Ficha = n === '4' ? Ficha4 : Ficha3
+  const grupo3 = esGrupoSencillo(perfil?.grupo)
+  // La ficha 5 es solo del Grupo 3, y el Grupo 3 ya hizo la 3 en una hoja aparte.
+  if (n !== '3' && n !== '4' && n !== '5') return <Navigate to="/tercer-corte" replace />
+  if ((n === '5' && !grupo3) || (n === '3' && grupo3)) return <Navigate to="/tercer-corte" replace />
+  const Ficha = n === '5' ? Ficha5 : n === '4' ? Ficha4 : Ficha3
   return (
     <>
       {error && <p className="aviso aviso--error" role="alert">{error}</p>}

@@ -128,5 +128,5 @@ export function useFicha(equipoId, ficha) {
     }
   }, [equipoId, ficha, guardarYa, cargar])
 
-  return { contenido, estado, comentarios, actualizadoPor, actualizadoEn, cargando, guardado, error, cambiar, entregar, recargar: cargar }
+  return { ficha, contenido, estado, comentarios, actualizadoPor, actualizadoEn, cargando, guardado, error, cambiar, entregar, recargar: cargar }
 }

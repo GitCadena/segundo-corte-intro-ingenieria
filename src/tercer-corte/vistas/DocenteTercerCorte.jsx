@@ -2,9 +2,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { almacenTc, fijarUsuarioDemo, modoDemostracionTc } from '../lib/almacenTc.js'
 import { useSesion } from '../../estado/SesionProvider.jsx'
-import { csvFicha3, csvFicha4, descargarPdf, descargarTexto, pdfFicha3, pdfFicha4 } from '../lib/exportar.js'
+import { csvFicha3, csvFicha4, csvFicha5, descargarPdf, descargarTexto, pdfFicha3, pdfFicha4, pdfFicha5 } from '../lib/exportar.js'
 import Ficha3 from './Ficha3.jsx'
 import Ficha4 from './Ficha4.jsx'
+import Ficha5 from './Ficha5.jsx'
 import './tercer-corte.css'
 
 const INTERVALO = 10000
@@ -52,7 +53,7 @@ export default function DocenteTercerCorte() {
         const f = await almacenTc.obtenerFicha(e.id, n)
         filas.push({ equipo: e.nombre, miembros: e.miembros, estado: f.estado, entregada_en: f.entregada_en, contenido: f.contenido })
       }
-      descargarTexto(`tercer-corte-ficha-${n}.csv`, n === 4 ? csvFicha4(filas) : csvFicha3(filas))
+      descargarTexto(`tercer-corte-ficha-${n}.csv`, n === 5 ? csvFicha5(filas) : n === 4 ? csvFicha4(filas) : csvFicha3(filas))
     } catch (e) {
       setError(e.message)
     } finally {
@@ -64,7 +65,7 @@ export default function DocenteTercerCorte() {
     try {
       const f = await almacenTc.obtenerFicha(e.id, n)
       const datos = { equipo: e.nombre, miembros: e.miembros, estado: f.estado, contenido: f.contenido }
-      descargarPdf(n === 4 ? pdfFicha4(datos) : pdfFicha3(datos), `ficha-${n}-${nombreArchivo(e.nombre)}.pdf`)
+      descargarPdf(n === 5 ? pdfFicha5(datos) : n === 4 ? pdfFicha4(datos) : pdfFicha3(datos), `ficha-${n}-${nombreArchivo(e.nombre)}.pdf`)
     } catch (err) {
       setError(err.message)
     }
@@ -109,6 +110,9 @@ export default function DocenteTercerCorte() {
             <button type="button" className="boton boton--secundario" onClick={() => exportarCsv(4)} disabled={exportando || equipos.length === 0}>
               {exportando ? 'Preparando…' : 'Exportar ficha 4 a CSV'}
             </button>
+            <button type="button" className="boton boton--secundario" onClick={() => exportarCsv(5)} disabled={exportando || equipos.length === 0}>
+              {exportando ? 'Preparando…' : 'Exportar ficha 5 a CSV'}
+            </button>
           </div>
 
           {equipos.length === 0 ? (
@@ -122,6 +126,7 @@ export default function DocenteTercerCorte() {
                     <th scope="col">Integrantes</th>
                     <th scope="col">Ficha 3</th>
                     <th scope="col">Ficha 4</th>
+                    <th scope="col">Ficha 5</th>
                     <th scope="col">Acciones</th>
                   </tr>
                 </thead>
@@ -129,6 +134,7 @@ export default function DocenteTercerCorte() {
                   {equipos.map((e) => {
                     const f3 = e.fichas.find((f) => f.ficha === 3)
                     const f4 = e.fichas.find((f) => f.ficha === 4)
+                    const f5 = e.fichas.find((f) => f.ficha === 5)
                     return (
                       <tr key={e.id}>
                         <th scope="row">{e.nombre}<br /><span className="tc-ultimo">Código {e.codigo}</span></th>
@@ -145,11 +151,16 @@ export default function DocenteTercerCorte() {
                           <span className={`chip ${f4?.estado === 'entregada' ? 'chip--tipo' : ''}`}>{textoEstado(f4)}</span>
                         </td>
                         <td>
+                          <span className={`chip ${f5?.estado === 'entregada' ? 'chip--tipo' : ''}`}>{textoEstado(f5)}</span>
+                        </td>
+                        <td>
                           <div className="tc-acciones">
                             <Link className="boton boton--pequeno boton--principal" to={`/tercer-corte/docente/${e.id}/ficha/3`}>Ficha 3</Link>
                             <Link className="boton boton--pequeno boton--principal" to={`/tercer-corte/docente/${e.id}/ficha/4`}>Ficha 4</Link>
+                            <Link className="boton boton--pequeno boton--principal" to={`/tercer-corte/docente/${e.id}/ficha/5`}>Ficha 5</Link>
                             <button type="button" className="boton boton--pequeno boton--texto" onClick={() => exportarPdf(e, 3)}>PDF 3</button>
                             <button type="button" className="boton boton--pequeno boton--texto" onClick={() => exportarPdf(e, 4)}>PDF 4</button>
+                            <button type="button" className="boton boton--pequeno boton--texto" onClick={() => exportarPdf(e, 5)}>PDF 5</button>
                           </div>
                         </td>
                       </tr>
@@ -181,13 +192,13 @@ export function FichaParaDocente() {
   }, [equipoId])
 
   if (equipo === undefined) return <p className="cargando" role="status">Cargando…</p>
-  if (!equipo || (n !== '3' && n !== '4')) {
+  if (!equipo || (n !== '3' && n !== '4' && n !== '5')) {
     return (
       <p className="vacio-util">
         No se encontró esa ficha. <Link to="/tercer-corte/docente">Volver a la lista</Link>
       </p>
     )
   }
-  const Ficha = n === '4' ? Ficha4 : Ficha3
+  const Ficha = n === '5' ? Ficha5 : n === '4' ? Ficha4 : Ficha3
   return <Ficha equipo={{ id: equipo.id, nombre: equipo.nombre, miembros: equipo.miembros }} modo="docente" />
 }

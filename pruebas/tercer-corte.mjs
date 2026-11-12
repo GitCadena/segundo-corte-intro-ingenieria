@@ -4,7 +4,7 @@
  * No dependen del navegador ni de la base de datos.
  */
 import { validarCriterio, atributosRepetidos, revisarFicha3 } from '../src/tercer-corte/lib/validadores.js'
-import { csvFicha3, pdfFicha3, csvFicha4, pdfFicha4 } from '../src/tercer-corte/lib/exportar.js'
+import { csvFicha3, pdfFicha3, csvFicha4, pdfFicha4, csvFicha5, pdfFicha5 } from '../src/tercer-corte/lib/exportar.js'
 import { EJEMPLO_LA_ESQUINA } from '../src/tercer-corte/data/iso.js'
 import { PSEUDO_EJEMPLO, PSEUDO_CON_FALLA, CASO_EJEMPLO } from '../src/tercer-corte/data/pseudocodigo.js'
 import {
@@ -12,6 +12,8 @@ import {
 } from '../src/tercer-corte/lib/interprete.js'
 import { revisarFicha4, firmaEjecucion, firmaPrueba } from '../src/tercer-corte/lib/ficha4.js'
 import { normalizarLineas, limpiarPseudocodigo } from '../src/tercer-corte/lib/normalizar.js'
+import { revisarFicha5 } from '../src/tercer-corte/lib/ficha5.js'
+import { TRADUCCION, LENGUAJES_TRADUCCION } from '../src/tercer-corte/data/ficha5.js'
 import { esGrupoSencillo, armarPseudocodigo, faltantes, nombreDeProceso, EJEMPLO_ASISTENTE } from '../src/tercer-corte/lib/asistente.js'
 import { construirTabla, revisarTabla, respuestasCorrectas, sugerirCaso, tipoDePaso } from '../src/tercer-corte/lib/pruebaGuiada.js'
 
@@ -563,6 +565,52 @@ prueba('guiada · la tabla correcta se aprueba y una casilla mal se detecta', ()
   const claves = Object.keys(buenas).filter((k) => !k.endsWith('|?'))
   const r2 = revisarTabla(t, { ...buenas, [claves[0]]: '99999' })
   return ok1 && !r2.todas && r2.ok[claves[0]] === false ? true : JSON.stringify([ok1, r2.buenas, r2.total])
+})
+
+const ficha5Base = () => ({
+  ...ficha4Completa(),
+  paradigma: 'oo',
+  justificacion: 'El problema tiene entidades claras (pedidos, productos y clientes) con datos propios y reglas propias, como el descuento del pedido.',
+  clases: 'Pedido: calcula su total\nProducto: guarda nombre y precio',
+  lenguaje: 'python',
+  lenguaje_porque: 'Es el que mejor conocemos, se parece al pseudocódigo y el proyecto corre en el computador de la sala.',
+  lenguaje_primero: 'La entrada y el cálculo del total',
+  pseudo_importa: 'La prueba de escritorio nos mostró que el descuento se aplicaba mal antes de programar nada.',
+})
+
+prueba('ficha 5 · vacía no se puede entregar; con lo esencial sí, aunque falte lo demás', () => {
+  const vacia = revisarFicha5({})
+  const esencial = revisarFicha5({ pseudo: 'PROCESO x\ntotal = 1\nSALIDA total', paradigma: 'estructurado', justificacion: 'Es una serie de pasos de cálculo, sin entidades.', lenguaje: 'java' })
+  return !vacia.puedeEntregar && esencial.puedeEntregar && !esencial.completa ? true : JSON.stringify([vacia.puedeEntregar, esencial.puedeEntregar, esencial.completa])
+})
+
+prueba('ficha 5 · exige el nombre del lenguaje cuando eligen «Otro» y el paradigma elegido', () => {
+  const sinNombre = revisarFicha5({ ...ficha5Base(), lenguaje: 'otro' })
+  const conNombre = revisarFicha5({ ...ficha5Base(), lenguaje: 'otro', lenguaje_otro: 'Kotlin' })
+  const sinParadigma = revisarFicha5({ ...ficha5Base(), paradigma: '' })
+  return !sinNombre.puedeEntregar && conNombre.puedeEntregar && !sinParadigma.puedeEntregar ? true : JSON.stringify([sinNombre.puedeEntregar, conNombre.puedeEntregar, sinParadigma.puedeEntregar])
+})
+
+prueba('ficha 5 · completa cuando todo está bien y pide clases u funciones según el paradigma', () => {
+  const r = revisarFicha5(ficha5Base())
+  const ids = r.puntos.map((p) => p.id)
+  const faltaEstructura = revisarFicha5({ ...ficha5Base(), clases: 'Pedido' }).puntos.find((p) => p.id === 'estructura').ok
+  const estructurado = revisarFicha5({ ...ficha5Base(), paradigma: 'estructurado', clases: '', funciones: 'calcularTotal: suma\narmarLista: junta' }).puntos.find((p) => p.id === 'estructura')
+  return r.completa && ids.includes('paradigma') && ids.includes('lenguaje') && !ids.includes('par') && !faltaEstructura && estructurado.ok ? true : JSON.stringify([r.puntos.filter((p) => !p.ok).map((p) => p.id), faltaEstructura, estructurado])
+})
+
+prueba('ficha 5 · el CSV y el PDF incluyen paradigma, lenguaje y justificación', () => {
+  const fila = { equipo: 'Mi tienda', miembros: [{ nombres: 'Ana', apellidos: 'Paz' }], estado: 'entregada', entregada_en: '2026-11-12', contenido: ficha5Base() }
+  const csv = csvFicha5([fila])
+  const pdf = pdfFicha5({ equipo: 'Mi tienda', miembros: fila.miembros, estado: 'entregada', contenido: fila.contenido })
+  const texto = typeof pdf === 'string' ? pdf : Buffer.from(pdf).toString('latin1')
+  return /Orientado a objetos/.test(csv) && /Python/.test(csv) && /entidades claras/.test(csv) && texto.startsWith('%PDF') ? true : JSON.stringify(csv.slice(0, 300))
+})
+
+prueba('ficha 5 · la traducción de ejemplo cubre las cuatro partes en los tres lenguajes', () => {
+  const partes = new Set(TRADUCCION.map((f) => f.parte))
+  const completo = TRADUCCION.every((f) => f.pseudo && f.python && f.javascript && f.java)
+  return partes.size === 4 && completo && LENGUAJES_TRADUCCION.length === 3 ? true : JSON.stringify([...partes])
 })
 
 prueba('sencilla · solo el Grupo 3 ve la versión sencilla', () => {

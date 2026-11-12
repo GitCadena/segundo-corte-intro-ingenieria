@@ -1,0 +1,33 @@
+/* Ficha 5 del tercer corte. Solo variables de styles.css; clases con prefijo tc-. */
+
+.tc-argumentos { display: grid; gap: .8rem; grid-template-columns: 1fr; margin: 1rem 0 1.4rem; }
+@media (min-width: 760px) { .tc-argumentos { grid-template-columns: 1fr 1fr; } }
+.tc-argumento { position: relative; background: var(--papel-suave); border: 1px solid var(--borde); border-radius: var(--radio); padding: 1rem 1.1rem 1rem 3.2rem; }
+.tc-argumento h3 { margin: 0 0 .3rem; font-size: 1.02rem; }
+.tc-argumento p { margin: 0; font-size: .94rem; color: var(--tinta-suave); }
+.tc-argumento__n { position: absolute; left: .9rem; top: 1rem; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--acento); color: #fff; font-weight: 700; display: grid; place-items: center; font-size: .9rem; }
+
+.tc-pestanas { display: flex; gap: .4rem; flex-wrap: wrap; margin: .6rem 0; }
+.tc-pestana { border: 1px solid var(--borde-fuerte); background: var(--papel); border-radius: 999px; padding: .35rem .9rem; font: inherit; cursor: pointer; }
+.tc-pestana--activa { background: var(--acento); border-color: var(--acento); color: #fff; font-weight: 600; }
+
+.tc-traduccion { min-width: 640px; }
+.tc-traduccion td { vertical-align: top; }
+.tc-traduccion pre { margin: 0; font-family: var(--fuente-mono); font-size: .85rem; white-space: pre-wrap; }
+.tc-traduccion td:first-child { font-size: .8rem; font-weight: 600; white-space: nowrap; }
+.tc-traduccion__preparar td:first-child { color: #2563eb; }
+.tc-traduccion__repetir td:first-child { color: #ea580c; }
+.tc-traduccion__decidir td:first-child { color: #9333ea; }
+.tc-traduccion__entregar td:first-child { color: #16a34a; }
+
+.tc-ejemplo5 { background: var(--papel-suave); border: 1px solid var(--borde); border-radius: var(--radio); padding: .6rem 1.1rem; margin-bottom: .8rem; }
+
+.tc-opciones { border: 0; padding: 0; margin: 0 0 1.1rem; display: grid; gap: .6rem; }
+.tc-opciones legend { margin-bottom: .4rem; }
+.tc-opcion { display: flex; gap: .7rem; align-items: flex-start; border: 1px solid var(--borde); border-radius: var(--radio); padding: .75rem .9rem; background: var(--papel); cursor: pointer; }
+.tc-opcion:hover { border-color: var(--acento); }
+.tc-opcion--elegida { border: 2px solid var(--acento); background: var(--acento-suave); padding: calc(.75rem - 1px) calc(.9rem - 1px); }
+.tc-opcion input { margin-top: .3rem; flex: none; }
+.tc-opcion strong { display: block; }
+.tc-opcion__texto, .tc-opcion__cuando { display: block; font-size: .92rem; }
+.tc-opcion__cuando { color: var(--acento-oscuro); margin-top: .15rem; }
