@@ -21,6 +21,11 @@ const SIGNIFICADOS = [
 ]
 
 // Una receta de la vida real, con las mismas partes que un algoritmo.
+// Se muestran mezcladas (de forma fija) para que haya que relacionar de verdad y no basta ir de arriba abajo.
+const ORDEN_FICHAS = ['si', 'salida', 'flecha', 'paracada', 'entrada']
+const ORDEN_SIGNIFICADOS = ['paracada', 'salida', 'entrada', 'si', 'flecha']
+const enOrden = (lista, orden) => orden.map((id) => lista.find((x) => x.id === id))
+
 const PASOS_JUGO = [
   { id: 'p1', texto: 'Tener las naranjas y el azúcar', parte: 'Entrada', color: '#2563eb' },
   { id: 'p2', texto: 'Lavar las naranjas', parte: 'Paso normal', color: '#64748b' },
@@ -103,7 +108,7 @@ function Relacionar({ fichas, huecos, hecho, onHecho, pintar, textoPista }) {
     if (hueco.respuesta === fichaId) {
       const nuevas = { ...puestas, [huecoId]: fichaId }
       setPuestas(nuevas)
-      setMensaje({ ok: true, texto: '¡Correcto!' })
+      setMensaje({ ok: true, texto: 'Correcto.' })
       if (Object.keys(nuevas).length === huecos.length) onHecho()
     } else {
       const n = (errores[fichaId] ?? 0) + 1
@@ -178,13 +183,13 @@ function Juego1({ hecho, onHecho }) {
       <h3>Juego 1 · Une cada palabra con lo que significa</h3>
       <p>Estas son las palabras que usarán para escribir su pseudocódigo. Lleva cada una a la explicación que le corresponde.</p>
       <Relacionar
-        fichas={PALABRAS}
+        fichas={enOrden(PALABRAS, ORDEN_FICHAS)}
         huecos={SIGNIFICADOS.map((s) => ({ id: s.id, respuesta: s.id, texto: s.texto }))}
         hecho={hecho}
         onHecho={onHecho}
         textoPista={(f) => f.pista}
         pintar={(sitios) =>
-          SIGNIFICADOS.map((s) => (
+          enOrden(SIGNIFICADOS, ORDEN_SIGNIFICADOS).map((s) => (
             <div key={s.id} className="tc-relacionar__fila">
               {sitios[s.id]}
               <p className="tc-relacionar__texto">{s.texto}</p>
@@ -192,7 +197,7 @@ function Juego1({ hecho, onHecho }) {
           ))
         }
       />
-      {hecho && <p className="aviso aviso--ok" role="status">¡Las cinco palabras! Con ellas se escribe casi cualquier proceso.</p>}
+      {hecho && <p className="aviso aviso--ok" role="status">Las cinco coinciden. Con estas palabras se escribe casi cualquier proceso.</p>}
     </div>
   )
 }
@@ -337,7 +342,7 @@ function Juego3({ habilitado, hecho, onHecho }) {
         llévalas a su lugar. Al lado de cada hueco hay una pista de lo que hace.
       </p>
       <Relacionar
-        fichas={PALABRAS.map((p) => (p.id === 'si' ? { ...p, texto: 'SI' } : p))}
+        fichas={enOrden(PALABRAS, ['salida', 'si', 'entrada', 'paracada', 'flecha']).map((p) => (p.id === 'si' ? { ...p, texto: 'SI' } : p))}
         huecos={huecos}
         hecho={hecho}
         onHecho={onHecho}
