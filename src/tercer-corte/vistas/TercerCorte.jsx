@@ -176,7 +176,7 @@ function MiEquipo({ equipo }) {
             {copiado ? 'Copiado' : 'Copiar'}
           </button>
         </p>
-        <p className="etiqueta-campo">Integrantes ({equipo.miembros.length} de 4)</p>
+        <p className="etiqueta-campo">Integrantes ({equipo.miembros.length} de {Math.max(4, equipo.miembros.length)})</p>
         <ul className="tc-integrantes">
           {equipo.miembros.map((m) => (
             <li key={m.perfil_id}>{m.nombres} {m.apellidos}</li>
