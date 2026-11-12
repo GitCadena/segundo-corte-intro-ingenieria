@@ -120,7 +120,7 @@ function FichaCuatro({ equipo, modo }) {
                 <button type="button" className="boton boton--texto" onClick={() => setConfirmando(false)}>Todavía no</button>
               </div>
             )}
-            {cerrada && <p className="aviso aviso--nota" role="status">El plazo para entregar la ficha 4 cerró el 12 de noviembre a las 11:10 a. m. Ya no se reciben entregas.</p>}
+            {cerrada && <p className="aviso aviso--nota" role="status">El plazo para entregar la ficha 4 cerró el 12 de noviembre a las 11:15 a. m. Ya no se reciben entregas.</p>}
             {avisoEntrega && <p className="aviso aviso--error" role="alert">{avisoEntrega}</p>}
           </div>
         )}
