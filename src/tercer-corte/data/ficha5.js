@@ -80,17 +80,44 @@ export const LENGUAJES_TRADUCCION = [
   { id: 'java', nombre: 'Java', nota: 'Igual que JavaScript, pero cada dato declara su tipo (double, int) y todo vive dentro de una clase.' },
 ]
 
-export const EJEMPLO_PROCESO_2 = {
-  proceso: 'armar la lista de producción del día. Recorre los pedidos con fecha de hoy (repetición), y si un producto ya está en la lista suma la cantidad; si no, lo agrega (decisión).',
-  paradigma: 'orientado a objetos.',
-  justificacion:
-    'el problema tiene entidades claras (pedidos, productos y clientes) con datos propios. Cada una tiene reglas propias, como el descuento del pedido. Además, nuevos productos se agregan sin tocar el resto.',
-  clases: 'Pedido (calcula su total), Producto (nombre y precio), Cliente (nombre y contacto).',
+export const PASOS_PARA_PROGRAMAR = [
+  {
+    titulo: 'Escojan uno o dos lenguajes para probar',
+    texto: 'No tienen que decidir todavía. Prueben el que les llame la atención y, si alcanzan, un segundo para comparar.',
+  },
+  {
+    titulo: 'Traduzcan su pseudocódigo de la ficha 4',
+    texto: 'Usen la tabla de arriba como guía: cada línea del pseudocódigo se vuelve una línea (o dos) de código. Empiecen por la entrada, el ciclo y la decisión.',
+  },
+  {
+    titulo: 'Ejecútenlo con su caso de la ficha 4',
+    texto: 'Usen el mismo caso de su prueba de escritorio. Si el resultado coincide con el que calcularon a mano, la traducción está bien.',
+  },
+  {
+    titulo: 'Cuenten qué tal les fue',
+    texto: 'Qué les resultó fácil, qué les costó y qué no entendieron. Eso es lo que va a decidir su lenguaje en la parte D.',
+  },
+]
+
+export const HERRAMIENTAS = [
+  'Un compilador en línea (por ejemplo OnlineGDB, Replit o JDoodle): no hay que instalar nada.',
+  'La consola del navegador (tecla F12): sirve para probar JavaScript.',
+  'Un editor instalado en el computador (VS Code, IDLE, Visual Studio, NetBeans…).',
+  'Si no lo pueden ejecutar, escriban el código igual y anoten qué les faltó. Se valora el intento.',
+]
+
+export const EJEMPLO_PROGRAMAR = {
+  lenguaje: 'Python (y JavaScript para comparar).',
+  herramienta: 'Un compilador en línea, desde el celular y desde la sala de cómputo.',
+  codigo: 'def calcular_total(productos):\n    total = 0\n    unidades = 0\n    for item in productos:\n        total = total + item["cantidad"] * item["precio"]\n        unidades = unidades + item["cantidad"]\n    ...',
+  resultado: 'Sí, con el pedido de 10 panes y 2 tortas dio 31.500, igual que en la prueba de escritorio.',
+  nota: 'En Python casi no hubo que pensar: se parece al pseudocódigo. En JavaScript nos costó acordarnos de las llaves y los «;».',
 }
 
 export const PARA_LA_SUSTENTACION = [
-  'El pseudocódigo del proceso 1 (ficha 4) y del proceso 2, cada uno con su prueba de escritorio.',
+  'El pseudocódigo del proceso principal (ficha 4) con su prueba de escritorio: es su plano.',
+  'La traducción a código que hicieron y qué resultado les dio con el caso de prueba.',
   'El paradigma que eligieron y la justificación, hablando de su problema.',
   'Las clases (o funciones) del programa y qué hace cada una.',
-  'El lenguaje elegido y las razones, y qué van a programar primero.',
+  'El lenguaje elegido, las razones (apóyense en lo que probaron) y qué van a programar primero.',
 ]

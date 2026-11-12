@@ -221,7 +221,7 @@ function MiEquipo({ equipo }) {
         {grupo3 && (
           <div className="tc-ficha-fila">
             <div>
-              <h3>Ficha 5 · Segundo proceso, paradigma y lenguaje</h3>
+              <h3>Ficha 5 · Del pseudocódigo al código</h3>
               <p>
                 {f5?.estado === 'entregada'
                   ? `Entregada${f5.actualizado_en ? ` · ${formatearHora(f5.actualizado_en)}` : ''}`

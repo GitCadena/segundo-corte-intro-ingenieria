@@ -31,3 +31,15 @@
 .tc-opcion strong { display: block; }
 .tc-opcion__texto, .tc-opcion__cuando { display: block; font-size: .92rem; }
 .tc-opcion__cuando { color: var(--acento-oscuro); margin-top: .15rem; }
+
+.tc-como--pasos { list-style: decimal; }
+.tc-lista--ayuda { margin: .2rem 0 1.2rem; font-size: .9rem; color: var(--tinta-suave); }
+.tc-opciones--compactas .tc-opcion { padding: .55rem .9rem; }
+.tc-opcion-lenguaje { border-top: 1px solid var(--borde); margin-top: 1.2rem; padding-top: .4rem; }
+.tc-opcion-lenguaje__cabeza { display: grid; gap: .8rem; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .tc-opcion-lenguaje__cabeza { grid-template-columns: minmax(180px, 260px) 1fr; } }
+.tc-codigo-area { font-family: var(--fuente-mono); font-size: .88rem; line-height: 1.5; white-space: pre; tab-size: 4; }
+
+.tc-sustenta { background: var(--acento-suave); border: 2px solid var(--acento); }
+.tc-sustenta__etiqueta { display: inline-block; margin: 0 0 .4rem; padding: .15rem .7rem; border-radius: 999px; background: var(--acento); color: #fff; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.tc-sustenta__lista { margin: .8rem 0; padding-left: 1.3rem; display: grid; gap: .45rem; }

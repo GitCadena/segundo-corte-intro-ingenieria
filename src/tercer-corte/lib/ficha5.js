@@ -1,9 +1,9 @@
 /**
- * Ficha 5 · Segundo proceso, paradigma y lenguaje (Grupo 3). Reutiliza la revisión
- * de la ficha 4 para el segundo proceso y agrega paradigma, justificación,
- * clases o funciones y la elección del lenguaje. Lógica pura.
+ * Ficha 5 · Del pseudocódigo al código (Grupo 3). El equipo traduce el pseudocódigo
+ * de la ficha 4 a uno o dos lenguajes para probarlos, elige el paradigma y escoge el
+ * lenguaje con el que va a programar. No repite el pseudocódigo ni la prueba de
+ * escritorio: usa los de la ficha 4. Lógica pura.
  */
-import { revisarFicha4 } from './ficha4.js'
 
 export const PARADIGMAS = [
   {
@@ -29,27 +29,48 @@ export const LENGUAJES = [
   { id: 'otro', nombre: 'Otro', texto: 'Si tienen razones de peso para usar otro lenguaje, escríbanlo y defiéndanlo.', ideal: 'Cuando el docente o el equipo ya lo trabajaron.' },
 ]
 
+/** Qué tan bien les fue al ejecutar el código con el caso de la ficha 4. */
+export const RESULTADOS = [
+  { id: 'si', texto: 'Sí, dio el mismo resultado que en la prueba de escritorio' },
+  { id: 'no', texto: 'Lo ejecutamos, pero dio un resultado distinto' },
+  { id: 'noejecuto', texto: 'No pudimos ejecutarlo todavía' },
+]
+
 const lleno = (v) => String(v ?? '').trim() !== ''
 const largo = (v) => String(v ?? '').trim().length
 const lineasCon = (v) => String(v ?? '').split(/\r?\n/).filter((l) => l.trim() !== '')
 
-export const nombreLenguaje = (c) => (c.lenguaje === 'otro' ? String(c.lenguaje_otro ?? '').trim() : LENGUAJES.find((l) => l.id === c.lenguaje)?.nombre ?? '')
+export const nombreDe = (id, otro) => (id === 'otro' ? String(otro ?? '').trim() : LENGUAJES.find((l) => l.id === id)?.nombre ?? '')
+export const nombreLenguaje = (c) => nombreDe(c.lenguaje, c.lenguaje_otro)
 export const nombreParadigma = (c) => PARADIGMAS.find((p) => p.id === c.paradigma)?.titulo ?? ''
 
 /** Las clases (orientado a objetos) o las funciones (estructurado) se listan una por línea. */
 export const claveDeEstructura = (c) => (c.paradigma === 'oo' ? 'clases' : 'funciones')
 
 export function revisarFicha5(c) {
-  const base = revisarFicha4(c)
   const estructura = lineasCon(c[claveDeEstructura(c)])
   const eligioOtro = c.lenguaje === 'otro'
-  const extra = [
+  const op1Otro = c.op1_lenguaje === 'otro'
+  const puntos = [
     {
-      id: 'paradigma',
-      texto: 'Eligieron el paradigma del proyecto',
-      ok: c.paradigma === 'estructurado' || c.paradigma === 'oo',
+      id: 'prueban',
+      texto: 'Tradujeron su pseudocódigo a código en al menos un lenguaje',
+      ok: lleno(c.op1_lenguaje) && (!op1Otro || lleno(c.op1_lenguaje_otro)) && largo(c.op1_codigo) >= 40,
+      pista: lleno(c.op1_codigo) && largo(c.op1_codigo) < 40 ? 'Escriban más: al menos la entrada, el ciclo y la decisión de su pseudocódigo.' : null,
+    },
+    {
+      id: 'herramienta',
+      texto: 'Dijeron con qué herramienta lo escriben y lo prueban',
+      ok: largo(c.como_programan) >= 8,
       pista: null,
     },
+    {
+      id: 'resultado',
+      texto: 'Contaron qué pasó al ejecutarlo con el caso de la ficha 4',
+      ok: lleno(c.prueba_igual),
+      pista: null,
+    },
+    { id: 'paradigma', texto: 'Eligieron el paradigma del proyecto', ok: c.paradigma === 'estructurado' || c.paradigma === 'oo', pista: null },
     {
       id: 'justificacion',
       texto: 'Justificaron el paradigma hablando de su problema (unas tres líneas)',
@@ -70,32 +91,25 @@ export function revisarFicha5(c) {
     },
     {
       id: 'lenguaje_porque',
-      texto: 'Explicaron por qué ese lenguaje es el adecuado para su proyecto',
+      texto: 'Explicaron por qué ese lenguaje es el adecuado, usando lo que probaron',
       ok: largo(c.lenguaje_porque) >= 60,
-      pista: lleno(c.lenguaje_porque) && largo(c.lenguaje_porque) < 60 ? 'Den razones de su proyecto: qué van a construir, dónde se usará, quién lo conoce.' : null,
+      pista: lleno(c.lenguaje_porque) && largo(c.lenguaje_porque) < 60 ? 'Den razones concretas: qué les resultó fácil o difícil, qué van a construir, quién lo conoce.' : null,
     },
-    {
-      id: 'primero',
-      texto: 'Dijeron qué van a programar primero',
-      ok: largo(c.lenguaje_primero) >= 10,
-      pista: null,
-    },
+    { id: 'primero', texto: 'Dijeron qué van a programar primero', ok: largo(c.lenguaje_primero) >= 10, pista: null },
     {
       id: 'importo',
       texto: 'Explicaron con sus palabras para qué les sirvió el pseudocódigo',
       ok: largo(c.pseudo_importa) >= 60,
-      pista: lleno(c.pseudo_importa) && largo(c.pseudo_importa) < 60 ? 'Cuenten algo concreto: qué error encontraron o qué decisión se facilitó.' : null,
+      pista: lleno(c.pseudo_importa) && largo(c.pseudo_importa) < 60 ? 'Cuenten algo concreto: qué les ahorró o qué se les facilitó al traducir.' : null,
     },
   ]
-  const puntos = [...base.puntos.filter((p) => p.id !== 'par'), ...extra]
-  const lineasPseudo = lineasCon(c.pseudo).length
   return {
-    ...base,
     puntos,
-    // Para entregar basta lo esencial: el segundo proceso escrito, el paradigma justificado y el lenguaje.
-    // El intérprete no entiende todas las formas de escribir y el docente revisa cada ficha a mano.
+    // Para entregar basta lo esencial. No hay consola que revise el código: el docente lo revisa a mano.
     puedeEntregar:
-      lineasPseudo >= 2 &&
+      lleno(c.op1_lenguaje) &&
+      (!op1Otro || lleno(c.op1_lenguaje_otro)) &&
+      largo(c.op1_codigo) >= 20 &&
       (c.paradigma === 'estructurado' || c.paradigma === 'oo') &&
       largo(c.justificacion) >= 40 &&
       lleno(c.lenguaje) &&

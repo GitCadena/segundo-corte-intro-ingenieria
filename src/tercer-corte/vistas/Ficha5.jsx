@@ -1,12 +1,19 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSesion } from '../../estado/SesionProvider.jsx'
 import { almacenTc } from '../lib/almacenTc.js'
 import { useFicha } from '../lib/useFicha.js'
-import { LENGUAJES, PARADIGMAS, claveDeEstructura, revisarFicha5 } from '../lib/ficha5.js'
-import { ARGUMENTOS, EJEMPLO_PROCESO_2, LENGUAJES_TRADUCCION, PARA_LA_SUSTENTACION, TRADUCCION } from '../data/ficha5.js'
+import { LENGUAJES, PARADIGMAS, RESULTADOS, claveDeEstructura, revisarFicha5 } from '../lib/ficha5.js'
+import {
+  ARGUMENTOS,
+  EJEMPLO_PROGRAMAR,
+  HERRAMIENTAS,
+  LENGUAJES_TRADUCCION,
+  PARA_LA_SUSTENTACION,
+  PASOS_PARA_PROGRAMAR,
+  TRADUCCION,
+} from '../data/ficha5.js'
 import { Campo, Comentarios as ComentariosFicha, EstadoFicha } from './componentes.jsx'
-import { BloqueDefinir, BloquePrueba, BloquePseudocodigo } from './Ficha4.jsx'
 import './tercer-corte.css'
 import './ficha4.css'
 import './ficha5.css'
@@ -14,9 +21,9 @@ import './ficha5.css'
 const Comentarios = (props) => <ComentariosFicha ficha={5} {...props} />
 
 /**
- * Ficha 5 · Segundo proceso, paradigma y lenguaje (Grupo 3). El equipo repite lo de
- * la ficha 4 con un segundo proceso, elige el paradigma, lo justifica y escoge el
- * lenguaje con el que va a programar. El docente la ve en modo lectura.
+ * Ficha 5 · Del pseudocódigo al código (Grupo 3). Ya tienen el plano (ficha 4): aquí
+ * lo traducen a código en uno o dos lenguajes, eligen el paradigma y escogen el
+ * lenguaje con el que van a programar. El docente la ve en modo lectura.
  */
 export default function Ficha5({ equipo, modo = 'equipo' }) {
   return <FichaCinco key={`${equipo.id}-5`} equipo={equipo} modo={modo} />
@@ -58,10 +65,10 @@ function FichaCinco({ equipo, modo }) {
       <header className="tc-cabecera">
         <div>
           <p className="etiqueta-campo">Proyecto: {equipo.nombre}</p>
-          <h1>Ficha 5 · Segundo proceso, paradigma y lenguaje</h1>
+          <h1>Ficha 5 · Del pseudocódigo al código</h1>
           <p className="tc-objetivo">
-            Repitan lo de la ficha 4 con un segundo proceso, decidan cómo se va a organizar el programa y elijan el lenguaje con el que van a empezar a
-            programar. En la próxima clase lo sustentan.
+            Ya tienen el plano (la ficha 4). Ahora lo pasan a código en uno o dos lenguajes, deciden cómo se va a organizar el programa y eligen el lenguaje con el
+            que van a programar. La próxima clase lo sustentan.
           </p>
         </div>
         <EstadoFicha f={f} entregada={entregada} esDocente={esDocente} />
@@ -77,12 +84,8 @@ function FichaCinco({ equipo, modo }) {
       {f.error && <p className="aviso aviso--error tc-aviso" role="alert">{f.error}</p>}
 
       {!esDocente && <PorQueImporto />}
-      {!esDocente && <Ejemplo />}
 
-      <BloqueDefinir {...ctx} segundo />
-      <BloquePseudocodigo {...ctx} />
-      <BloquePrueba {...ctx} />
-
+      <BloqueProgramar {...ctx} />
       <BloqueParadigma {...ctx} />
       <BloqueLenguaje {...ctx} />
 
@@ -100,15 +103,15 @@ function FichaCinco({ equipo, modo }) {
           ))}
         </ul>
         <p className="tc-nota">
-          Para entregar necesitan como mínimo el segundo proceso escrito, el paradigma con su justificación y el lenguaje elegido. Lo ideal es dejar todos los
-          puntos en verde: el docente revisa la ficha completa antes de la sustentación.
+          Para entregar necesitan como mínimo la traducción a código de un lenguaje, el paradigma con su justificación y el lenguaje elegido. Lo ideal es dejar todos
+          los puntos en verde: el docente revisa la ficha completa antes de la sustentación.
         </p>
 
         {!esDocente && !entregada && (
           <div className="tc-entrega">
             {!confirmando ? (
               <button type="button" className="boton boton--principal" disabled={!revision.puedeEntregar} onClick={() => setConfirmando(true)}>
-                {revision.puedeEntregar ? 'Entregar la ficha' : 'Falta el proceso, el paradigma o el lenguaje para entregar'}
+                {revision.puedeEntregar ? 'Entregar la ficha' : 'Falta el código, el paradigma o el lenguaje para entregar'}
               </button>
             ) : (
               <div className="tc-confirmar" role="alert">
@@ -149,7 +152,8 @@ function PorQueImporto() {
     <section className="tarjeta tc-bloque" aria-labelledby="tc-importo">
       <h2 id="tc-importo" className="tc-bloque__titulo">A · Por qué el pseudocódigo que hicieron importa</h2>
       <p className="tc-objetivo">
-        Escribir el pseudocódigo y probarlo a mano pudo parecer un paso de más. No lo fue: es lo que les permite elegir lenguaje con la cabeza fría. Cuatro razones:
+        Escribir el pseudocódigo y probarlo a mano pudo parecer un paso de más. No lo fue: es lo que les permite programar y elegir lenguaje con la cabeza fría.
+        Cuatro razones:
       </p>
       <div className="tc-argumentos">
         {ARGUMENTOS.map((a, i) => (
@@ -161,9 +165,10 @@ function PorQueImporto() {
         ))}
       </div>
 
-      <h3 className="tc-subtitulo">El mismo algoritmo, en tres lenguajes</h3>
+      <h3 className="tc-subtitulo">Su guía para traducir: el mismo algoritmo en tres lenguajes</h3>
       <p>
         Este es el pseudocódigo de la panadería de la ficha 4, traducido línea por línea. Cambia el lenguaje y miren qué cambia (los símbolos) y qué no (los pasos).
+        Úsenla como guía cuando traduzcan el suyo.
       </p>
       <div className="tc-pestanas" role="tablist" aria-label="Lenguaje de la traducción">
         {LENGUAJES_TRADUCCION.map((l) => (
@@ -204,34 +209,169 @@ function PorQueImporto() {
   )
 }
 
-/* -------------------------- ejemplo de la panadería (referencia) -------------------------- */
+/* ------------------------------- B · programen su proceso ------------------------------- */
 
-function Ejemplo() {
+/** Pseudocódigo de la ficha 4 del equipo, solo para leerlo mientras traducen. */
+function usePseudoDeLaFicha4(equipoId) {
+  const [datos, setDatos] = useState(undefined)
+  useEffect(() => {
+    let vivo = true
+    almacenTc
+      .obtenerFicha(equipoId, 4)
+      .then((r) => vivo && setDatos(r.contenido ?? {}))
+      .catch(() => vivo && setDatos({}))
+    return () => {
+      vivo = false
+    }
+  }, [equipoId])
+  return datos
+}
+
+function BloqueProgramar({ c, f, bloqueada, equipo, esDocente, autorId }) {
+  const ficha4 = usePseudoDeLaFicha4(equipo.id)
+  const caso = ficha4
+    ? Object.keys(ficha4)
+        .filter((k) => k.startsWith('caso__'))
+        .sort()
+        .map((k) => `${k.replace('caso__', '')} = ${String(ficha4[k]).replace(/\r?\n/g, ' | ')}`)
+        .join(' ; ')
+    : ''
+
   return (
-    <section className="tarjeta tc-bloque" aria-labelledby="tc-ejemplo5">
-      <h2 id="tc-ejemplo5" className="tc-bloque__titulo">Ejemplo: Panadería La Esquina</h2>
-      <p className="tc-objetivo">Así se ve una ficha 5 bien hecha. Es solo un ejemplo: ustedes escriben el de su proyecto.</p>
-      <div className="tc-ejemplo5">
-        <p><strong>Proceso 2:</strong> {EJEMPLO_PROCESO_2.proceso}</p>
-        <p><strong>Paradigma:</strong> {EJEMPLO_PROCESO_2.paradigma}</p>
-        <p><strong>Justificación:</strong> {EJEMPLO_PROCESO_2.justificacion}</p>
-        <p><strong>Clases:</strong> {EJEMPLO_PROCESO_2.clases}</p>
-      </div>
-      <p className="aviso aviso--ok">
-        <strong>Está lista cuando</strong> la justificación del paradigma habla del problema del grupo, y el segundo proceso se puede seguir paso a paso.
+    <section className="tarjeta tc-bloque" aria-labelledby="tc-programar">
+      <h2 id="tc-programar" className="tc-bloque__titulo">B · Pasen su pseudocódigo a código</h2>
+      <p className="tc-objetivo">
+        Aquí no repiten nada: usan lo que ya hicieron. Toman el pseudocódigo de su ficha 4 y lo escriben en un lenguaje de programación. Tienen libertad para probar
+        uno o dos y ver cuál se les da mejor: eso les ayudará a decidir en la parte D.
       </p>
+
+      <ol className="tc-como tc-como--pasos" aria-label="Cómo se hace">
+        {PASOS_PARA_PROGRAMAR.map((p) => (
+          <li key={p.titulo}>
+            <strong>{p.titulo}.</strong> {p.texto}
+          </li>
+        ))}
+      </ol>
+
+      <h3 className="tc-subtitulo">Su pseudocódigo de la ficha 4</h3>
+      {ficha4 === undefined ? (
+        <p className="cargando" role="status">Buscando su pseudocódigo…</p>
+      ) : String(ficha4.pseudo ?? '').trim() ? (
+        <>
+          <pre className="tc-codigo-final">{ficha4.pseudo}</pre>
+          {caso && <p className="tc-nota">Caso de su prueba de escritorio: {caso}{ficha4.esperado ? ` · resultado esperado: ${ficha4.esperado}` : ''}</p>}
+        </>
+      ) : (
+        <p className="aviso aviso--nota">
+          No encontramos un pseudocódigo guardado en la ficha 4 de este equipo. Pueden traducir el que hicieron en su hoja o terminar la{' '}
+          {esDocente ? 'ficha 4' : <Link to="/tercer-corte/ficha/4">ficha 4</Link>}.
+        </p>
+      )}
+
+      <Campo
+        etiqueta="¿Con qué herramienta lo escriben y lo prueban?"
+        ayuda="Dónde van a escribir y ejecutar el código. Ejemplos de lo que pueden usar en la lista de abajo."
+        id="tc5-herramienta"
+      >
+        <input id="tc5-herramienta" className="campo" disabled={bloqueada} value={c.como_programan ?? ''} onChange={(e) => f.cambiar('como_programan', e.target.value)} />
+      </Campo>
+      <ul className="tc-lista tc-lista--ayuda">
+        {HERRAMIENTAS.map((h) => (
+          <li key={h}>{h}</li>
+        ))}
+      </ul>
+
+      <Opcion prefijo="op1" titulo="Opción 1 · El lenguaje que van a probar primero" c={c} f={f} bloqueada={bloqueada} />
+      <Opcion prefijo="op2" titulo="Opción 2 (opcional) · Otro lenguaje para comparar" c={c} f={f} bloqueada={bloqueada} opcional />
+
+      <h3 className="tc-subtitulo">¿Qué resultado dio con el caso de la ficha 4?</h3>
+      <fieldset className="tc-opciones tc-opciones--compactas" disabled={bloqueada}>
+        <legend className="visualmente-oculto">Resultado de ejecutar el código</legend>
+        {RESULTADOS.map((r) => (
+          <label key={r.id} className={'tc-opcion' + (c.prueba_igual === r.id ? ' tc-opcion--elegida' : '')}>
+            <input type="radio" name="tc5-resultado" value={r.id} checked={c.prueba_igual === r.id} onChange={() => f.cambiar('prueba_igual', r.id)} />
+            <span>{r.texto}</span>
+          </label>
+        ))}
+      </fieldset>
+      <Campo etiqueta="Cuéntenlo en una o dos líneas" ayuda="Qué valor les dio, o qué les faltó para poder ejecutarlo." id="tc5-resultado-texto">
+        <input id="tc5-resultado-texto" className="campo" disabled={bloqueada} value={c.prueba_resultado ?? ''} onChange={(e) => f.cambiar('prueba_resultado', e.target.value)} />
+      </Campo>
+
+      {!esDocente && !bloqueada && (
+        <details className="tc-ver-paso">
+          <summary>Ver un ejemplo de cómo se llena esta parte (Panadería La Esquina)</summary>
+          <div className="tc-ejemplo5">
+            <p><strong>Lenguajes que probaron:</strong> {EJEMPLO_PROGRAMAR.lenguaje}</p>
+            <p><strong>Herramienta:</strong> {EJEMPLO_PROGRAMAR.herramienta}</p>
+            <p><strong>Código (una parte):</strong></p>
+            <pre className="tc-codigo-final">{EJEMPLO_PROGRAMAR.codigo}</pre>
+            <p><strong>Resultado:</strong> {EJEMPLO_PROGRAMAR.resultado}</p>
+            <p><strong>Cómo les fue:</strong> {EJEMPLO_PROGRAMAR.nota}</p>
+          </div>
+          <p className="tc-nota">Es solo un ejemplo: ustedes escriben el de su proyecto, con su lenguaje y su experiencia.</p>
+        </details>
+      )}
+
+      <Comentarios seccion="programar" f={f} equipo={equipo} esDocente={esDocente} autorId={autorId} />
     </section>
   )
 }
 
-/* ------------------------------------ D · paradigma ------------------------------------ */
+function Opcion({ prefijo, titulo, c, f, bloqueada, opcional = false }) {
+  const len = c[`${prefijo}_lenguaje`] ?? ''
+  return (
+    <div className="tc-opcion-lenguaje">
+      <h3 className="tc-subtitulo">{titulo}</h3>
+      <div className="tc-opcion-lenguaje__cabeza">
+        <Campo etiqueta="Lenguaje" id={`tc5-${prefijo}-len`}>
+          <select id={`tc5-${prefijo}-len`} className="campo" disabled={bloqueada} value={len} onChange={(e) => f.cambiar(`${prefijo}_lenguaje`, e.target.value)}>
+            <option value="">{opcional ? '— sin segunda opción —' : '— elijan uno —'}</option>
+            {LENGUAJES.map((l) => (
+              <option key={l.id} value={l.id}>{l.nombre}</option>
+            ))}
+          </select>
+        </Campo>
+        {len === 'otro' && (
+          <Campo etiqueta="¿Cuál?" id={`tc5-${prefijo}-otro`}>
+            <input id={`tc5-${prefijo}-otro`} className="campo" disabled={bloqueada} value={c[`${prefijo}_lenguaje_otro`] ?? ''} onChange={(e) => f.cambiar(`${prefijo}_lenguaje_otro`, e.target.value)} />
+          </Campo>
+        )}
+      </div>
+      {len && (
+        <>
+          <Campo
+            etiqueta="Su pseudocódigo traducido a ese lenguaje"
+            ayuda="Escríbanlo o pégenlo aquí. Si no lo terminaron, pongan lo que alcanzaron: la entrada, el ciclo y la decisión."
+            id={`tc5-${prefijo}-codigo`}
+          >
+            <textarea
+              id={`tc5-${prefijo}-codigo`}
+              className="campo campo--area tc-codigo-area"
+              rows={10}
+              spellCheck={false}
+              disabled={bloqueada}
+              value={c[`${prefijo}_codigo`] ?? ''}
+              onChange={(e) => f.cambiar(`${prefijo}_codigo`, e.target.value)}
+            />
+          </Campo>
+          <Campo etiqueta="¿Qué tal les fue con este lenguaje?" ayuda="Qué les resultó fácil, qué les costó y qué no entendieron." id={`tc5-${prefijo}-nota`}>
+            <textarea id={`tc5-${prefijo}-nota`} className="campo campo--area" rows={3} disabled={bloqueada} value={c[`${prefijo}_nota`] ?? ''} onChange={(e) => f.cambiar(`${prefijo}_nota`, e.target.value)} />
+          </Campo>
+        </>
+      )}
+    </div>
+  )
+}
+
+/* ------------------------------------ C · paradigma ------------------------------------ */
 
 function BloqueParadigma({ c, f, bloqueada, equipo, esDocente, autorId }) {
   const clave = claveDeEstructura(c)
   const esOO = c.paradigma === 'oo'
   return (
     <section className="tarjeta tc-bloque" aria-labelledby="tc-paradigma">
-      <h2 id="tc-paradigma" className="tc-bloque__titulo">D · Elijan el paradigma</h2>
+      <h2 id="tc-paradigma" className="tc-bloque__titulo">C · Elijan el paradigma</h2>
       <p className="tc-objetivo">
         El paradigma es una decisión de diseño: cómo se va a organizar el programa. Hay que defenderla con el problema, no con el gusto.
       </p>
@@ -255,14 +395,7 @@ function BloqueParadigma({ c, f, bloqueada, equipo, esDocente, autorId }) {
         ayuda="Hablen de SU problema: qué cosas o pasos tiene, qué reglas, qué podría crecer. Eviten «porque es más fácil»."
         id="tc5-justificacion"
       >
-        <textarea
-          id="tc5-justificacion"
-          className="campo campo--area"
-          rows={5}
-          disabled={bloqueada}
-          value={c.justificacion ?? ''}
-          onChange={(e) => f.cambiar('justificacion', e.target.value)}
-        />
+        <textarea id="tc5-justificacion" className="campo campo--area" rows={5} disabled={bloqueada} value={c.justificacion ?? ''} onChange={(e) => f.cambiar('justificacion', e.target.value)} />
       </Campo>
 
       {c.paradigma && (
@@ -275,14 +408,7 @@ function BloqueParadigma({ c, f, bloqueada, equipo, esDocente, autorId }) {
           }
           id={`tc5-${clave}`}
         >
-          <textarea
-            id={`tc5-${clave}`}
-            className="campo campo--area"
-            rows={5}
-            disabled={bloqueada}
-            value={c[clave] ?? ''}
-            onChange={(e) => f.cambiar(clave, e.target.value)}
-          />
+          <textarea id={`tc5-${clave}`} className="campo campo--area" rows={5} disabled={bloqueada} value={c[clave] ?? ''} onChange={(e) => f.cambiar(clave, e.target.value)} />
         </Campo>
       )}
 
@@ -291,14 +417,14 @@ function BloqueParadigma({ c, f, bloqueada, equipo, esDocente, autorId }) {
   )
 }
 
-/* ------------------------------------ E · lenguaje ------------------------------------ */
+/* ------------------------------------ D · lenguaje ------------------------------------ */
 
 function BloqueLenguaje({ c, f, bloqueada, equipo, esDocente, autorId }) {
   return (
     <section className="tarjeta tc-bloque" aria-labelledby="tc-lenguaje">
-      <h2 id="tc-lenguaje" className="tc-bloque__titulo">E · Elijan el lenguaje de programación</h2>
+      <h2 id="tc-lenguaje" className="tc-bloque__titulo">D · Elijan el lenguaje con el que van a programar</h2>
       <p className="tc-objetivo">
-        Ya resolvieron la lógica; ahora escojan en qué lenguaje la van a escribir. No hay uno «mejor»: hay uno que le sirve más a su proyecto. Antes de decidir,
+        Ya probaron traducir su plano. Ahora decidan: no hay un lenguaje «mejor», hay uno que le sirve más a su proyecto. Apóyense en lo que les pasó en la parte B y
         respondan: ¿qué van a construir y dónde se va a usar?, ¿alguien del equipo ya lo conoce?, ¿encaja con el paradigma que eligieron?
       </p>
 
@@ -324,7 +450,7 @@ function BloqueLenguaje({ c, f, bloqueada, equipo, esDocente, autorId }) {
 
       <Campo
         etiqueta="¿Por qué ese lenguaje es el adecuado para SU proyecto?"
-        ayuda="Den razones concretas: qué van a construir, dónde se usará, quién del equipo lo conoce o cómo lo van a aprender, y por qué encaja con el paradigma que eligieron."
+        ayuda="Den razones concretas: qué les resultó fácil o difícil al probarlo, qué van a construir, dónde se usará, quién lo conoce y por qué encaja con el paradigma."
         id="tc5-porque"
       >
         <textarea id="tc5-porque" className="campo campo--area" rows={4} disabled={bloqueada} value={c.lenguaje_porque ?? ''} onChange={(e) => f.cambiar('lenguaje_porque', e.target.value)} />
@@ -332,15 +458,15 @@ function BloqueLenguaje({ c, f, bloqueada, equipo, esDocente, autorId }) {
 
       <Campo
         etiqueta="¿Qué es lo primero que van a programar?"
-        ayuda="Escojan una parte pequeña de su pseudocódigo que puedan traducir primero. Ejemplo: «la entrada y el cálculo del total del proceso 1»."
+        ayuda="Escojan una parte pequeña de su pseudocódigo para empezar. Ejemplo: «la entrada y el cálculo del total»."
         id="tc5-primero"
       >
         <input id="tc5-primero" className="campo" disabled={bloqueada} value={c.lenguaje_primero ?? ''} onChange={(e) => f.cambiar('lenguaje_primero', e.target.value)} />
       </Campo>
 
       <Campo
-        etiqueta="Con sus palabras: ¿para qué les sirvió escribir el pseudocódigo y la prueba de escritorio antes de elegir el lenguaje?"
-        ayuda="Dos o tres líneas, con algo concreto: un error que encontraron a tiempo, una decisión que se les facilitó, algo que entendieron mejor."
+        etiqueta="Con sus palabras: ¿para qué les sirvió escribir el pseudocódigo y la prueba de escritorio antes de programar?"
+        ayuda="Dos o tres líneas, con algo concreto: qué les ahorró al traducir, qué error evitaron, qué entendieron mejor."
         id="tc5-importo"
       >
         <textarea id="tc5-importo" className="campo campo--area" rows={4} disabled={bloqueada} value={c.pseudo_importa ?? ''} onChange={(e) => f.cambiar('pseudo_importa', e.target.value)} />
@@ -355,14 +481,19 @@ function BloqueLenguaje({ c, f, bloqueada, equipo, esDocente, autorId }) {
 
 function ParaLaSustentacion() {
   return (
-    <section className="tarjeta tc-bloque" aria-labelledby="tc-sustentacion">
-      <h2 id="tc-sustentacion" className="tc-bloque__titulo">Para la sustentación de la próxima clase</h2>
-      <p className="tc-objetivo">Esto es lo que van a explicar y lo que deben tener listo:</p>
-      <ul className="tc-lista">
+    <section className="tarjeta tc-bloque tc-sustenta" aria-labelledby="tc-sustentacion">
+      <p className="tc-sustenta__etiqueta">Próxima clase</p>
+      <h2 id="tc-sustentacion" className="tc-bloque__titulo">Ya estamos cerca de la sustentación</h2>
+      <p className="tc-objetivo">
+        En la siguiente clase cada equipo explica su trabajo frente al grupo. Lleguen con todo esto preparado: no tienen que memorizar, tienen que entender lo que
+        hicieron.
+      </p>
+      <ul className="tc-sustenta__lista">
         {PARA_LA_SUSTENTACION.map((t) => (
           <li key={t}>{t}</li>
         ))}
       </ul>
+      <p className="tc-nota">Reparten quién explica cada parte antes de la clase. Quien sustenta debe poder responder: «¿por qué lo hicieron así?».</p>
     </section>
   )
 }

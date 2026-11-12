@@ -568,7 +568,14 @@ prueba('guiada · la tabla correcta se aprueba y una casilla mal se detecta', ()
 })
 
 const ficha5Base = () => ({
-  ...ficha4Completa(),
+  como_programan: 'Un compilador en línea desde la sala de cómputo',
+  op1_lenguaje: 'python',
+  op1_codigo: 'def calcular_total(productos):\n    total = 0\n    for item in productos:\n        total = total + item["precio"]\n    return total',
+  op1_nota: 'Se parece mucho al pseudocódigo.',
+  op2_lenguaje: 'javascript',
+  op2_codigo: 'function calcularTotal(productos) { let total = 0; return total; }',
+  prueba_igual: 'si',
+  prueba_resultado: 'Dio 31.500, igual que a mano.',
   paradigma: 'oo',
   justificacion: 'El problema tiene entidades claras (pedidos, productos y clientes) con datos propios y reglas propias, como el descuento del pedido.',
   clases: 'Pedido: calcula su total\nProducto: guarda nombre y precio',
@@ -580,7 +587,7 @@ const ficha5Base = () => ({
 
 prueba('ficha 5 · vacía no se puede entregar; con lo esencial sí, aunque falte lo demás', () => {
   const vacia = revisarFicha5({})
-  const esencial = revisarFicha5({ pseudo: 'PROCESO x\ntotal = 1\nSALIDA total', paradigma: 'estructurado', justificacion: 'Es una serie de pasos de cálculo, sin entidades.', lenguaje: 'java' })
+  const esencial = revisarFicha5({ op1_lenguaje: 'python', op1_codigo: 'def f(x):\n    return x + 1  # traducción', paradigma: 'estructurado', justificacion: 'Es una serie de pasos de cálculo, sin entidades.', lenguaje: 'java' })
   return !vacia.puedeEntregar && esencial.puedeEntregar && !esencial.completa ? true : JSON.stringify([vacia.puedeEntregar, esencial.puedeEntregar, esencial.completa])
 })
 
@@ -588,7 +595,8 @@ prueba('ficha 5 · exige el nombre del lenguaje cuando eligen «Otro» y el para
   const sinNombre = revisarFicha5({ ...ficha5Base(), lenguaje: 'otro' })
   const conNombre = revisarFicha5({ ...ficha5Base(), lenguaje: 'otro', lenguaje_otro: 'Kotlin' })
   const sinParadigma = revisarFicha5({ ...ficha5Base(), paradigma: '' })
-  return !sinNombre.puedeEntregar && conNombre.puedeEntregar && !sinParadigma.puedeEntregar ? true : JSON.stringify([sinNombre.puedeEntregar, conNombre.puedeEntregar, sinParadigma.puedeEntregar])
+  const sinCodigo = revisarFicha5({ ...ficha5Base(), op1_codigo: '' })
+  return !sinNombre.puedeEntregar && conNombre.puedeEntregar && !sinParadigma.puedeEntregar && !sinCodigo.puedeEntregar ? true : JSON.stringify([sinNombre.puedeEntregar, conNombre.puedeEntregar, sinParadigma.puedeEntregar])
 })
 
 prueba('ficha 5 · completa cuando todo está bien y pide clases u funciones según el paradigma', () => {
@@ -596,7 +604,7 @@ prueba('ficha 5 · completa cuando todo está bien y pide clases u funciones seg
   const ids = r.puntos.map((p) => p.id)
   const faltaEstructura = revisarFicha5({ ...ficha5Base(), clases: 'Pedido' }).puntos.find((p) => p.id === 'estructura').ok
   const estructurado = revisarFicha5({ ...ficha5Base(), paradigma: 'estructurado', clases: '', funciones: 'calcularTotal: suma\narmarLista: junta' }).puntos.find((p) => p.id === 'estructura')
-  return r.completa && ids.includes('paradigma') && ids.includes('lenguaje') && !ids.includes('par') && !faltaEstructura && estructurado.ok ? true : JSON.stringify([r.puntos.filter((p) => !p.ok).map((p) => p.id), faltaEstructura, estructurado])
+  return r.completa && ids.includes('paradigma') && ids.includes('lenguaje') && ids.includes('prueban') && !ids.includes('par') && !faltaEstructura && estructurado.ok ? true : JSON.stringify([r.puntos.filter((p) => !p.ok).map((p) => p.id), faltaEstructura, estructurado])
 })
 
 prueba('ficha 5 · el CSV y el PDF incluyen paradigma, lenguaje y justificación', () => {
@@ -604,7 +612,7 @@ prueba('ficha 5 · el CSV y el PDF incluyen paradigma, lenguaje y justificación
   const csv = csvFicha5([fila])
   const pdf = pdfFicha5({ equipo: 'Mi tienda', miembros: fila.miembros, estado: 'entregada', contenido: fila.contenido })
   const texto = typeof pdf === 'string' ? pdf : Buffer.from(pdf).toString('latin1')
-  return /Orientado a objetos/.test(csv) && /Python/.test(csv) && /entidades claras/.test(csv) && texto.startsWith('%PDF') ? true : JSON.stringify(csv.slice(0, 300))
+  return /Orientado a objetos/.test(csv) && /Python/.test(csv) && /entidades claras/.test(csv) && /JavaScript/.test(csv) && /compilador en línea/.test(csv) && texto.startsWith('%PDF') ? true : JSON.stringify(csv.slice(0, 300))
 })
 
 prueba('ficha 5 · la traducción de ejemplo cubre las cuatro partes en los tres lenguajes', () => {
