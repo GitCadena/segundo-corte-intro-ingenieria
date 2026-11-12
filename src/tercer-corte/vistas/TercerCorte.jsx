@@ -149,7 +149,7 @@ function MiEquipo({ equipo }) {
   const f3 = estadoDe(3)
   const f4 = estadoDe(4)
   const f5 = estadoDe(5)
-  // El Grupo 3 ya hizo la ficha 3 en una hoja aparte: trabaja las fichas 4 y 5.
+  // El Grupo 3 ya hizo la ficha 3 en una hoja aparte: no la ve y trabaja las fichas 4 y 5.
   const { perfil } = useSesion()
   const grupo3 = esGrupoSencillo(perfil?.grupo)
   const [copiado, setCopiado] = useState(false)
@@ -186,14 +186,7 @@ function MiEquipo({ equipo }) {
 
       <section className="tarjeta" aria-labelledby="tc-fichas">
         <h2 id="tc-fichas" className="tc-bloque__titulo">Fichas del corte</h2>
-        {grupo3 ? (
-          <div className="tc-ficha-fila">
-            <div>
-              <h3>Ficha 3 · Calidad con números (ISO/IEC 25010)</h3>
-              <p>La hicieron en una hoja aparte. Aquí no tienen que repetirla.</p>
-            </div>
-          </div>
-        ) : (
+        {!grupo3 && (
           <div className="tc-ficha-fila">
             <div>
               <h3>Ficha 3 · Calidad con números (ISO/IEC 25010)</h3>
