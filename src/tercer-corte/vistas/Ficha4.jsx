@@ -9,6 +9,9 @@ import { limpiarPseudocodigo, normalizarLineas } from '../lib/normalizar.js'
 import { IDEAS_DE_PROCESO, PLANTILLAS } from '../data/pseudocodigo.js'
 import { Campo, Comentarios as ComentariosFicha, EstadoFicha } from './componentes.jsx'
 import Aprende from './Aprende.jsx'
+import AprendeSencillo from './AprendeSencillo.jsx'
+import AsistenteSencillo from './AsistenteSencillo.jsx'
+import { esGrupoSencillo } from '../lib/asistente.js'
 import TablaGuiada from './TablaGuiada.jsx'
 import { sugerirCaso } from '../lib/pruebaGuiada.js'
 import './tercer-corte.css'
@@ -33,6 +36,8 @@ function FichaCuatro({ equipo, modo }) {
   const entregada = f.estado === 'entregada'
   const bloqueada = entregada || esDocente
   const c = f.contenido
+  // Grupo 3 (primíparos): versión más sencilla, con otros juegos y un asistente. Lo que se entrega es lo mismo.
+  const sencillo = !esDocente && esGrupoSencillo(perfil?.grupo)
 
   const revision = useMemo(() => revisarFicha4(c), [c])
   const ctx = { c, f, equipo, esDocente, bloqueada, perfil, revision, autorId: perfil?.id }
@@ -78,9 +83,10 @@ function FichaCuatro({ equipo, modo }) {
       )}
       {f.error && <p className="aviso aviso--error tc-aviso" role="alert">{f.error}</p>}
 
-      {!esDocente && <Aprende />}
+      {!esDocente && (sencillo ? <AprendeSencillo /> : <Aprende />)}
 
       <BloqueDefinir {...ctx} />
+      {sencillo && <AsistenteSencillo c={c} f={f} bloqueada={bloqueada} />}
       <BloquePseudocodigo {...ctx} />
       <BloquePrueba {...ctx} />
 

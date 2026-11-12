@@ -12,6 +12,7 @@ import {
 } from '../src/tercer-corte/lib/interprete.js'
 import { revisarFicha4, firmaEjecucion, firmaPrueba } from '../src/tercer-corte/lib/ficha4.js'
 import { normalizarLineas, limpiarPseudocodigo } from '../src/tercer-corte/lib/normalizar.js'
+import { esGrupoSencillo, armarPseudocodigo, faltantes, nombreDeProceso, EJEMPLO_ASISTENTE } from '../src/tercer-corte/lib/asistente.js'
 import { construirTabla, revisarTabla, respuestasCorrectas, sugerirCaso, tipoDePaso } from '../src/tercer-corte/lib/pruebaGuiada.js'
 
 let ok = 0
@@ -562,6 +563,27 @@ prueba('guiada · la tabla correcta se aprueba y una casilla mal se detecta', ()
   const claves = Object.keys(buenas).filter((k) => !k.endsWith('|?'))
   const r2 = revisarTabla(t, { ...buenas, [claves[0]]: '99999' })
   return ok1 && !r2.todas && r2.ok[claves[0]] === false ? true : JSON.stringify([ok1, r2.buenas, r2.total])
+})
+
+prueba('sencilla · solo el Grupo 3 ve la versión sencilla', () => {
+  const si = ['Grupo 3', 'grupo 3', ' GRUPO  3 '].every(esGrupoSencillo)
+  const no = ['Grupo 1', 'Grupo 2', 'Grupo 30', '', null, undefined].every((g) => !esGrupoSencillo(g))
+  return si && no ? true : JSON.stringify([si, no])
+})
+
+prueba('sencilla · con las respuestas del ejemplo el asistente arma un pseudocódigo que se entiende y se ejecuta', () => {
+  const texto = armarPseudocodigo('Calcular el total del pedido', EJEMPLO_ASISTENTE)
+  const c = { proceso: 'Calcular el total del pedido', entradas: 'productos: lista', salida: 'total', pseudo: texto, caso__productos: 'cantidad=10, precio=5000\ncantidad=2, precio=15000' }
+  const rev = revisarFicha4(c)
+  const e = rev.ejecucion
+  const pasan = ['bloques', 'si', 'repetir', 'variables', 'espanol'].every((id) => rev.puntos.find((p) => p.id === id).ok)
+  return e?.ok && e.resultado === 72000 && pasan ? true : JSON.stringify([e?.resultado, e?.error, rev.analisis.errores, rev.puntos.filter((p) => !p.ok).map((p) => p.id)])
+})
+
+prueba('sencilla · el asistente avisa lo que falta y arma un nombre de proceso válido', () => {
+  const falta = faltantes({ lista: 'x' }).length === 6
+  const nombre = nombreDeProceso('Calcular el total del pedido') === 'calcularElTotalDelPedido' && nombreDeProceso('¡¡') === 'miProceso' && nombreDeProceso('3 pasos') === 'proceso3Pasos'
+  return falta && nombre ? true : JSON.stringify([falta, nombre])
 })
 
 prueba('ficha 4 · se puede entregar con el pseudocódigo escrito aunque la revisión no esté completa, pero no vacía', () => {

@@ -87,3 +87,36 @@
 .tc-celda-gris { color: var(--tinta-tenue); font-family: var(--fuente-mono); font-size: .9rem; }
 .tc-ver-paso { margin-top: 1rem; border: 1px solid var(--borde); border-radius: var(--radio); padding: .7rem 1rem; background: var(--papel-suave); }
 .tc-ver-paso summary { cursor: pointer; font-weight: 600; color: var(--acento-oscuro); }
+
+/* ---------------------- Ficha 4 sencilla (Grupo 3) ---------------------- */
+
+.tc-camino { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: .7rem; grid-template-columns: 1fr; }
+@media (min-width: 760px) { .tc-camino { grid-template-columns: 1fr 1fr; } }
+.tc-camino li { display: flex; gap: .8rem; align-items: flex-start; background: var(--papel-suave); border: 1px solid var(--borde); border-radius: var(--radio); padding: .8rem 1rem; }
+.tc-camino li > span { flex: none; width: 2rem; height: 2rem; border-radius: 50%; background: var(--acento); color: #fff; font-weight: 700; display: grid; place-items: center; }
+.tc-camino p { margin: .2rem 0 0; font-size: .92rem; color: var(--tinta-suave); }
+
+.tc-relacionar__banco { margin-bottom: 1rem; }
+.tc-relacionar__huecos { display: flex; flex-direction: column; gap: .6rem; }
+.tc-relacionar__fila { display: flex; gap: .8rem; align-items: center; }
+.tc-relacionar__texto { margin: 0; }
+.tc-hueco { display: inline-flex; align-items: center; justify-content: center; min-width: 7.5rem; min-height: 2.6rem; padding: .15rem; border: 2px dashed var(--borde-fuerte); border-radius: var(--radio); background: var(--papel); flex: none; }
+.tc-hueco--listo { border-color: var(--acento); background: var(--acento-suave); }
+.tc-hueco--ok { border: 2px solid var(--ok); background: var(--ok-suave); }
+.tc-hueco__boton { border: 0; background: none; font: inherit; color: var(--tinta-tenue); cursor: pointer; padding: .4rem .6rem; }
+.tc-hueco__boton:disabled { cursor: default; }
+.tc-hueco code { font-family: var(--fuente-mono); font-weight: 700; padding: 0 .4rem; }
+.tc-nota--aviso { color: var(--mal); font-weight: 600; }
+
+.tc-codigo-hueco { display: flex; flex-direction: column; gap: .35rem; padding: .8rem 1rem; background: var(--papel-suave); border: 1px solid var(--borde); border-radius: var(--radio); overflow-x: auto; }
+.tc-codigo-hueco__fila { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
+.tc-codigo-hueco__linea { font-family: var(--fuente-mono); font-size: .9rem; white-space: pre; display: inline-flex; align-items: center; gap: .3rem; }
+.tc-codigo-hueco__ayuda { font-size: .82rem; color: var(--acento-oscuro); }
+
+.tc-orden--receta .tc-orden__linea--ok { border-color: var(--ok); background: var(--ok-suave); }
+.tc-orden--receta .tc-orden__linea--mal { border-color: var(--mal); background: var(--mal-suave); }
+.tc-orden__n { display: inline-block; min-width: 1.4rem; font-weight: 700; color: var(--tinta-tenue); }
+.tc-orden__parte { display: inline-block; margin-left: .6rem; padding: .05rem .5rem; border-radius: 999px; color: #fff; font-size: .75rem; font-style: normal; }
+
+.tc-asistente__preguntas { display: grid; gap: .9rem; margin: 1rem 0; }
+.tc-asistente .tc-nota { margin: .1rem 0 .35rem; }
