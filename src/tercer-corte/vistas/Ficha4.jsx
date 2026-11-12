@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSesion } from '../../estado/SesionProvider.jsx'
 import { almacenTc } from '../lib/almacenTc.js'
+import { CIERRE_FICHA_4 } from '../config.js'
 import { useFicha } from '../lib/useFicha.js'
 import { revisarFicha4, firmaEjecucion, firmaPrueba, procesar } from '../lib/ficha4.js'
 import { camposUsados, lineasDe, mostrarValor, resultadosCoinciden } from '../lib/interprete.js'
@@ -40,6 +41,8 @@ function FichaCuatro({ equipo, modo }) {
   const sencillo = !esDocente && esGrupoSencillo(perfil?.grupo)
 
   const revision = useMemo(() => revisarFicha4(c), [c])
+  // Después del cierre ya no se reciben entregas (también lo impide la base de datos).
+  const cerrada = Date.now() >= CIERRE_FICHA_4.getTime()
   const ctx = { c, f, equipo, esDocente, bloqueada, perfil, revision, autorId: perfil?.id }
 
   async function entregar() {
@@ -107,8 +110,8 @@ function FichaCuatro({ equipo, modo }) {
         {!esDocente && !entregada && (
           <div className="tc-entrega">
             {!confirmando ? (
-              <button type="button" className="boton boton--principal" disabled={!revision.puedeEntregar} onClick={() => setConfirmando(true)}>
-                {revision.puedeEntregar ? 'Entregar la ficha' : 'Escriban el pseudocódigo para poder entregar'}
+              <button type="button" className="boton boton--principal" disabled={cerrada || !revision.puedeEntregar} onClick={() => setConfirmando(true)}>
+                {cerrada ? 'Entregas cerradas' : revision.puedeEntregar ? 'Entregar la ficha' : 'Escriban el pseudocódigo para poder entregar'}
               </button>
             ) : (
               <div className="tc-confirmar" role="alert">
@@ -117,6 +120,7 @@ function FichaCuatro({ equipo, modo }) {
                 <button type="button" className="boton boton--texto" onClick={() => setConfirmando(false)}>Todavía no</button>
               </div>
             )}
+            {cerrada && <p className="aviso aviso--nota" role="status">El plazo para entregar la ficha 4 cerró el 12 de noviembre a las 11:00 a. m. Ya no se reciben entregas.</p>}
             {avisoEntrega && <p className="aviso aviso--error" role="alert">{avisoEntrega}</p>}
           </div>
         )}
